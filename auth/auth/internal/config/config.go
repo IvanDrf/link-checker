@@ -2,7 +2,6 @@ package config
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -11,6 +10,7 @@ import (
 
 type Config struct {
 	Env         string     `yaml:"env" `
+	Level       string     `yaml:"level"`
 	StoragePath string     `yaml:"storage_path" `
 	GRPC        GRPCConfig `yaml:"grpc" `
 }
@@ -27,7 +27,6 @@ func MustLoad() *Config {
 		cfgPath = defaultPath
 	}
 
-	fmt.Println(os.Getwd())
 	if _, err := os.Stat(cfgPath); os.IsNotExist(err) {
 		log.Fatal("cant find config file " + cfgPath)
 	}
