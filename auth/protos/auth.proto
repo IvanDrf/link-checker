@@ -1,0 +1,39 @@
+syntax="proto3";
+
+package auth;
+
+option go_package="protos/gen-go/authv1";
+
+service Auth {
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc RefreshTokens(RefreshRequest) returns (RefreshResponse);
+}
+
+message RegisterRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message RegisterResponse {
+    int64 user_id = 1;
+}
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    string access = 1;
+    string refresh = 2;
+}
+
+message RefreshRequest {
+    string refresh = 2;
+}
+
+message RefreshResponse {
+    string access = 1;
+    string refresh = 2;
+}
