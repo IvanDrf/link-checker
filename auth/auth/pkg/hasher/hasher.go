@@ -1,6 +1,8 @@
 package hasher
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"golang.org/x/crypto/bcrypt"
+)
 
 type PswHasher interface {
 	HashPassword(passw string) string
@@ -21,6 +23,6 @@ func (h hasher) HashPassword(passw string) string {
 	return string(bytes)
 }
 
-func (h hasher) ComparePassword(hashed, passw string) bool {
-	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(passw)) == nil
+func (h hasher) ComparePassword(hashed, password string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(hashed), []byte(password)) == nil
 }

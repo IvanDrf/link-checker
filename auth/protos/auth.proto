@@ -7,8 +7,7 @@ option go_package="protos/gen-go/authv1";
 service Auth {
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc Login(LoginRequest) returns (LoginResponse);
-
-    rpc IsAdmin(IsAdminRequest) returns (IsAdminResponse);
+    rpc RefreshTokens(RefreshRequest) returns (RefreshResponse);
 }
 
 message RegisterRequest {
@@ -26,13 +25,15 @@ message LoginRequest {
 }
 
 message LoginResponse {
-    string token = 1;
+    string access = 1;
+    string refresh = 2;
 }
 
-message IsAdminRequest {
-    int64 user_id = 1;
+message RefreshRequest {
+    string refresh = 2;
 }
 
-message IsAdminResponse {
-    bool is_admin = 1;
+message RefreshResponse {
+    string access = 1;
+    string refresh = 2;
 }

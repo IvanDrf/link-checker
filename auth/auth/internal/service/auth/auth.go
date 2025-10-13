@@ -1,7 +1,9 @@
 package authService
 
 import (
+	"auth/auth/internal/config"
 	"auth/auth/internal/errs"
+	"auth/auth/internal/lib/jwter"
 	"auth/auth/internal/models"
 	userRepo "auth/auth/internal/repo/user"
 	"auth/auth/pkg/email"
@@ -9,27 +11,32 @@ import (
 	"context"
 	"database/sql"
 	"log/slog"
+	"time"
 )
 
 type AuthService interface {
 	Register(ctx context.Context, user *models.User) (*models.User, error)
-	//Login(ctx context.Context)
-	//IsAdmin(ctx context.Context)
+	Login(ctx context.Context, user *models.User) (string, string, error)
+	RefreshTokens(ctx context.Context, refreshToken string) (string, string, error)
 }
+
+const ctxTime = 5 * time.Second
 
 type authService struct {
 	users userRepo.UserRepo
 
+	jwter          jwter.JWTer
 	hasher         hasher.PswHasher
 	emailValidator email.EmailValidator
 
 	log *slog.Logger
 }
 
-func NewAuthService(db *sql.DB, log *slog.Logger) AuthService {
+func NewAuthService(cfg *config.Config, db *sql.DB, log *slog.Logger) AuthService {
 	return &authService{
 		users: userRepo.NewRepo(db, log),
 
+		jwter:          jwter.NewJWTer(cfg),
 		hasher:         hasher.NewPswHasher(),
 		emailValidator: email.NewValidator(),
 
@@ -44,17 +51,45 @@ func (a *authService) Register(ctx context.Context, user *models.User) (*models.
 		return nil, errs.ErrInvalidEmail()
 	}
 
-	_, err := a.users.FindUserByEmail(ctx, user.Email)
+	ct, cancel := context.WithTimeout(ctx, ctxTime)
+	defer cancel()
+
+	_, err := a.users.FindUserByEmail(ct, user.Email)
 	if err == nil {
 		return nil, errs.ErrUserAlreadyInDB()
 	}
 
 	user.Password = a.hasher.HashPassword(user.Password)
 
-	user.Id, err = a.users.AddUser(ctx, user)
+	user.Id, err = a.users.AddUser(ct, user)
 	if err != nil {
 		return nil, errs.ErrCantAddNewUser()
 	}
 
 	return user, nil
+}
+
+func (a *authService) Login(ctx context.Context, user *models.User) (string, string, error) {
+	ct, cancel := context.WithTimeout(ctx, ctxTime)
+	defer cancel()
+
+	userInDB, err := a.users.FindUserByEmail(ct, user.Email)
+	if err != nil {
+		return "", "", errs.ErrCantFindUserInDB()
+	}
+
+	if !a.hasher.ComparePassword(userInDB.Password, user.Password) {
+		return "", "", errs.ErrIncorrectPassword()
+	}
+
+	access, refresh, err := a.jwter.GenerateTokens(user.Id)
+	if err != nil {
+		return "", "", errs.ErrCantCreateJWT()
+	}
+
+	return access, refresh, nil
+}
+
+func (a *authService) RefreshTokens(ctx context.Context, refreshToken string) (string, string, error) {
+	return a.jwter.RefreshTokens(refreshToken)
 }

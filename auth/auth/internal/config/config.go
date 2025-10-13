@@ -4,19 +4,29 @@ import (
 	"flag"
 	"log"
 	"os"
+	"time"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
-	Env         string     `yaml:"env" `
-	Level       string     `yaml:"level"`
-	StoragePath string     `yaml:"storage_path" `
-	GRPC        GRPCConfig `yaml:"grpc" `
+	Env         string `yaml:"env" `
+	Level       string `yaml:"level"`
+	StoragePath string `yaml:"storage_path" `
+
+	GRPC GRPCConfig `yaml:"grpc" `
+	JWT  JWTConfig  `yaml:"jwt"`
 }
 
 type GRPCConfig struct {
 	Port string `yaml:"port" `
+}
+
+type JWTConfig struct {
+	Key string `yaml:"secret_key"`
+
+	AccessExpTime  time.Duration `yaml:"access_exp_time"`
+	RefreshExpTime time.Duration `yaml:"refresh_exp_time"`
 }
 
 const defaultPath = "../auth/config/config.yaml"

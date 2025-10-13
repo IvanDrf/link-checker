@@ -30,7 +30,7 @@ func (t *tableCreator) CreateUsersTable(ctx context.Context) error {
 	query := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
 		user_id INTEGER PRIMARY KEY,
 		email TINYTEXT NOT NULL UNIQUE,
-		password TINYTEXT NOT NULL
+		password TEXT NOT NULL
 	)`, UsersTable)
 
 	_, err := t.db.ExecContext(ctx, query)

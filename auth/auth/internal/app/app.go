@@ -34,7 +34,7 @@ func New(cfg *config.Config, log *slog.Logger) *App {
 		log:         log,
 	}
 
-	auth.Register(gRPCServer, app.db, log)
+	auth.Register(gRPCServer, cfg, app.db, log)
 	return app
 }
 

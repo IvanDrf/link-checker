@@ -13,3 +13,11 @@ func ErrInvalidEmail() error {
 func ErrCantAddNewUser() error {
 	return Error{Code: http.StatusInternalServerError, Msg: "cant add new user in database"}
 }
+
+func ErrCantFindUserInDB() error {
+	return Error{Code: http.StatusNotFound, Msg: "cant find user in database"}
+}
+
+func ErrIncorrectPassword() error {
+	return Error{Code: http.StatusForbidden, Msg: "password is incorrect"}
+}
