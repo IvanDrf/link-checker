@@ -4,13 +4,11 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log/slog"
-	"time"
 )
 
 type TableCreator interface {
-	CreateUsersTable() error
-	CreateJWTTable() error
+	CreateUsersTable(ctx context.Context) error
+	CreateJWTTable(ctx context.Context) error
 }
 
 const (
@@ -20,44 +18,33 @@ const (
 
 type tableCreator struct {
 	db *sql.DB
-
-	log *slog.Logger
 }
 
-const ctxTime = 5 * time.Second
-
-func NewCreator(db *sql.DB, log *slog.Logger) TableCreator {
+func NewCreator(db *sql.DB) TableCreator {
 	return &tableCreator{
-		db:  db,
-		log: log,
+		db: db,
 	}
 }
 
-func (t *tableCreator) CreateUsersTable() error {
+func (t *tableCreator) CreateUsersTable(ctx context.Context) error {
 	query := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
 		user_id INTEGER PRIMARY KEY,
 		email TINYTEXT NOT NULL UNIQUE,
 		password TINYTEXT NOT NULL
 	)`, UsersTable)
 
-	ctx, cancel := context.WithTimeout(context.Background(), ctxTime)
-	defer cancel()
-
 	_, err := t.db.ExecContext(ctx, query)
 	return err
 }
 
-func (t *tableCreator) CreateJWTTable() error {
+func (t *tableCreator) CreateJWTTable(ctx context.Context) error {
 	query := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s(
 		token_id INTEGER PRIMARY KEY,
 		token TEXT NOT NULL,
 		user_id INTEGER NOT NULL,
 
-		FOREIGN KEY (user_id) REFERENCES TO users(user_id)
+		FOREIGN KEY (user_id) REFERENCES users(user_id)
 	)`, JWTTable)
-
-	ctx, cancel := context.WithTimeout(context.Background(), ctxTime)
-	defer cancel()
 
 	_, err := t.db.ExecContext(ctx, query)
 	return err

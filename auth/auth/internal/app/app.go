@@ -2,7 +2,9 @@ package app
 
 import (
 	"auth/auth/internal/config"
+	"auth/auth/internal/database"
 	auth "auth/auth/internal/grpc"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -15,6 +17,7 @@ type App struct {
 	gRPCserver *grpc.Server
 	port       string
 
+	db          *sql.DB
 	storagePath string
 
 	log *slog.Logger
@@ -22,14 +25,17 @@ type App struct {
 
 func New(cfg *config.Config, log *slog.Logger) *App {
 	gRPCServer := grpc.NewServer()
-	auth.Register(gRPCServer)
 
-	return &App{
+	app := &App{
 		gRPCserver:  gRPCServer,
 		port:        cfg.GRPC.Port,
 		storagePath: cfg.StoragePath,
+		db:          database.InitDatabase(cfg),
 		log:         log,
 	}
+
+	auth.Register(gRPCServer, app.db, log)
+	return app
 }
 
 func (a *App) Run() error {
@@ -47,5 +53,6 @@ func (a *App) Run() error {
 }
 
 func (a *App) Stop() {
+	defer a.db.Close()
 	a.gRPCserver.GracefulStop()
 }
