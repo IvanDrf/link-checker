@@ -1,0 +1,24 @@
+syntax="proto3";
+
+package checker;
+
+option go_package="protos/gen-go/checkerv1";
+
+service Checker {
+    rpc CheckLinks(CheckRequest) returns (CheckResponse);
+}
+
+message CheckRequest {
+    repeated string url = 1;
+}
+
+message CheckResponse {
+    repeated Url urls = 1;
+}
+
+
+message Url {
+    string url = 1;
+    bool status = 2;
+}
+
