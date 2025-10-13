@@ -1,9 +1,10 @@
 package main
 
 import (
-	logger "checker/checker"
 	"checker/checker/internal/app"
 	"checker/checker/internal/config"
+	logger "checker/checker/logger"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -21,5 +22,6 @@ func main() {
 	signal.Notify(stop, syscall.SIGABRT, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
+	log.Info(fmt.Sprintf("shutdown server on %s", cfg.GRPC.Port))
 	app.Stop()
 }

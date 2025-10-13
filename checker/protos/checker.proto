@@ -9,7 +9,7 @@ service Checker {
 }
 
 message CheckRequest {
-    repeated string url = 1;
+    repeated string urls = 1;
 }
 
 message CheckResponse {

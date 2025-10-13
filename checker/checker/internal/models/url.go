@@ -1,6 +1,6 @@
 package models
 
-type Link struct {
+type Url struct {
 	Url    string
 	Status bool
 }

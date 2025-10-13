@@ -23,7 +23,7 @@ const (
 
 type CheckRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Url           []string               `protobuf:"bytes,1,rep,name=url,proto3" json:"url,omitempty"`
+	Urls          []string               `protobuf:"bytes,1,rep,name=urls,proto3" json:"urls,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,9 +58,9 @@ func (*CheckRequest) Descriptor() ([]byte, []int) {
 	return file_protos_checker_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CheckRequest) GetUrl() []string {
+func (x *CheckRequest) GetUrls() []string {
 	if x != nil {
-		return x.Url
+		return x.Urls
 	}
 	return nil
 }
@@ -165,9 +165,9 @@ var File_protos_checker_proto protoreflect.FileDescriptor
 
 const file_protos_checker_proto_rawDesc = "" +
 	"\n" +
-	"\x14protos/checker.proto\x12\achecker\" \n" +
-	"\fCheckRequest\x12\x10\n" +
-	"\x03url\x18\x01 \x03(\tR\x03url\"1\n" +
+	"\x14protos/checker.proto\x12\achecker\"\"\n" +
+	"\fCheckRequest\x12\x12\n" +
+	"\x04urls\x18\x01 \x03(\tR\x04urls\"1\n" +
 	"\rCheckResponse\x12 \n" +
 	"\x04urls\x18\x01 \x03(\v2\f.checker.UrlR\x04urls\"/\n" +
 	"\x03Url\x12\x10\n" +
