@@ -14,13 +14,13 @@ func main() {
 	cfg := config.MustLoad()
 	log := logger.InitLogger(cfg)
 
-	application := app.New(cfg, log)
-	go application.Run()
+	app := app.New(cfg, log)
+	go app.Run()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
 	log.Info(fmt.Sprintf("shutdown server on %s", cfg.GRPC.Port))
-	application.Stop()
+	app.Stop()
 }
