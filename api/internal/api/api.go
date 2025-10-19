@@ -11,8 +11,11 @@ import (
 )
 
 type apiGateway struct {
-	auth    authv1.AuthClient
-	checker checkerv1.CheckerClient
+	auth     authv1.AuthClient
+	authConn *grpc.ClientConn
+
+	checker     checkerv1.CheckerClient
+	checkerConn *grpc.ClientConn
 }
 
 func NewAPIGateway(cfg *config.Config) *apiGateway {
@@ -27,7 +30,20 @@ func NewAPIGateway(cfg *config.Config) *apiGateway {
 	}
 
 	return &apiGateway{
-		auth:    authv1.NewAuthClient(authConn),
-		checker: checkerv1.NewCheckerClient(checkerConn),
+		auth:     authv1.NewAuthClient(authConn),
+		authConn: authConn,
+
+		checker:     checkerv1.NewCheckerClient(checkerConn),
+		checkerConn: checkerConn,
+	}
+}
+
+func (a *apiGateway) Close() {
+	if a.authConn != nil {
+		a.authConn.Close()
+	}
+
+	if a.checkerConn != nil {
+		a.checkerConn.Close()
 	}
 }
