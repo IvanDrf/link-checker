@@ -37,7 +37,7 @@ func (a *App) Run() error {
 		return errors.New("")
 	}
 
-	a.log.Info(fmt.Sprintf("starting server on %s", a.port))
+	a.log.Info(fmt.Sprintf("starting _CHECKER_ server on %s", a.port))
 	if err := a.gRPCserver.Serve(l); err != nil {
 		return fmt.Errorf("")
 	}
