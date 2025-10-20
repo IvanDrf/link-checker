@@ -3,10 +3,9 @@ package errs
 import "fmt"
 
 type Error struct {
-	Code int
-	Msg  string
+	Msg string
 }
 
 func (e Error) Error() string {
-	return fmt.Sprintf("code: %v, msg: %s", e.Code, e.Msg)
+	return fmt.Sprintf("msg: %s", e.Msg)
 }
