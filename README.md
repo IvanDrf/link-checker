@@ -3,8 +3,4 @@ The project ***has not been completed yet***, and here the ***future*** project 
 
 ## Microservice Architecture
 >[!TIP]
-> 
-> ![idea](https://github.com/user-attachments/assets/6e087f9f-6f6e-4929-84f7-a94f45bcd672)
-
-
-
+> ![architecture](https://github.com/user-attachments/assets/c9f6dc78-9e9f-46d3-9bd5-24aa44b23eca)
