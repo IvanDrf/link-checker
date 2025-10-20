@@ -1,6 +1,7 @@
 package config
 
 import (
+	"api-gateway/internal/errs"
 	"flag"
 	"log"
 	"os"
@@ -12,8 +13,14 @@ type Config struct {
 	Env   string `yaml:"env"`
 	Level string `yaml:"level"`
 
+	Api     ApiConfig     `yaml:"api"`
 	Auth    AuthConfig    `yaml:"auth"`
 	Checker CheckerConfig `yaml:"checker"`
+}
+
+type ApiConfig struct {
+	Addr string `yaml:"addr"`
+	Port string `yaml:"port"`
 }
 
 type AuthConfig struct {
@@ -40,23 +47,23 @@ func MustLoad() *Config {
 	}
 
 	if _, err := os.Stat(cfgPath); os.IsExist(err) {
-		log.Fatal("cant find config file " + cfgPath)
+		log.Fatal(errs.ErrCantFindConfigFile(cfgPath))
 	}
 
 	cfg := new(Config)
 	if err := cleanenv.ReadConfig(cfgPath, cfg); err != nil {
-		log.Fatal("cant parse config file " + err.Error())
+		log.Fatal(errs.ErrCantParseConfigFile(err))
 	}
 
 	return cfg
 }
 
-const cfg = "cfg"
+const flagCfg = "cfg"
 
 func getPathFromFlag() string {
 	cfgPath := ""
 
-	flag.StringVar(&cfgPath, cfg, "", "")
+	flag.StringVar(&cfgPath, flagCfg, "", "")
 	flag.Parse()
 
 	return cfgPath
