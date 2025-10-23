@@ -7,11 +7,11 @@ import (
 	"time"
 )
 
-type UrlChecker interface {
-	CheckUrl(ctx context.Context, url string) bool
+type LinkChecker interface {
+	CheckLink(ctx context.Context, url string) bool
 }
 
-type urlChecker struct {
+type linkChecker struct {
 	client http.Client
 }
 
@@ -26,8 +26,8 @@ const (
 	maxResponseHeaderTime = 2 * time.Second
 )
 
-func NewUrlChecker() UrlChecker {
-	return &urlChecker{
+func NewUrlChecker() LinkChecker {
+	return &linkChecker{
 		client: http.Client{
 			Timeout: requestTimeOut,
 			Transport: &http.Transport{
@@ -41,7 +41,7 @@ func NewUrlChecker() UrlChecker {
 	}
 }
 
-func (u *urlChecker) CheckUrl(ctx context.Context, url string) bool {
+func (u *linkChecker) CheckLink(ctx context.Context, url string) bool {
 	if !strings.HasPrefix(url, "https://") {
 		url = "https://" + url
 	}
