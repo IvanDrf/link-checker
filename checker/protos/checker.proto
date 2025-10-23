@@ -9,16 +9,16 @@ service Checker {
 }
 
 message CheckRequest {
-    repeated string urls = 1;
+    repeated string links = 1;
 }
 
 message CheckResponse {
-    repeated Url urls = 1;
+    repeated Link links = 1;
 }
 
 
-message Url {
-    string url = 1;
+message Link {
+    string link = 1;
     bool status = 2;
 }
 

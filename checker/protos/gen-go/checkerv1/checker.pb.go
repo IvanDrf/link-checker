@@ -23,7 +23,7 @@ const (
 
 type CheckRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Urls          []string               `protobuf:"bytes,1,rep,name=urls,proto3" json:"urls,omitempty"`
+	Links         []string               `protobuf:"bytes,1,rep,name=links,proto3" json:"links,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -58,16 +58,16 @@ func (*CheckRequest) Descriptor() ([]byte, []int) {
 	return file_protos_checker_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *CheckRequest) GetUrls() []string {
+func (x *CheckRequest) GetLinks() []string {
 	if x != nil {
-		return x.Urls
+		return x.Links
 	}
 	return nil
 }
 
 type CheckResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Urls          []*Url                 `protobuf:"bytes,1,rep,name=urls,proto3" json:"urls,omitempty"`
+	Links         []*Link                `protobuf:"bytes,1,rep,name=links,proto3" json:"links,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -102,35 +102,35 @@ func (*CheckResponse) Descriptor() ([]byte, []int) {
 	return file_protos_checker_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *CheckResponse) GetUrls() []*Url {
+func (x *CheckResponse) GetLinks() []*Link {
 	if x != nil {
-		return x.Urls
+		return x.Links
 	}
 	return nil
 }
 
-type Url struct {
+type Link struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Url           string                 `protobuf:"bytes,1,opt,name=url,proto3" json:"url,omitempty"`
+	Link          string                 `protobuf:"bytes,1,opt,name=link,proto3" json:"link,omitempty"`
 	Status        bool                   `protobuf:"varint,2,opt,name=status,proto3" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Url) Reset() {
-	*x = Url{}
+func (x *Link) Reset() {
+	*x = Link{}
 	mi := &file_protos_checker_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Url) String() string {
+func (x *Link) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Url) ProtoMessage() {}
+func (*Link) ProtoMessage() {}
 
-func (x *Url) ProtoReflect() protoreflect.Message {
+func (x *Link) ProtoReflect() protoreflect.Message {
 	mi := &file_protos_checker_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -142,19 +142,19 @@ func (x *Url) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Url.ProtoReflect.Descriptor instead.
-func (*Url) Descriptor() ([]byte, []int) {
+// Deprecated: Use Link.ProtoReflect.Descriptor instead.
+func (*Link) Descriptor() ([]byte, []int) {
 	return file_protos_checker_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Url) GetUrl() string {
+func (x *Link) GetLink() string {
 	if x != nil {
-		return x.Url
+		return x.Link
 	}
 	return ""
 }
 
-func (x *Url) GetStatus() bool {
+func (x *Link) GetStatus() bool {
 	if x != nil {
 		return x.Status
 	}
@@ -165,13 +165,13 @@ var File_protos_checker_proto protoreflect.FileDescriptor
 
 const file_protos_checker_proto_rawDesc = "" +
 	"\n" +
-	"\x14protos/checker.proto\x12\achecker\"\"\n" +
-	"\fCheckRequest\x12\x12\n" +
-	"\x04urls\x18\x01 \x03(\tR\x04urls\"1\n" +
-	"\rCheckResponse\x12 \n" +
-	"\x04urls\x18\x01 \x03(\v2\f.checker.UrlR\x04urls\"/\n" +
-	"\x03Url\x12\x10\n" +
-	"\x03url\x18\x01 \x01(\tR\x03url\x12\x16\n" +
+	"\x14protos/checker.proto\x12\achecker\"$\n" +
+	"\fCheckRequest\x12\x14\n" +
+	"\x05links\x18\x01 \x03(\tR\x05links\"4\n" +
+	"\rCheckResponse\x12#\n" +
+	"\x05links\x18\x01 \x03(\v2\r.checker.LinkR\x05links\"2\n" +
+	"\x04Link\x12\x12\n" +
+	"\x04link\x18\x01 \x01(\tR\x04link\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\bR\x06status2F\n" +
 	"\aChecker\x12;\n" +
 	"\n" +
@@ -193,10 +193,10 @@ var file_protos_checker_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_protos_checker_proto_goTypes = []any{
 	(*CheckRequest)(nil),  // 0: checker.CheckRequest
 	(*CheckResponse)(nil), // 1: checker.CheckResponse
-	(*Url)(nil),           // 2: checker.Url
+	(*Link)(nil),          // 2: checker.Link
 }
 var file_protos_checker_proto_depIdxs = []int32{
-	2, // 0: checker.CheckResponse.urls:type_name -> checker.Url
+	2, // 0: checker.CheckResponse.links:type_name -> checker.Link
 	0, // 1: checker.Checker.CheckLinks:input_type -> checker.CheckRequest
 	1, // 2: checker.Checker.CheckLinks:output_type -> checker.CheckResponse
 	2, // [2:3] is the sub-list for method output_type

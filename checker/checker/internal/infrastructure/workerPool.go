@@ -3,23 +3,34 @@ package workerPool
 import (
 	"checker/checker/internal/models"
 	"context"
-	"runtime"
 	"sync"
 )
 
-var maxGoroutines = 2 * runtime.GOMAXPROCS(0)
+const maxGoroutines = 75
 
-func WorkerPool(ctx context.Context, in chan string, out chan models.Url, checkUrl func(context.Context, string) bool) {
+func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink func(context.Context, string) bool) {
 	wg := new(sync.WaitGroup)
 
-	for range maxGoroutines {
-		for url := range in {
-			wg.Add(1)
-			go func() {
-				defer wg.Done()
-				worker(ctx, url, out, checkUrl)
-			}()
-		}
+	workers = min(workers, maxGoroutines)
+
+	wg.Add(workers)
+	for range workers {
+		go func() {
+			defer wg.Done()
+
+			select {
+			case <-ctx.Done():
+				return
+			default:
+				link, ok := <-in
+				if !ok {
+					return
+				}
+
+				worker(ctx, link, out, checkLink)
+			}
+
+		}()
 	}
 
 	go func() {
@@ -28,15 +39,16 @@ func WorkerPool(ctx context.Context, in chan string, out chan models.Url, checkU
 	}()
 }
 
-func worker(ctx context.Context, url string, out chan models.Url, checkUrl func(context.Context, string) bool) {
+func worker(ctx context.Context, link string, out chan models.Link, checkLink func(context.Context, string) bool) {
 	select {
 	case <-ctx.Done():
 		return
 
 	default:
-		out <- models.Url{
-			Url:    url,
-			Status: checkUrl(ctx, url),
+		out <- models.Link{
+			Link:    link,
+			Status:  checkLink(ctx, link),
+			Checked: true,
 		}
 	}
 

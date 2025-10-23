@@ -9,14 +9,22 @@ import (
 )
 
 type Config struct {
-	Env   string `yaml:"env" `
-	Level string `yaml:"level"`
+	Env         string `yaml:"env"`
+	LoggerLevel string `yaml:"level"`
 
-	GRPC GRPCConfig `yaml:"grpc" `
+	GRPC  GRPCConfig  `yaml:"grpc"`
+	Redis RedisConfig `yaml:"redis"`
 }
 
 type GRPCConfig struct {
 	Port string `yaml:"port" `
+}
+
+type RedisConfig struct {
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
+
+	Password string `yaml:"password"`
 }
 
 const defaultPath = "../checker/config/config.yaml"
@@ -40,12 +48,10 @@ func MustLoad() *Config {
 	return cfg
 }
 
-const cfg = "cfg"
-
 func getPathFromFlag() string {
 	cfgPath := ""
 
-	flag.StringVar(&cfgPath, cfg, "", "")
+	flag.StringVar(&cfgPath, "cfg", "", "")
 	flag.Parse()
 
 	return cfgPath

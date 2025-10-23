@@ -2,7 +2,7 @@ package userRepo
 
 import (
 	"auth/auth/internal/models"
-	"auth/auth/internal/repo/creator"
+	"auth/auth/internal/repo"
 	"context"
 	"database/sql"
 	"fmt"
@@ -28,7 +28,7 @@ func NewRepo(db *sql.DB, log *slog.Logger) UserRepo {
 }
 
 func (r *userRepo) AddUser(ctx context.Context, user *models.User) (int64, error) {
-	query := fmt.Sprintf("INSERT INTO %s (email, password) VALUES(?, ?)", creator.UsersTable)
+	query := fmt.Sprintf("INSERT INTO %s (email, password) VALUES(?, ?)", repo.UsersTable)
 
 	res, err := r.db.ExecContext(ctx, query, user.Email, user.Password)
 	if err != nil {
@@ -39,7 +39,7 @@ func (r *userRepo) AddUser(ctx context.Context, user *models.User) (int64, error
 }
 
 func (r *userRepo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
-	query := fmt.Sprintf("SELECT user_id, email, password FROM %s WHERE email = ?", creator.UsersTable)
+	query := fmt.Sprintf("SELECT user_id, email, password FROM %s WHERE email = ?", repo.UsersTable)
 
 	user := models.User{}
 	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.Id, &user.Email, &user.Password)

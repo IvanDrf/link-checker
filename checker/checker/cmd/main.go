@@ -3,6 +3,7 @@ package main
 import (
 	"checker/checker/internal/app"
 	"checker/checker/internal/config"
+	"checker/checker/internal/database"
 	logger "checker/checker/logger"
 	"fmt"
 	"os"
@@ -12,9 +13,12 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	log := logger.InitLogger(cfg)
+	log := logger.InitLogger(cfg.LoggerLevel)
+	rdb := database.InitRedisDatabase(cfg)
 
-	app := app.New(cfg, log)
+	defer rdb.Close()
+
+	app := app.New(cfg, rdb, log)
 
 	go app.Run()
 
@@ -22,6 +26,6 @@ func main() {
 	signal.Notify(stop, syscall.SIGABRT, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
-	log.Info(fmt.Sprintf("shutdown server on %s", cfg.GRPC.Port))
+	log.Info(fmt.Sprintf("shutdown _CHECKER_ server on %s", cfg.GRPC.Port))
 	app.Stop()
 }
