@@ -3,44 +3,55 @@ package links
 import (
 	"checker/checker/internal/config"
 	"checker/checker/internal/errs"
-	urlService "checker/checker/internal/service/url"
+	"checker/checker/internal/service"
+	linkService "checker/checker/internal/service/links"
 	"checker/protos/gen-go/checkerv1"
 	"context"
 	"log/slog"
 
+	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
+const maxLinksCount = 150
+
 type serverAPI struct {
-	urlChecker urlService.UrlChecker
+	linkChecker service.LinkChecker
+
+	log *slog.Logger
 	checkerv1.UnimplementedCheckerServer
 }
 
-func Register(gRPC *grpc.Server, cfg *config.Config, log *slog.Logger) {
+func Register(gRPC *grpc.Server, cfg *config.Config, rdb *redis.Client, logger *slog.Logger) {
 	checkerv1.RegisterCheckerServer(gRPC, &serverAPI{
-		urlChecker: urlService.NewUrlChecker(),
+		linkChecker: linkService.NewLinkChecker(rdb, logger),
+		log:         logger,
 	})
 }
 
 func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest) (*checkerv1.CheckResponse, error) {
-	if len(req.Urls) >= 150 {
+	s.log.Info("CheckLinks -> get request")
+
+	if len(req.Links) >= maxLinksCount {
 		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyUrls().Error())
 	}
 
-	urls := s.urlChecker.CheckUrls(ctx, req.Urls)
+	links := s.linkChecker.CheckLinks(ctx, req.Links)
 
 	resp := &checkerv1.CheckResponse{
-		Urls: make([]*checkerv1.Url, 0, len(urls)),
+		Links: make([]*checkerv1.Link, 0, len(links)),
 	}
 
-	for i := range urls {
-		resp.Urls = append(resp.Urls, &checkerv1.Url{
-			Url:    urls[i].Url,
-			Status: urls[i].Status,
+	for i := range links {
+		resp.Links = append(resp.Links, &checkerv1.Link{
+			Link:   links[i].Link,
+			Status: links[i].Status,
 		})
 	}
+
+	s.log.Info("CheckLinks -> send response")
 
 	return resp, nil
 }
