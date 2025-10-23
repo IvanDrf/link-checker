@@ -9,8 +9,8 @@ import (
 )
 
 type Config struct {
-	Env   string `yaml:"env" `
-	Level string `yaml:"level"`
+	Env         string `yaml:"env" `
+	LoggerLevel string `yaml:"level"`
 
 	GRPC GRPCConfig `yaml:"grpc" `
 }

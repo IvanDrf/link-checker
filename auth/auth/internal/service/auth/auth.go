@@ -11,7 +11,6 @@ import (
 	"context"
 	"database/sql"
 	"log/slog"
-	"time"
 )
 
 type AuthService interface {
@@ -19,8 +18,6 @@ type AuthService interface {
 	Login(ctx context.Context, user *models.User) (string, string, error)
 	RefreshTokens(ctx context.Context, refreshToken string) (string, string, error)
 }
-
-const ctxTime = 5 * time.Second
 
 type authService struct {
 	users userRepo.UserRepo
@@ -51,17 +48,14 @@ func (a *authService) Register(ctx context.Context, user *models.User) (*models.
 		return nil, errs.ErrInvalidEmail()
 	}
 
-	ct, cancel := context.WithTimeout(ctx, ctxTime)
-	defer cancel()
-
-	_, err := a.users.FindUserByEmail(ct, user.Email)
+	_, err := a.users.FindUserByEmail(ctx, user.Email)
 	if err == nil {
 		return nil, errs.ErrUserAlreadyInDB()
 	}
 
 	user.Password = a.hasher.HashPassword(user.Password)
 
-	user.Id, err = a.users.AddUser(ct, user)
+	user.Id, err = a.users.AddUser(ctx, user)
 	if err != nil {
 		return nil, errs.ErrCantAddNewUser()
 	}
@@ -70,10 +64,7 @@ func (a *authService) Register(ctx context.Context, user *models.User) (*models.
 }
 
 func (a *authService) Login(ctx context.Context, user *models.User) (string, string, error) {
-	ct, cancel := context.WithTimeout(ctx, ctxTime)
-	defer cancel()
-
-	userInDB, err := a.users.FindUserByEmail(ct, user.Email)
+	userInDB, err := a.users.FindUserByEmail(ctx, user.Email)
 	if err != nil {
 		return "", "", errs.ErrCantFindUserInDB()
 	}

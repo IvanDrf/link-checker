@@ -1,14 +1,13 @@
 package logger
 
 import (
-	"auth/auth/internal/config"
 	"log"
 	"log/slog"
 	"os"
 )
 
-func InitLogger(cfg *config.Config) *slog.Logger {
-	level := setLoggerLevel(cfg.Level)
+func InitLogger(loggerLevel string) *slog.Logger {
+	level := setLoggerLevel(loggerLevel)
 	return slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
 		Level:     level,
 		AddSource: false,

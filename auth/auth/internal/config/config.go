@@ -11,7 +11,7 @@ import (
 
 type Config struct {
 	Env         string `yaml:"env" `
-	Level       string `yaml:"level"`
+	LoggerLevel string `yaml:"level"`
 	StoragePath string `yaml:"storage_path" `
 
 	GRPC GRPCConfig `yaml:"grpc" `

@@ -12,7 +12,7 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	log := logger.InitLogger(cfg)
+	log := logger.InitLogger(cfg.LoggerLevel)
 
 	app := app.New(cfg, log)
 
