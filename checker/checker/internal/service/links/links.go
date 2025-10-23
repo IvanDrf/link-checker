@@ -36,7 +36,7 @@ func (l *linkChecker) CheckLinks(ctx context.Context, links []string) []models.L
 	out := make(chan models.Link, len(links))
 
 	go l.sendLinks(ctx, in, out, links)
-	go workerPool.WorkerPool(ctx, in, out, l.urlsChecker.CheckUrl)
+	go workerPool.WorkerPool(ctx, in, out, len(links), l.urlsChecker.CheckUrl)
 
 	res := []models.Link{}
 	for link := range out {

@@ -6,13 +6,15 @@ import (
 	"sync"
 )
 
-const maxGoroutines = 50
+const maxGoroutines = 75
 
-func WorkerPool(ctx context.Context, in chan string, out chan models.Link, checkLink func(context.Context, string) bool) {
+func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink func(context.Context, string) bool) {
 	wg := new(sync.WaitGroup)
 
-	wg.Add(maxGoroutines)
-	for range maxGoroutines {
+	workers = min(workers, maxGoroutines)
+
+	wg.Add(workers)
+	for range workers {
 		go func() {
 			defer wg.Done()
 
