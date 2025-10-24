@@ -7,7 +7,9 @@ import (
 	linkService "checker/checker/internal/service/links"
 	"checker/protos/gen-go/checkerv1"
 	"context"
+	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -15,7 +17,10 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const maxLinksCount = 150
+const (
+	maxLinksCount = 150
+	timeFormat    = "15:05:04:05"
+)
 
 type serverAPI struct {
 	linkChecker service.LinkChecker
@@ -32,9 +37,11 @@ func Register(gRPC *grpc.Server, cfg *config.Config, rdb *redis.Client, logger *
 }
 
 func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest) (*checkerv1.CheckResponse, error) {
-	s.log.Info("CheckLinks -> get request")
+	s.log.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
 
 	if len(req.Links) >= maxLinksCount {
+		s.log.Info(fmt.Sprintf("CheckLinks -> too many links: %v", len(req.Links)))
+
 		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyLinksInRequest().Error())
 	}
 
@@ -51,7 +58,7 @@ func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest)
 		})
 	}
 
-	s.log.Info("CheckLinks -> send response")
+	s.log.Info(fmt.Sprintf("CheckLinks -> send response:, %s", time.Now().Format(timeFormat)))
 
 	return resp, nil
 }

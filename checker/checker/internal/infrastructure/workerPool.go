@@ -6,9 +6,11 @@ import (
 	"sync"
 )
 
+type CheckLinkFunc func(context.Context, string) bool
+
 const maxGoroutines = 75
 
-func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink func(context.Context, string) bool) {
+func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink CheckLinkFunc) {
 	wg := new(sync.WaitGroup)
 
 	workers = min(workers, maxGoroutines)
@@ -17,19 +19,19 @@ func WorkerPool(ctx context.Context, in chan string, out chan models.Link, worke
 	for range workers {
 		go func() {
 			defer wg.Done()
-
-			select {
-			case <-ctx.Done():
-				return
-			default:
-				link, ok := <-in
-				if !ok {
+			for {
+				select {
+				case <-ctx.Done():
 					return
+				default:
+					link, ok := <-in
+					if !ok {
+						return
+					}
+
+					worker(ctx, link, out, checkLink)
 				}
-
-				worker(ctx, link, out, checkLink)
 			}
-
 		}()
 	}
 
@@ -39,7 +41,7 @@ func WorkerPool(ctx context.Context, in chan string, out chan models.Link, worke
 	}()
 }
 
-func worker(ctx context.Context, link string, out chan models.Link, checkLink func(context.Context, string) bool) {
+func worker(ctx context.Context, link string, out chan models.Link, checkLink CheckLinkFunc) {
 	select {
 	case <-ctx.Done():
 		return

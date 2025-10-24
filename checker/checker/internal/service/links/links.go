@@ -40,6 +40,8 @@ func (l *linkChecker) CheckLinks(ctx context.Context, links []string) []models.L
 
 	res := make([]models.Link, 0, len(links))
 	for link := range out {
+		l.log.Debug(fmt.Sprintf("CheckLinks -> done: %s", link.Link))
+
 		res = append(res, link)
 	}
 
@@ -58,6 +60,7 @@ func (l *linkChecker) sendLinks(ctx context.Context, in chan string, out chan mo
 
 			l.log.Debug(fmt.Sprintf("sendLinks-> %s", err.Error()))
 		} else {
+			l.log.Debug(fmt.Sprintf("sendLinks -> link: %s", links[i]))
 			out <- models.Link{
 				Link:    links[i],
 				Status:  linkStatus,
@@ -70,6 +73,8 @@ func (l *linkChecker) sendLinks(ctx context.Context, in chan string, out chan mo
 const linksSavingTime = 2 * time.Second
 
 func (l *linkChecker) saveLinks(links []models.Link) {
+	l.log.Debug(fmt.Sprintf("saveLinks -> start saving links: %v", len(links)))
+	l.log.Info(fmt.Sprintf("links to reddis: %v", len(links)))
 	ctx, cancel := context.WithTimeout(context.Background(), linksSavingTime)
 	defer cancel()
 
@@ -79,4 +84,6 @@ func (l *linkChecker) saveLinks(links []models.Link) {
 	}
 
 	l.cacheRepo.SaveLinks(ctx, &redisLinks)
+
+	l.log.Debug(fmt.Sprintf("saveLinks -> done saving links: %v", len(links)))
 }
