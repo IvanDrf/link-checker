@@ -17,7 +17,7 @@ import (
 
 type linkChecker struct {
 	cacheRepo   repo.CacheRepo
-	urlsChecker checker.LinkChecker
+	linkChecker checker.LinkChecker
 
 	log *slog.Logger
 }
@@ -25,7 +25,7 @@ type linkChecker struct {
 func NewLinkChecker(db *redis.Client, logger *slog.Logger) service.LinkChecker {
 	return &linkChecker{
 		cacheRepo:   redisCache.NewCacheRepo(db),
-		urlsChecker: checker.NewUrlChecker(),
+		linkChecker: checker.NewLinkChecker(),
 
 		log: logger,
 	}
@@ -36,9 +36,9 @@ func (l *linkChecker) CheckLinks(ctx context.Context, links []string) []models.L
 	out := make(chan models.Link, len(links))
 
 	go l.sendLinks(ctx, in, out, links)
-	go workerPool.WorkerPool(ctx, in, out, len(links), l.urlsChecker.CheckLink)
+	go workerPool.WorkerPool(ctx, in, out, len(links), l.linkChecker.CheckLink)
 
-	res := []models.Link{}
+	res := make([]models.Link, 0, len(links))
 	for link := range out {
 		res = append(res, link)
 	}
@@ -67,20 +67,16 @@ func (l *linkChecker) sendLinks(ctx context.Context, in chan string, out chan mo
 	}
 }
 
-const linkSavingTime = 2 * time.Second
+const linksSavingTime = 2 * time.Second
 
 func (l *linkChecker) saveLinks(links []models.Link) {
-	ctx, cancel := context.WithTimeout(context.Background(), linkSavingTime)
+	ctx, cancel := context.WithTimeout(context.Background(), linksSavingTime)
 	defer cancel()
 
-	for _, link := range links {
-		l.saveLink(ctx, &link)
+	redisLinks := make([]interface{}, 0, len(links))
+	for i := range len(links) {
+		redisLinks = append(redisLinks, links[i].Link, links[i].Status)
 	}
-}
 
-func (l *linkChecker) saveLink(ctx context.Context, link *models.Link) {
-	err := l.cacheRepo.SaveLink(ctx, link)
-	if err != nil {
-		l.log.Warn(fmt.Sprintf("saveLink -> %s", err.Error()))
-	}
+	l.cacheRepo.SaveLinks(ctx, &redisLinks)
 }

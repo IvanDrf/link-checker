@@ -1,11 +1,10 @@
 package repo
 
 import (
-	"checker/checker/internal/models"
 	"context"
 )
 
 type CacheRepo interface {
-	SaveLink(ctx context.Context, link *models.Link) error
+	SaveLinks(ctx context.Context, links *[]interface{}) error
 	GetLink(ctx context.Context, link string) (bool, error)
 }

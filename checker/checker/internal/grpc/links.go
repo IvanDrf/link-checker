@@ -35,7 +35,7 @@ func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest)
 	s.log.Info("CheckLinks -> get request")
 
 	if len(req.Links) >= maxLinksCount {
-		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyUrls().Error())
+		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyLinksInRequest().Error())
 	}
 
 	links := s.linkChecker.CheckLinks(ctx, req.Links)
