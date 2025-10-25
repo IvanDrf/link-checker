@@ -7,8 +7,6 @@ import (
 )
 
 func TestValidEmails(t *testing.T) {
-	t.Parallel()
-
 	validEmails := []string{
 		"ivan@gmail.com",
 		"example@mail.com",
@@ -19,8 +17,6 @@ func TestValidEmails(t *testing.T) {
 }
 
 func TestInvalidEmails(t *testing.T) {
-	t.Parallel()
-
 	invalidEmails := []string{
 		"1",
 		"example.com",

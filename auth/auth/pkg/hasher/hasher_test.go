@@ -14,8 +14,6 @@ var passwords = []string{
 }
 
 func TestPasswordHashing(t *testing.T) {
-	t.Parallel()
-
 	hasher := NewPswHasher()
 
 	wg := new(sync.WaitGroup)
@@ -32,8 +30,6 @@ func TestPasswordHashing(t *testing.T) {
 }
 
 func TestPaswordComparing(t *testing.T) {
-	t.Parallel()
-
 	hashedPasswords := make([]string, len(passwords))
 
 	hasher := NewPswHasher()

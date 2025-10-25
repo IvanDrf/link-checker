@@ -12,8 +12,6 @@ import (
 const testingTime = 10 * time.Second
 
 func TestValidLinks(t *testing.T) {
-	t.Parallel()
-
 	validLinks := []string{
 		"google.com",
 		"https://ya.ru",
@@ -28,8 +26,6 @@ func TestValidLinks(t *testing.T) {
 }
 
 func TestInvalidLinks(t *testing.T) {
-	t.Parallel()
-
 	invalidLinks := []string{
 		"1",
 		"http://bad2.link",
