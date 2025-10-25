@@ -26,5 +26,5 @@ jobs:
             - name: Run tests
               run: |
                   cd scripts
-                  run: chmod +x run_tests.bash
-                  run: ./run_tests.bash
+                  chmod +x run_tests.bash
+                  ./run_tests.bash
