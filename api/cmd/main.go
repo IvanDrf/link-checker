@@ -21,6 +21,6 @@ func main() {
 	signal.Notify(stop, syscall.SIGABRT, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
-	log.Info(fmt.Sprintf("shutdown server on %s", cfg.Api.Port))
+	log.Info(fmt.Sprintf("shutdown _API_ server on %s", cfg.Api.Port))
 	app.Stop()
 }

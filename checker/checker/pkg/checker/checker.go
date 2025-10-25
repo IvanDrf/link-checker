@@ -8,7 +8,7 @@ import (
 )
 
 type LinkChecker interface {
-	CheckLink(ctx context.Context, url string) bool
+	CheckLink(ctx context.Context, link string) bool
 }
 
 type linkChecker struct {
@@ -46,7 +46,7 @@ func (u *linkChecker) CheckLink(ctx context.Context, link string) bool {
 		link = "https://" + link
 	}
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodHead, link, nil)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, link, nil)
 	if err != nil {
 		return false
 	}
