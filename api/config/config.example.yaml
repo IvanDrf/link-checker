@@ -1,0 +1,16 @@
+env: local
+level: debug
+
+api:
+  addr: localhost
+  port: 8080
+
+auth:
+  addr: localhost
+  port: 50051
+  jwt:
+    key: secret_key
+
+checker:
+  addr: localhost
+  port: 50052

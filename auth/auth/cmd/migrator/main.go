@@ -1,7 +1,6 @@
 package main
 
 import (
-	"auth/auth/internal/repo"
 	"errors"
 	"flag"
 	"fmt"
@@ -21,7 +20,7 @@ func main() {
 	flag.Parse()
 	checkPaths(storagePath, migrationsPath)
 
-	m, err := migrate.New("file://"+migrationsPath, fmt.Sprintf("sqlite3://%s?x-migrations-table=%s", storagePath, repo.UsersTable))
+	m, err := migrate.New("file://"+migrationsPath, fmt.Sprintf("sqlite3://%s", storagePath))
 	if err != nil {
 		log.Fatal(err)
 	}

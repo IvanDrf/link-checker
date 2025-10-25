@@ -15,3 +15,10 @@ func ErrInvalidJSON() error {
 		Msg:  "invalid json",
 	}
 }
+
+func ErrInternalServer() error {
+	return Error{
+		Code: http.StatusInternalServerError,
+		Msg:  "internal server error",
+	}
+}

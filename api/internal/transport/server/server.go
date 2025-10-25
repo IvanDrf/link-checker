@@ -50,5 +50,8 @@ func (s *Server) StartServer() {
 }
 
 func (s *Server) GracefulStop(ctx context.Context) {
+	s.api.CloseAuth()
+	s.api.CloseChecker()
+
 	s.httpServer.Shutdown(ctx)
 }

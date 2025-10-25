@@ -52,7 +52,7 @@ func (j *jwter) IsValid(tokenStr string) error {
 	})
 
 	if err != nil {
-		return err
+		return errs.ErrInvalidJWTMethod()
 	}
 
 	if !token.Valid {

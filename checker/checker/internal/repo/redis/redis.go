@@ -42,5 +42,5 @@ func (c *cacheRepo) GetLink(ctx context.Context, link string) (bool, error) {
 		return false, errs.ErrCantGetLink()
 	}
 
-	return linkStatus == "true", nil
+	return linkStatus == "1", nil
 }

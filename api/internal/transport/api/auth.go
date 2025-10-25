@@ -4,6 +4,9 @@ import (
 	"api-gateway/internal/config"
 	"api-gateway/internal/errs"
 	"api-gateway/internal/models"
+	"api-gateway/internal/transport/api/response"
+	"api-gateway/internal/transport/cookies"
+	"api-gateway/internal/transport/jwt"
 	"auth/protos/gen-go/authv1"
 	"context"
 	"encoding/json"
@@ -17,12 +20,16 @@ import (
 )
 
 const (
+	contentType = "Content-Type"
 	jsonContent = "application/json"
 )
 
 type authGateway struct {
 	authClient authv1.AuthClient
 	authConn   *grpc.ClientConn
+
+	jwter   jwt.JWTer
+	cookier cookies.Cookier
 
 	log *slog.Logger
 }
@@ -33,6 +40,9 @@ func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
 	return &authGateway{
 		authClient: authClient,
 		authConn:   authConn,
+
+		jwter:   jwt.NewJWTer(cfg),
+		cookier: cookies.NewCookier(),
 
 		log: logger,
 	}
@@ -55,22 +65,20 @@ func (a *authGateway) CloseAuth() {
 }
 
 func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", jsonContent)
+	w.Header().Set(contentType, jsonContent)
 
-	if r.Header.Get("Content-Type") != jsonContent {
-		w.WriteHeader(http.StatusUnsupportedMediaType)
+	if r.Header.Get(contentType) != jsonContent {
+		response.RespondUnsupportedMedia(w)
 
-		json.NewEncoder(w).Encode(errs.ErrUnsupportedMediaType())
 		return
 	}
 	defer r.Body.Close()
 
 	user := models.User{}
 	err := json.NewDecoder(r.Body).Decode(&user)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+	if err != nil || user.Email == "" || user.Password == "" {
+		response.RespondBadRequest(w)
 
-		json.NewEncoder(w).Encode(errs.ErrInvalidJSON())
 		return
 	}
 
@@ -85,7 +93,7 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 
-		json.NewEncoder(w).Encode(err.Error())
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
@@ -93,5 +101,71 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 }
 
-func (a *authGateway) Login(w http.ResponseWriter, r *http.Request)         {}
-func (a *authGateway) RefreshTokens(w http.ResponseWriter, r *http.Request) {}
+func (a *authGateway) Login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set(contentType, jsonContent)
+
+	if r.Header.Get(contentType) != jsonContent {
+		response.RespondUnsupportedMedia(w)
+
+		return
+	}
+	defer r.Body.Close()
+
+	user := models.User{}
+	err := json.NewDecoder(r.Body).Decode(&user)
+	if err != nil || user.Email == "" || user.Password == "" {
+		response.RespondBadRequest(w)
+
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
+	defer cancel()
+
+	resp, err := a.authClient.Login(ctx, &authv1.LoginRequest{
+		Email:    user.Email,
+		Password: user.Password,
+	})
+	if err != nil {
+		errs.HandlerGrpcError(w, err)
+		return
+	}
+
+	a.cookier.SetAuthCookies(w, resp.Access, resp.Refresh)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(models.Tokens{
+		Access:  resp.Access,
+		Refresh: resp.Refresh,
+	})
+}
+
+func (a *authGateway) RefreshTokens(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set(contentType, jsonContent)
+
+	refresh, err := a.jwter.GetToken(jwt.RefreshToken, r)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
+	defer cancel()
+
+	resp, err := a.authClient.RefreshTokens(ctx, &authv1.RefreshRequest{
+		Refresh: refresh,
+	})
+	if err != nil {
+		errs.HandlerGrpcError(w, err)
+
+		return
+	}
+
+	a.cookier.SetAuthCookies(w, resp.Access, resp.Refresh)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(models.Tokens{
+		Access:  resp.Access,
+		Refresh: resp.Refresh,
+	})
+}
