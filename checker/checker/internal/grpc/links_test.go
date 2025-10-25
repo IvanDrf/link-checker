@@ -29,8 +29,8 @@ func setUpRedisCLient() *redis.Client {
 }
 
 var (
-	rdb   = setUpRedisCLient()
-	links = checkerv1.CheckRequest{
+	rdb         = setUpRedisCLient()
+	goodRequest = checkerv1.CheckRequest{
 		Links: []string{
 			"vk.com",
 			"ya.ru",
@@ -40,6 +40,10 @@ var (
 			"https://httpbin.org/status/404",
 			"https://httpbin.org/status/500",
 		},
+	}
+
+	badRequest = checkerv1.CheckRequest{
+		Links: make([]string, maxLinksCount+1),
 	}
 
 	expected = map[string]models.Link{
@@ -75,7 +79,8 @@ var (
 	}
 )
 
-func TestGrpcCheckLinks(t *testing.T) {
+func TestGrpcCheckGoodRequest(t *testing.T) {
+	t.Parallel()
 	s := &serverAPI{
 		linkChecker: linkService.NewLinkChecker(rdb, slog.Default()),
 		log:         slog.Default(),
@@ -84,7 +89,7 @@ func TestGrpcCheckLinks(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), testingCheckLinksTime)
 	defer cancel()
 
-	resp, err := s.CheckLinks(ctx, &links)
+	resp, err := s.CheckLinks(ctx, &goodRequest)
 
 	assert.Nil(t, err)
 
@@ -92,4 +97,20 @@ func TestGrpcCheckLinks(t *testing.T) {
 		assert.Equal(t, expected[link.GetLink()].Link, link.GetLink())
 		assert.Equal(t, expected[link.GetLink()].Status, link.GetStatus())
 	}
+}
+
+func TestGrpcCheckBadRequest(t *testing.T) {
+	t.Parallel()
+	s := &serverAPI{
+		linkChecker: linkService.NewLinkChecker(rdb, slog.Default()),
+		log:         slog.Default(),
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), testingCheckLinksTime)
+	defer cancel()
+
+	resp, err := s.CheckLinks(ctx, &badRequest)
+
+	assert.NotNil(t, err)
+	assert.Nil(t, resp)
 }
