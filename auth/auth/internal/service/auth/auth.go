@@ -73,7 +73,7 @@ func (a *authService) Login(ctx context.Context, user *models.User) (string, str
 		return "", "", errs.ErrIncorrectPassword()
 	}
 
-	access, refresh, err := a.jwter.GenerateTokens(user.Id)
+	access, refresh, err := a.jwter.GenerateTokens(userInDB.Id)
 	if err != nil {
 		return "", "", errs.ErrCantCreateJWT()
 	}

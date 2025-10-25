@@ -1,9 +1,7 @@
 package errs
 
-import "fmt"
-
-func ErrCantAddLink(link *string) error {
-	return Error{Msg: fmt.Sprintf("cant add link: %s to redis", *link)}
+func ErrCantSaveLinks() error {
+	return Error{Msg: "cant save links to redis"}
 }
 
 func ErrLinkNotInRedis() error {

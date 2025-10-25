@@ -28,11 +28,11 @@ func newAuthMiddleware(cfg *config.Config, log *slog.Logger) Auth {
 
 func (a *authMiddleware) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		a.log.Info("auth_middle -> start")
+		a.log.Debug("auth_middle -> start")
 
 		accessToken, err := a.jwter.GetToken(jwt.AccessToken, r)
 		if err != nil {
-			a.log.Info("auth_middle -> cant get token")
+			a.log.Debug("auth_middle -> cant get token")
 
 			w.WriteHeader(errs.GetCode(err))
 			json.NewEncoder(w).Encode(err)
@@ -41,14 +41,14 @@ func (a *authMiddleware) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc 
 
 		err = a.jwter.IsValid(accessToken)
 		if err != nil {
-			a.log.Info("auth_middle -> given invalid token")
+			a.log.Debug("auth_middle -> given invalid token")
 
 			w.WriteHeader(errs.GetCode(err))
 			json.NewEncoder(w).Encode(err)
 			return
 		}
 
-		a.log.Info("auth_middle -> success")
+		a.log.Debug("auth_middle -> success")
 		next(w, r)
 	}
 }

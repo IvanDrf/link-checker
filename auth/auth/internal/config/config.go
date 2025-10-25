@@ -23,7 +23,7 @@ type GRPCConfig struct {
 }
 
 type JWTConfig struct {
-	Key string `yaml:"secret_key"`
+	Key string `yaml:"key"`
 
 	AccessExpTime  time.Duration `yaml:"access_exp_time"`
 	RefreshExpTime time.Duration `yaml:"refresh_exp_time"`
@@ -50,12 +50,10 @@ func MustLoad() *Config {
 	return cfg
 }
 
-const cfg = "cfg"
-
 func getPathFromFlag() string {
 	cfgPath := ""
 
-	flag.StringVar(&cfgPath, cfg, "", "")
+	flag.StringVar(&cfgPath, "cfg", "", "")
 	flag.Parse()
 
 	return cfgPath

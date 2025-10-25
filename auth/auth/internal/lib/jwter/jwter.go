@@ -3,7 +3,7 @@ package jwter
 import (
 	"auth/auth/internal/config"
 	"auth/auth/internal/errs"
-	"log"
+
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -84,15 +84,12 @@ func (j *jwter) getClaims(refreshToken string) (jwt.MapClaims, error) {
 	})
 
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return claims, nil
-	} else {
-
-		log.Println(ok, token.Valid)
 	}
+
 	return nil, errs.ErrIncorrectJWT()
 }

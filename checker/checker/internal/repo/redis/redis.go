@@ -2,7 +2,6 @@ package redisCache
 
 import (
 	"checker/checker/internal/errs"
-	"checker/checker/internal/models"
 	"checker/checker/internal/repo"
 	"context"
 	"time"
@@ -20,10 +19,14 @@ func NewCacheRepo(rdb *redis.Client) repo.CacheRepo {
 	return &cacheRepo{rdb: rdb}
 }
 
-func (c *cacheRepo) SaveLink(ctx context.Context, link *models.Link) error {
-	err := c.rdb.Set(ctx, link.Link, link.Status, timeToLive).Err()
+func (c *cacheRepo) SaveLinks(ctx context.Context, links *[]interface{}) error {
+	err := c.rdb.MSet(ctx, (*links)...).Err()
 	if err != nil {
-		return errs.ErrCantAddLink(&link.Link)
+		return errs.ErrCantSaveLinks()
+	}
+
+	for i := 0; i < len(*links); i += 2 {
+		c.rdb.Expire(ctx, (*links)[i].(string), timeToLive)
 	}
 
 	return nil
@@ -39,5 +42,5 @@ func (c *cacheRepo) GetLink(ctx context.Context, link string) (bool, error) {
 		return false, errs.ErrCantGetLink()
 	}
 
-	return linkStatus == "true", nil
+	return linkStatus == "1", nil
 }
