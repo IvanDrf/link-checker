@@ -5,8 +5,8 @@ import (
 )
 
 type PswHasher interface {
-	HashPassword(passw string) string
-	ComparePassword(hashed, passw string) bool
+	HashPassword(password string) string
+	ComparePassword(hashed, password string) bool
 }
 
 type hasher struct {
