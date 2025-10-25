@@ -20,10 +20,10 @@ func TestPasswordHashing(t *testing.T) {
 	wg.Add(len(passwords))
 
 	for _, password := range passwords {
-		go func() {
+		go func(password string) {
 			defer wg.Done()
 			assert.NotEqual(t, password, hasher.HashPassword(password))
-		}()
+		}(password)
 	}
 
 	wg.Wait()

@@ -46,10 +46,10 @@ func testChecker(t *testing.T, ctx context.Context, links []string, expected boo
 
 	wg.Add(len(links))
 	for _, link := range links {
-		go func() {
+		go func(link string) {
 			defer wg.Done()
 			assert.Equal(t, expected, checker.CheckLink(ctx, link))
-		}()
+		}(link)
 	}
 
 	wg.Wait()
