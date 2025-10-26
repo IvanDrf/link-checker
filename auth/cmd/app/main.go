@@ -1,13 +1,15 @@
 package main
 
 import (
-	"auth/auth/internal/app"
-	"auth/auth/internal/config"
-	"auth/auth/logger"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/IvanDrf/auth/internal/config"
+	"github.com/IvanDrf/auth/logger"
+
+	"github.com/IvanDrf/auth/internal/app"
 )
 
 func main() {
