@@ -1,12 +1,13 @@
 package middleware
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/errs"
-	"api-gateway/internal/transport/jwt"
 	"encoding/json"
 	"log/slog"
 	"net/http"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 )
 
 type Auth interface {

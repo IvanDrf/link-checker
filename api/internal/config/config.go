@@ -1,8 +1,8 @@
 package config
 
 import (
-	"api-gateway/internal/errs"
 	"flag"
+	"github.com/IvanDrf/api-gateway/internal/errs"
 	"log"
 	"os"
 

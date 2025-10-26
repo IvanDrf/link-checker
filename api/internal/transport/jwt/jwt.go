@@ -1,8 +1,8 @@
 package jwt
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
 	"net/http"
 
 	"github.com/golang-jwt/jwt"

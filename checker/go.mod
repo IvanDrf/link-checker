@@ -1,4 +1,4 @@
-module checker
+module github.com/IvanDrf/checker
 
 go 1.25.1
 

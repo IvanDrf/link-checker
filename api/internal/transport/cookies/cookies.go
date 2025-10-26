@@ -1,7 +1,7 @@
 package cookies
 
 import (
-	"api-gateway/internal/transport/jwt"
+	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	"net/http"
 )
 

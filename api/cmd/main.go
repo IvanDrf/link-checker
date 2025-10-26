@@ -1,13 +1,14 @@
 package main
 
 import (
-	"api-gateway/internal/app"
-	"api-gateway/internal/config"
-	"api-gateway/logger"
 	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/IvanDrf/api-gateway/internal/app"
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/logger"
 )
 
 func main() {
