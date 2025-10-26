@@ -1,24 +1,25 @@
 package api
 
 import (
-	"checker/protos/gen-go/checkerv1"
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"log/slog"
+	"net/http"
+
 	"github.com/IvanDrf/api-gateway/internal/config"
 	"github.com/IvanDrf/api-gateway/internal/errs"
 	"github.com/IvanDrf/api-gateway/internal/models"
 	"github.com/IvanDrf/api-gateway/internal/transport/api/response"
-	"log"
-	"log/slog"
-	"net/http"
+	checker_api "github.com/IvanDrf/link-checker/pkg/checker-api"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type checkerGateway struct {
-	checkerClient checkerv1.CheckerClient
+	checkerClient checker_api.CheckerClient
 	checkerConn   *grpc.ClientConn
 
 	log *slog.Logger
@@ -33,13 +34,13 @@ func newCheckerGateway(cfg *config.Config, logger *slog.Logger) CheckerGateway {
 	}
 }
 
-func connectToChecker(cfg *config.Config) (checkerv1.CheckerClient, *grpc.ClientConn) {
+func connectToChecker(cfg *config.Config) (checker_api.CheckerClient, *grpc.ClientConn) {
 	checkerConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", cfg.Checker.Addr, cfg.Checker.Port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("checker: ", err)
 	}
 
-	return checkerv1.NewCheckerClient(checkerConn), checkerConn
+	return checker_api.NewCheckerClient(checkerConn), checkerConn
 }
 
 func (a *checkerGateway) CloseChecker() {
@@ -69,7 +70,7 @@ func (c *checkerGateway) CheckLinks(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
 	defer cancel()
 
-	resp, err := c.checkerClient.CheckLinks(ctx, &checkerv1.CheckRequest{
+	resp, err := c.checkerClient.CheckLinks(ctx, &checker_api.CheckRequest{
 		Links: links.Links,
 	})
 	if err != nil {
@@ -81,7 +82,7 @@ func (c *checkerGateway) CheckLinks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(convertToLinks(resp))
 }
 
-func convertToLinks(grpcResp *checkerv1.CheckResponse) []models.Link {
+func convertToLinks(grpcResp *checker_api.CheckResponse) []models.Link {
 	links := make([]models.Link, 0, len(grpcResp.Links))
 
 	for i := range grpcResp.Links {

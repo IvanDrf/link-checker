@@ -1,8 +1,8 @@
 package links
 
 import (
-	"checker/protos/gen-go/checkerv1"
 	"context"
+	"github.com/IvanDrf/link-checker/pkg/checker-api"
 	"log"
 	"log/slog"
 	"testing"
@@ -31,7 +31,7 @@ func setUpRedisCLient() *redis.Client {
 
 var (
 	rdb   = setUpRedisCLient()
-	links = checkerv1.CheckRequest{
+	links = checker_api.CheckRequest{
 		Links: []string{
 			"vk.com",
 			"ya.ru",

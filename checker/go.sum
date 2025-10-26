@@ -1,5 +1,7 @@
 github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+github.com/IvanDrf/link-checker/pkg/checker-api v0.0.0-20251026094944-57aa81aff904 h1:v4S+8zZWlI+XuOa2HZSGi3ohy4fadmuduYnrUBNQ3WM=
+github.com/IvanDrf/link-checker/pkg/checker-api v0.0.0-20251026094944-57aa81aff904/go.mod h1:97buUl0xkDStWDT5gbOLFi3ujXp6kq9QPkBlLHYvHh4=
 github.com/alicebob/gopher-json v0.0.0-20230218143504-906a9b012302 h1:uvdUDbHQHO85qeSydJtItA4T55Pw6BtAejd0APRJOCE=
 github.com/alicebob/gopher-json v0.0.0-20230218143504-906a9b012302/go.mod h1:SGnFV6hVsYE877CKEZ6tDNTjaSXYUk6QqoIK6PrAtcc=
 github.com/alicebob/miniredis v2.5.0+incompatible h1:yBHoLpsyjupjz3NL3MhKMVkR41j82Yjf3KFv7ApYzUI=

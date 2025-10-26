@@ -1,14 +1,15 @@
 package api
 
 import (
-	"auth/protos/gen-go/authv1"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	"log"
 	"log/slog"
 	"net/http"
+
+	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
+	auth_api "github.com/IvanDrf/link-checker/pkg/auth-api"
 
 	"github.com/IvanDrf/api-gateway/internal/config"
 	"github.com/IvanDrf/api-gateway/internal/errs"
@@ -26,7 +27,7 @@ const (
 )
 
 type authGateway struct {
-	authClient authv1.AuthClient
+	authClient auth_api.AuthClient
 	authConn   *grpc.ClientConn
 
 	jwter   jwt.JWTer
@@ -50,13 +51,13 @@ func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
 
 }
 
-func connectToAuth(cfg *config.Config) (authv1.AuthClient, *grpc.ClientConn) {
+func connectToAuth(cfg *config.Config) (auth_api.AuthClient, *grpc.ClientConn) {
 	authConn, err := grpc.NewClient(fmt.Sprintf("%s:%d", cfg.Auth.Addr, cfg.Auth.Port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal("auth: ", err)
 	}
 
-	return authv1.NewAuthClient(authConn), authConn
+	return auth_api.NewAuthClient(authConn), authConn
 }
 
 func (a *authGateway) CloseAuth() {
@@ -86,7 +87,7 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
 	defer cancel()
 
-	resp, err := a.authClient.Register(ctx, &authv1.RegisterRequest{
+	resp, err := a.authClient.Register(ctx, &auth_api.RegisterRequest{
 		Email:    user.Email,
 		Password: user.Password,
 	})
@@ -123,7 +124,7 @@ func (a *authGateway) Login(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
 	defer cancel()
 
-	resp, err := a.authClient.Login(ctx, &authv1.LoginRequest{
+	resp, err := a.authClient.Login(ctx, &auth_api.LoginRequest{
 		Email:    user.Email,
 		Password: user.Password,
 	})
@@ -153,7 +154,7 @@ func (a *authGateway) RefreshTokens(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
 	defer cancel()
 
-	resp, err := a.authClient.RefreshTokens(ctx, &authv1.RefreshRequest{
+	resp, err := a.authClient.RefreshTokens(ctx, &auth_api.RefreshRequest{
 		Refresh: refresh,
 	})
 	if err != nil {

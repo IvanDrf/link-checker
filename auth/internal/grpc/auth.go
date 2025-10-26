@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"auth/protos/gen-go/authv1"
 	"context"
 	"database/sql"
 	"errors"
@@ -9,6 +8,7 @@ import (
 	"github.com/IvanDrf/auth/internal/errs"
 	"github.com/IvanDrf/auth/internal/models"
 	authService "github.com/IvanDrf/auth/internal/service/auth"
+	"github.com/IvanDrf/link-checker/pkg/auth-api"
 	"log/slog"
 
 	"google.golang.org/grpc"
@@ -18,16 +18,16 @@ import (
 
 type serverAPI struct {
 	auther authService.AuthService
-	authv1.UnimplementedAuthServer
+	auth_api.UnimplementedAuthServer
 }
 
 func Register(gRPC *grpc.Server, cfg *config.Config, db *sql.DB, log *slog.Logger) {
-	authv1.RegisterAuthServer(gRPC, &serverAPI{
+	auth_api.RegisterAuthServer(gRPC, &serverAPI{
 		auther: authService.NewAuthService(cfg, db, log),
 	})
 }
 
-func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (*authv1.RegisterResponse, error) {
+func (s *serverAPI) Register(ctx context.Context, req *auth_api.RegisterRequest) (*auth_api.RegisterResponse, error) {
 	user := &models.User{
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
@@ -47,12 +47,12 @@ func (s *serverAPI) Register(ctx context.Context, req *authv1.RegisterRequest) (
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &authv1.RegisterResponse{
+	return &auth_api.RegisterResponse{
 		UserId: user.Id,
 	}, nil
 }
 
-func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv1.LoginResponse, error) {
+func (s *serverAPI) Login(ctx context.Context, req *auth_api.LoginRequest) (*auth_api.LoginResponse, error) {
 	user := &models.User{
 		Email:    req.GetEmail(),
 		Password: req.GetPassword(),
@@ -71,20 +71,20 @@ func (s *serverAPI) Login(ctx context.Context, req *authv1.LoginRequest) (*authv
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
-	return &authv1.LoginResponse{
+	return &auth_api.LoginResponse{
 		Access:  access,
 		Refresh: refresh,
 	}, nil
 
 }
 
-func (s *serverAPI) RefreshTokens(ctx context.Context, req *authv1.RefreshRequest) (*authv1.RefreshResponse, error) {
+func (s *serverAPI) RefreshTokens(ctx context.Context, req *auth_api.RefreshRequest) (*auth_api.RefreshResponse, error) {
 	access, refresh, err := s.auther.RefreshTokens(ctx, req.GetRefresh())
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return &authv1.RefreshResponse{
+	return &auth_api.RefreshResponse{
 		Access:  access,
 		Refresh: refresh,
 	}, nil

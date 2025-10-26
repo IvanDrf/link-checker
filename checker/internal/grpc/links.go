@@ -1,15 +1,16 @@
 package links
 
 import (
-	"checker/protos/gen-go/checkerv1"
 	"context"
 	"fmt"
+	"github.com/IvanDrf/link-checker/pkg/checker-api"
+	"log/slog"
+	"time"
+
 	"github.com/IvanDrf/checker/internal/config"
 	"github.com/IvanDrf/checker/internal/errs"
 	"github.com/IvanDrf/checker/internal/service"
 	linkService "github.com/IvanDrf/checker/internal/service/links"
-	"log/slog"
-	"time"
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -26,17 +27,17 @@ type serverAPI struct {
 	linkChecker service.LinkChecker
 
 	log *slog.Logger
-	checkerv1.UnimplementedCheckerServer
+	checker_api.UnimplementedCheckerServer
 }
 
 func Register(gRPC *grpc.Server, cfg *config.Config, rdb *redis.Client, logger *slog.Logger) {
-	checkerv1.RegisterCheckerServer(gRPC, &serverAPI{
+	checker_api.RegisterCheckerServer(gRPC, &serverAPI{
 		linkChecker: linkService.NewLinkChecker(rdb, logger),
 		log:         logger,
 	})
 }
 
-func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest) (*checkerv1.CheckResponse, error) {
+func (s *serverAPI) CheckLinks(ctx context.Context, req *checker_api.CheckRequest) (*checker_api.CheckResponse, error) {
 	s.log.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
 
 	if len(req.Links) >= maxLinksCount {
@@ -47,12 +48,12 @@ func (s *serverAPI) CheckLinks(ctx context.Context, req *checkerv1.CheckRequest)
 
 	links := s.linkChecker.CheckLinks(ctx, req.Links)
 
-	resp := &checkerv1.CheckResponse{
-		Links: make([]*checkerv1.Link, 0, len(links)),
+	resp := &checker_api.CheckResponse{
+		Links: make([]*checker_api.Link, 0, len(links)),
 	}
 
 	for i := range links {
-		resp.Links = append(resp.Links, &checkerv1.Link{
+		resp.Links = append(resp.Links, &checker_api.Link{
 			Link:   links[i].Link,
 			Status: links[i].Status,
 		})
