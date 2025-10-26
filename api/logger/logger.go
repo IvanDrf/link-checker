@@ -1,10 +1,11 @@
 package logger
 
 import (
-	"api-gateway/internal/config"
 	"log"
 	"log/slog"
 	"os"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
 )
 
 func InitLogger(cfg *config.Config) *slog.Logger {

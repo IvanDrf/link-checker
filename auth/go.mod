@@ -1,4 +1,4 @@
-module auth
+module github.com/IvanDrf/auth
 
 go 1.25.1
 

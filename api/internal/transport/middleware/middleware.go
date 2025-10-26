@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/config"
 	"log/slog"
 )
 

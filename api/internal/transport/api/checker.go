@@ -1,14 +1,14 @@
 package api
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/errs"
-	"api-gateway/internal/models"
-	"api-gateway/internal/transport/api/response"
 	"checker/protos/gen-go/checkerv1"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/models"
+	"github.com/IvanDrf/api-gateway/internal/transport/api/response"
 	"log"
 	"log/slog"
 	"net/http"

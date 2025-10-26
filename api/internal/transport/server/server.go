@@ -1,15 +1,16 @@
 package server
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/errs"
-	"api-gateway/internal/transport/api"
-	"api-gateway/internal/transport/middleware"
 	"context"
 	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/transport/api"
+	"github.com/IvanDrf/api-gateway/internal/transport/middleware"
 )
 
 type Server struct {

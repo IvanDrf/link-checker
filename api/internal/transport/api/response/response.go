@@ -1,8 +1,8 @@
 package response
 
 import (
-	"api-gateway/internal/errs"
 	"encoding/json"
+	"github.com/IvanDrf/api-gateway/internal/errs"
 	"net/http"
 )
 

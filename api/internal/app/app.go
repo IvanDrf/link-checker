@@ -1,9 +1,9 @@
 package app
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/transport/server"
 	"context"
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/transport/server"
 	"log/slog"
 	"time"
 )

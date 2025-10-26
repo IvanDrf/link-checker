@@ -1,19 +1,20 @@
 package api
 
 import (
-	"api-gateway/internal/config"
-	"api-gateway/internal/errs"
-	"api-gateway/internal/models"
-	"api-gateway/internal/transport/api/response"
-	"api-gateway/internal/transport/cookies"
-	"api-gateway/internal/transport/jwt"
 	"auth/protos/gen-go/authv1"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	"log"
 	"log/slog"
 	"net/http"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/models"
+	"github.com/IvanDrf/api-gateway/internal/transport/api/response"
+	"github.com/IvanDrf/api-gateway/internal/transport/cookies"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
