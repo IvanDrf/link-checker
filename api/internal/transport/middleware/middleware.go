@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"github.com/IvanDrf/api-gateway/internal/config"
 	"log/slog"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
 )
 
 type Middleware interface {
@@ -15,6 +16,6 @@ type middleware struct {
 
 func NewMiddleware(cfg *config.Config, logger *slog.Logger) Middleware {
 	return &middleware{
-		newAuthMiddleware(cfg, logger),
+		Auth: newAuthMiddleware(cfg, logger),
 	}
 }

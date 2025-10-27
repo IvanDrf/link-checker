@@ -31,6 +31,8 @@ func newCheckerGateway(cfg *config.Config, logger *slog.Logger) CheckerGateway {
 	return &checkerGateway{
 		checkerClient: checkerClient,
 		checkerConn:   checkerConn,
+
+		log: logger,
 	}
 }
 
