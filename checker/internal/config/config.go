@@ -12,8 +12,9 @@ type Config struct {
 	Env         string `yaml:"env"`
 	LoggerLevel string `yaml:"level"`
 
-	GRPC  GRPCConfig  `yaml:"grpc"`
-	Redis RedisConfig `yaml:"redis"`
+	GRPC     GRPCConfig     `yaml:"grpc"`
+	Redis    RedisConfig    `yaml:"redis"`
+	Rabbitmq RabbitmqConfig `yaml:"rabbitmq"`
 }
 
 type GRPCConfig struct {
@@ -25,6 +26,17 @@ type RedisConfig struct {
 	Port string `yaml:"port"`
 
 	Password string `yaml:"password"`
+}
+
+type RabbitmqConfig struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
+
+	ConsQueue   string `yaml:"consumer_queue"`
+	ProdusQueue string `yaml:"producer_queue"`
 }
 
 const defaultPath = "../checker/config/config.yaml"

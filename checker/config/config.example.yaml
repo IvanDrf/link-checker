@@ -6,3 +6,10 @@ redis:
   host: localhost
   port: 6379
   password: secret_password
+rabbitmq:
+  username: user
+  password: secret_password
+  host: localhost
+  port: 5672
+  consumer_queue: cons
+  producer_queue: produs

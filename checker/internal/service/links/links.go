@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"time"
 
-	workerPool "github.com/IvanDrf/checker/internal/infrastructure"
+	workerPool "github.com/IvanDrf/checker/internal/infrastructure/workerPool"
 	"github.com/IvanDrf/checker/internal/models"
 	"github.com/IvanDrf/checker/internal/repo"
 	redisCache "github.com/IvanDrf/checker/internal/repo/redis"
