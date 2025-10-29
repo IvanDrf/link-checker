@@ -3,9 +3,10 @@ package links
 import (
 	"context"
 	"fmt"
-	"github.com/IvanDrf/link-checker/pkg/checker-api"
 	"log/slog"
 	"time"
+
+	checker_api "github.com/IvanDrf/link-checker/pkg/checker-api"
 
 	"github.com/IvanDrf/checker/internal/config"
 	"github.com/IvanDrf/checker/internal/errs"
@@ -19,29 +20,28 @@ import (
 )
 
 const (
-	maxLinksCount = 150
-	timeFormat    = "15:05:04:05"
+	timeFormat = "15:05:04:05"
 )
 
 type serverAPI struct {
 	linkChecker service.LinkChecker
 
-	log *slog.Logger
+	logger *slog.Logger
 	checker_api.UnimplementedCheckerServer
 }
 
 func Register(gRPC *grpc.Server, cfg *config.Config, rdb *redis.Client, logger *slog.Logger) {
 	checker_api.RegisterCheckerServer(gRPC, &serverAPI{
 		linkChecker: linkService.NewLinkChecker(rdb, logger),
-		log:         logger,
+		logger:      logger,
 	})
 }
 
 func (s *serverAPI) CheckLinks(ctx context.Context, req *checker_api.CheckRequest) (*checker_api.CheckResponse, error) {
-	s.log.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
+	s.logger.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
 
-	if len(req.Links) >= maxLinksCount {
-		s.log.Info(fmt.Sprintf("CheckLinks -> too many links: %v", len(req.Links)))
+	if len(req.Links) > service.MaxLinksCount {
+		s.logger.Info(fmt.Sprintf("CheckLinks -> too many links: %v", len(req.Links)))
 
 		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyLinksInRequest().Error())
 	}
@@ -59,7 +59,7 @@ func (s *serverAPI) CheckLinks(ctx context.Context, req *checker_api.CheckReques
 		})
 	}
 
-	s.log.Info(fmt.Sprintf("CheckLinks -> send response:, %s", time.Now().Format(timeFormat)))
+	s.logger.Info(fmt.Sprintf("CheckLinks -> send response:, %s", time.Now().Format(timeFormat)))
 
 	return resp, nil
 }

@@ -4,26 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
 	"github.com/IvanDrf/auth/internal/models"
 	"github.com/IvanDrf/auth/internal/repo"
-	"log/slog"
 )
-
-type UserRepo interface {
-	AddUser(ctx context.Context, user *models.User) (int64, error)
-	FindUserByEmail(ctx context.Context, email string) (*models.User, error)
-}
 
 type userRepo struct {
 	db *sql.DB
-
-	log *slog.Logger
 }
 
-func NewRepo(db *sql.DB, log *slog.Logger) UserRepo {
+func NewRepo(db *sql.DB) repo.UserRepo {
 	return &userRepo{
-		db:  db,
-		log: log,
+		db: db,
 	}
 }
 

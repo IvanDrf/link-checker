@@ -13,15 +13,15 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	log := logger.InitLogger(cfg)
+	logger := logger.InitLogger(cfg)
 
-	app := app.New(cfg, log)
+	app := app.New(cfg, logger)
 	go app.Run()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGABRT, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
-	log.Info(fmt.Sprintf("shutdown _API_ server on %s", cfg.Api.Port))
+	logger.Info(fmt.Sprintf("shutdown _API_ server on %s", cfg.Api.Port))
 	app.Stop()
 }

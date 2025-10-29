@@ -19,7 +19,7 @@ type Server struct {
 	api        api.ApiGateway
 	middle     middleware.Middleware
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func NewServer(cfg *config.Config, logger *slog.Logger) *Server {
@@ -35,12 +35,12 @@ func NewServer(cfg *config.Config, logger *slog.Logger) *Server {
 		api:    api.NewApiGateway(cfg, logger),
 		middle: middleware.NewMiddleware(cfg, logger),
 
-		log: logger,
+		logger: logger,
 	}
 }
 
 func (s *Server) StartServer() {
-	s.log.Info(fmt.Sprintf("starting _API_ server on %s", s.httpServer.Addr))
+	s.logger.Info(fmt.Sprintf("starting _API_ server on %s", s.httpServer.Addr))
 
 	s.httpServer.Handler = s.mux
 

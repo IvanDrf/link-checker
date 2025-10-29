@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"time"
 
-	workerPool "github.com/IvanDrf/checker/internal/infrastructure"
+	workerPool "github.com/IvanDrf/checker/internal/infrastructure/workerPool"
 	"github.com/IvanDrf/checker/internal/models"
 	"github.com/IvanDrf/checker/internal/repo"
 	redisCache "github.com/IvanDrf/checker/internal/repo/redis"
@@ -20,7 +20,7 @@ type linkChecker struct {
 	cacheRepo   repo.CacheRepo
 	linkChecker checker.LinkChecker
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func NewLinkChecker(db *redis.Client, logger *slog.Logger) service.LinkChecker {
@@ -28,7 +28,7 @@ func NewLinkChecker(db *redis.Client, logger *slog.Logger) service.LinkChecker {
 		cacheRepo:   redisCache.NewCacheRepo(db),
 		linkChecker: checker.NewLinkChecker(),
 
-		log: logger,
+		logger: logger,
 	}
 }
 
@@ -41,7 +41,7 @@ func (l *linkChecker) CheckLinks(ctx context.Context, links []string) []models.L
 
 	res := make([]models.Link, 0, len(links))
 	for link := range out {
-		l.log.Debug(fmt.Sprintf("CheckLinks -> done: %s", link.Link))
+		l.logger.Debug(fmt.Sprintf("CheckLinks -> done: %s", link.Link))
 
 		res = append(res, link)
 	}
@@ -59,9 +59,9 @@ func (l *linkChecker) sendLinks(ctx context.Context, in chan string, out chan mo
 		if err != nil {
 			in <- links[i]
 
-			l.log.Debug(fmt.Sprintf("sendLinks-> %s", err.Error()))
+			l.logger.Debug(fmt.Sprintf("sendLinks-> %s", err.Error()))
 		} else {
-			l.log.Debug(fmt.Sprintf("sendLinks -> link: %s", links[i]))
+			l.logger.Debug(fmt.Sprintf("sendLinks -> link: %s", links[i]))
 			out <- models.Link{
 				Link:    links[i],
 				Status:  linkStatus,
@@ -74,8 +74,8 @@ func (l *linkChecker) sendLinks(ctx context.Context, in chan string, out chan mo
 const linksSavingTime = 2 * time.Second
 
 func (l *linkChecker) saveLinks(links []models.Link) {
-	l.log.Debug(fmt.Sprintf("saveLinks -> start saving links: %v", len(links)))
-	l.log.Info(fmt.Sprintf("links to reddis: %v", len(links)))
+	l.logger.Debug(fmt.Sprintf("saveLinks -> start saving links: %v", len(links)))
+	l.logger.Info(fmt.Sprintf("links to reddis: %v", len(links)))
 	ctx, cancel := context.WithTimeout(context.Background(), linksSavingTime)
 	defer cancel()
 
@@ -86,5 +86,5 @@ func (l *linkChecker) saveLinks(links []models.Link) {
 
 	l.cacheRepo.SaveLinks(ctx, &redisLinks)
 
-	l.log.Debug(fmt.Sprintf("saveLinks -> done saving links: %v", len(links)))
+	l.logger.Debug(fmt.Sprintf("saveLinks -> done saving links: %v", len(links)))
 }

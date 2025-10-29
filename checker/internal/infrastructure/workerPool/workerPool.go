@@ -9,7 +9,7 @@ import (
 
 type CheckLinkFunc func(context.Context, string) bool
 
-const maxGoroutines = 75
+const maxGoroutines = 50
 
 func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink CheckLinkFunc) {
 	wg := new(sync.WaitGroup)

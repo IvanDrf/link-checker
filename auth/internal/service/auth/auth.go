@@ -3,46 +3,43 @@ package authService
 import (
 	"context"
 	"database/sql"
+	"log/slog"
+
 	"github.com/IvanDrf/auth/internal/config"
 	"github.com/IvanDrf/auth/internal/errs"
 	"github.com/IvanDrf/auth/internal/lib/jwter"
 	"github.com/IvanDrf/auth/internal/models"
+	"github.com/IvanDrf/auth/internal/repo"
 	userRepo "github.com/IvanDrf/auth/internal/repo/user"
+	"github.com/IvanDrf/auth/internal/service"
 	"github.com/IvanDrf/auth/pkg/email"
 	"github.com/IvanDrf/auth/pkg/hasher"
-	"log/slog"
 )
 
-type AuthService interface {
-	Register(ctx context.Context, user *models.User) (*models.User, error)
-	Login(ctx context.Context, user *models.User) (string, string, error)
-	RefreshTokens(ctx context.Context, refreshToken string) (string, string, error)
-}
-
 type authService struct {
-	users userRepo.UserRepo
+	users repo.UserRepo
 
 	jwter          jwter.JWTer
 	hasher         hasher.PswHasher
 	emailValidator email.EmailValidator
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
-func NewAuthService(cfg *config.Config, db *sql.DB, log *slog.Logger) AuthService {
+func NewAuthService(cfg *config.Config, db *sql.DB, logger *slog.Logger) service.AuthService {
 	return &authService{
-		users: userRepo.NewRepo(db, log),
+		users: userRepo.NewRepo(db),
 
 		jwter:          jwter.NewJWTer(cfg),
 		hasher:         hasher.NewPswHasher(),
 		emailValidator: email.NewValidator(),
 
-		log: log,
+		logger: logger,
 	}
 }
 
 func (a *authService) Register(ctx context.Context, user *models.User) (*models.User, error) {
-	a.log.Info("Register request")
+	a.logger.Info("Register request")
 
 	if !a.emailValidator.IsEmailValid(user.Email) {
 		return nil, errs.ErrInvalidEmail()
