@@ -1,0 +1,3 @@
+logger_level: debug
+bot_token: token
+storage_path: storage/sqlite/links.db
