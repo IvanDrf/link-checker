@@ -8,7 +8,8 @@ import (
 
 	"github.com/IvanDrf/checker/internal/config"
 	checker "github.com/IvanDrf/checker/internal/grpc"
-	"github.com/IvanDrf/checker/internal/rabbitmq"
+	"github.com/IvanDrf/checker/internal/messages"
+	"github.com/IvanDrf/checker/internal/messages/rabbitmq"
 
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
@@ -18,9 +19,9 @@ type App struct {
 	gRPCserver *grpc.Server
 	port       string
 
-	rabbiter rabbitmq.Rabbiter
+	messenger messages.Messenger
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func New(cfg *config.Config, rdb *redis.Client, logger *slog.Logger) *App {
@@ -29,8 +30,8 @@ func New(cfg *config.Config, rdb *redis.Client, logger *slog.Logger) *App {
 	app := &App{
 		gRPCserver: gRPCServer,
 		port:       cfg.GRPC.Port,
-		rabbiter:   rabbitmq.NewRabbiter(cfg, rdb, logger),
-		log:        logger,
+		messenger:  rabbitmq.NewRabbiter(cfg, rdb, logger),
+		logger:     logger,
 	}
 
 	checker.Register(gRPCServer, cfg, rdb, logger)
@@ -45,7 +46,7 @@ func (a *App) Run() error {
 		return errors.New("")
 	}
 
-	a.log.Info(fmt.Sprintf("starting _CHECKER_ server on %s", a.port))
+	a.logger.Info(fmt.Sprintf("starting _CHECKER_ server on %s", a.port))
 	if err := a.gRPCserver.Serve(l); err != nil {
 		return fmt.Errorf("")
 	}
@@ -54,12 +55,12 @@ func (a *App) Run() error {
 }
 
 func (a *App) startRabbitmq() {
-	go a.rabbiter.ReadMessages()
-	go a.rabbiter.ServiceMessages()
-	go a.rabbiter.SendMessages()
+	go a.messenger.ReadMessages()
+	go a.messenger.ServiceMessages()
+	go a.messenger.SendMessages()
 }
 
 func (a *App) Stop() {
 	a.gRPCserver.GracefulStop()
-	a.rabbiter.GracefulStop()
+	a.messenger.GracefulStop()
 }

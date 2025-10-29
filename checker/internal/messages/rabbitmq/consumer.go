@@ -25,8 +25,8 @@ type consumer struct {
 }
 
 func NewConsumer(cfg *config.Config, db *redis.Client, logger *slog.Logger) Consumer {
-	conn, ch := ConnectToRabbitmq(cfg)
-	queue := DeclareQueue(cfg.Rabbitmq.ConsQueue, ch)
+	conn, ch := connectToRabbitmq(cfg)
+	queue := declareQueue(cfg.Rabbitmq.ConsQueue, ch)
 
 	return &consumer{
 		conn:  conn,
@@ -46,11 +46,15 @@ func (c *consumer) ReadMessages(tasksChan chan *models.RabbitLinks, doneConsumin
 		case <-doneConsuming:
 			return
 		default:
-
+			c.logger.Info("consumer -> get message")
 			links := c.parseMessage(&message)
 			if links == nil {
+				c.logger.Warn("consumer -> get invalid message")
+				message.Reject(false)
 				continue
 			}
+
+			c.logger.Info("consumer -> send message to tasks chan")
 
 			tasksChan <- links
 			message.Ack(false)
@@ -80,6 +84,8 @@ func (c *consumer) parseMessage(message *rabbit.Delivery) *models.RabbitLinks {
 }
 
 func (c *consumer) Close() {
+	c.logger.Info("consumer -> Close")
+
 	c.ch.Close()
 	c.conn.Close()
 }

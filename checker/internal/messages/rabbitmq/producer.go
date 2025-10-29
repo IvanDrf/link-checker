@@ -21,8 +21,8 @@ type producer struct {
 }
 
 func NewProducer(cfg *config.Config, logger *slog.Logger) Producer {
-	conn, ch := ConnectToRabbitmq(cfg)
-	queue := DeclareQueue(cfg.Rabbitmq.ProdusQueue, ch)
+	conn, ch := connectToRabbitmq(cfg)
+	queue := declareQueue(cfg.Rabbitmq.ProdusQueue, ch)
 
 	return &producer{
 		conn:  conn,
@@ -50,6 +50,8 @@ func (p *producer) SendMessage(ctx context.Context, links *models.RabbitLinks) {
 }
 
 func (p *producer) Close() {
+	p.logger.Info("producer -> Close")
+
 	p.ch.Close()
 	p.conn.Close()
 }

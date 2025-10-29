@@ -26,22 +26,22 @@ const (
 type serverAPI struct {
 	linkChecker service.LinkChecker
 
-	log *slog.Logger
+	logger *slog.Logger
 	checker_api.UnimplementedCheckerServer
 }
 
 func Register(gRPC *grpc.Server, cfg *config.Config, rdb *redis.Client, logger *slog.Logger) {
 	checker_api.RegisterCheckerServer(gRPC, &serverAPI{
 		linkChecker: linkService.NewLinkChecker(rdb, logger),
-		log:         logger,
+		logger:      logger,
 	})
 }
 
 func (s *serverAPI) CheckLinks(ctx context.Context, req *checker_api.CheckRequest) (*checker_api.CheckResponse, error) {
-	s.log.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
+	s.logger.Info(fmt.Sprintf("CheckLinks -> get request: %s", time.Now().Format(timeFormat)))
 
 	if len(req.Links) > service.MaxLinksCount {
-		s.log.Info(fmt.Sprintf("CheckLinks -> too many links: %v", len(req.Links)))
+		s.logger.Info(fmt.Sprintf("CheckLinks -> too many links: %v", len(req.Links)))
 
 		return nil, status.Error(codes.OutOfRange, errs.ErrTooManyLinksInRequest().Error())
 	}
@@ -59,7 +59,7 @@ func (s *serverAPI) CheckLinks(ctx context.Context, req *checker_api.CheckReques
 		})
 	}
 
-	s.log.Info(fmt.Sprintf("CheckLinks -> send response:, %s", time.Now().Format(timeFormat)))
+	s.logger.Info(fmt.Sprintf("CheckLinks -> send response:, %s", time.Now().Format(timeFormat)))
 
 	return resp, nil
 }

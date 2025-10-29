@@ -21,7 +21,7 @@ type App struct {
 	db          *sql.DB
 	storagePath string
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func New(cfg *config.Config, log *slog.Logger) *App {
@@ -32,7 +32,7 @@ func New(cfg *config.Config, log *slog.Logger) *App {
 		port:        cfg.GRPC.Port,
 		storagePath: cfg.StoragePath,
 		db:          database.InitDatabase(cfg),
-		log:         log,
+		logger:      log,
 	}
 
 	auth.Register(gRPCServer, cfg, app.db, log)
@@ -45,7 +45,7 @@ func (a *App) Run() error {
 		return errors.New("")
 	}
 
-	a.log.Info(fmt.Sprintf("starting _AUTH_ server on %s", a.port))
+	a.logger.Info(fmt.Sprintf("starting _AUTH_ server on %s", a.port))
 	if err := a.gRPCserver.Serve(l); err != nil {
 		return fmt.Errorf("")
 	}

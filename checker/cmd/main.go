@@ -14,12 +14,12 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	log := logger.InitLogger(cfg.LoggerLevel)
-	rdb := database.InitRedisDatabase(cfg)
+	logger := logger.InitLogger(cfg.LoggerLevel)
 
+	rdb := database.InitRedisDatabase(cfg)
 	defer rdb.Close()
 
-	app := app.New(cfg, rdb, log)
+	app := app.New(cfg, rdb, logger)
 
 	go app.Run()
 
@@ -27,6 +27,6 @@ func main() {
 	signal.Notify(stop, syscall.SIGABRT, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
-	log.Info(fmt.Sprintf("shutdown _CHECKER_ server on %s", cfg.GRPC.Port))
+	logger.Info(fmt.Sprintf("shutdown _CHECKER_ server on %s", cfg.GRPC.Port))
 	app.Stop()
 }

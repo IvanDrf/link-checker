@@ -2,7 +2,6 @@ package links
 
 import (
 	"context"
-	"github.com/IvanDrf/link-checker/pkg/checker-api"
 	"log"
 	"log/slog"
 	"testing"
@@ -10,6 +9,7 @@ import (
 
 	"github.com/IvanDrf/checker/internal/models"
 	linkService "github.com/IvanDrf/checker/internal/service/links"
+	checker_api "github.com/IvanDrf/link-checker/pkg/checker-api"
 
 	"github.com/alicebob/miniredis"
 	"github.com/redis/go-redis/v9"
@@ -79,7 +79,7 @@ var (
 func TestGrpcCheckLinks(t *testing.T) {
 	s := &serverAPI{
 		linkChecker: linkService.NewLinkChecker(rdb, slog.Default()),
-		log:         slog.Default(),
+		logger:      slog.Default(),
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), testingCheckLinksTime)

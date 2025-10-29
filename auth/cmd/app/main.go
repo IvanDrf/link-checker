@@ -14,15 +14,15 @@ import (
 
 func main() {
 	cfg := config.MustLoad()
-	log := logger.InitLogger(cfg.LoggerLevel)
+	logger := logger.InitLogger(cfg.LoggerLevel)
 
-	application := app.New(cfg, log)
+	application := app.New(cfg, logger)
 	go application.Run()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
 
 	<-stop
-	log.Info(fmt.Sprintf("shutdown _AUTH_ server on %s", cfg.GRPC.Port))
+	logger.Info(fmt.Sprintf("shutdown _AUTH_ server on %s", cfg.GRPC.Port))
 	application.Stop()
 }

@@ -4,12 +4,14 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log/slog"
+
 	"github.com/IvanDrf/auth/internal/config"
 	"github.com/IvanDrf/auth/internal/errs"
 	"github.com/IvanDrf/auth/internal/models"
+	"github.com/IvanDrf/auth/internal/service"
 	authService "github.com/IvanDrf/auth/internal/service/auth"
-	"github.com/IvanDrf/link-checker/pkg/auth-api"
-	"log/slog"
+	auth_api "github.com/IvanDrf/link-checker/pkg/auth-api"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -17,7 +19,7 @@ import (
 )
 
 type serverAPI struct {
-	auther authService.AuthService
+	auther service.AuthService
 	auth_api.UnimplementedAuthServer
 }
 

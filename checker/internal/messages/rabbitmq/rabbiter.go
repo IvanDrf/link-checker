@@ -7,11 +7,22 @@ import (
 
 	"github.com/IvanDrf/checker/internal/config"
 	"github.com/IvanDrf/checker/internal/infrastructure/semaphore"
+	"github.com/IvanDrf/checker/internal/messages"
 	"github.com/IvanDrf/checker/internal/models"
 	"github.com/IvanDrf/checker/internal/service"
 	linkService "github.com/IvanDrf/checker/internal/service/links"
 	"github.com/redis/go-redis/v9"
 )
+
+type Producer interface {
+	SendMessage(ctx context.Context, links *models.RabbitLinks)
+	Close()
+}
+
+type Consumer interface {
+	ReadMessages(tasksChan chan *models.RabbitLinks, doneConsuming chan struct{})
+	Close()
+}
 
 type rabbiter struct {
 	producer      Producer
@@ -26,7 +37,7 @@ type rabbiter struct {
 	tasksChan   chan *models.RabbitLinks
 	resultsChan chan *models.RabbitLinks
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 const (
@@ -36,7 +47,7 @@ const (
 	semaphoreSize = 20
 )
 
-func NewRabbiter(cfg *config.Config, rdb *redis.Client, logger *slog.Logger) Rabbiter {
+func NewRabbiter(cfg *config.Config, rdb *redis.Client, logger *slog.Logger) messages.Messenger {
 	return &rabbiter{
 		producer:      NewProducer(cfg, logger),
 		doneProducing: make(chan struct{}, 1),
@@ -50,7 +61,7 @@ func NewRabbiter(cfg *config.Config, rdb *redis.Client, logger *slog.Logger) Rab
 		tasksChan:   make(chan *models.RabbitLinks, tasksChanLength),
 		resultsChan: make(chan *models.RabbitLinks, resultsChanLength),
 
-		log: logger,
+		logger: logger,
 	}
 }
 
@@ -67,18 +78,24 @@ func (r *rabbiter) ServiceMessages() {
 			if !ok {
 				return
 			}
+			r.logger.Info("rabbiter -> get message from tasks chan")
 
 			ctx, cancel := context.WithTimeout(context.Background(), serviceTime)
 			defer cancel()
 
 			go func(links *models.RabbitLinks) {
+				r.logger.Info("rabbiter -> start servicing message")
+
 				r.sem.Acquire()
 				defer r.sem.Release()
 
 				r.serviceMessage(ctx, links)
+
+				r.logger.Info("rabbiter -> send message to results chan")
 				r.resultsChan <- links
 			}(links)
 		case <-r.doneConsuming:
+			r.logger.Info("rabbiter -> done consuming")
 			return
 		}
 	}
@@ -114,19 +131,23 @@ func (r *rabbiter) SendMessages() {
 			if !ok {
 				return
 			}
+			r.logger.Info("rabbiter -> get message from results chan")
 
 			ctx, cancel := context.WithTimeout(context.Background(), sendingTime)
 			defer cancel()
 
+			r.logger.Info("rabbiter -> send message to producer")
 			r.producer.SendMessage(ctx, links)
 
 		case <-r.doneProducing:
+			r.logger.Info("rabbiter -> done producing")
 			return
 		}
 	}
 }
 
 func (r *rabbiter) GracefulStop() {
+	r.logger.Info("rabbiter -> GracefulStop")
 	r.consumer.Close()
 	r.producer.Close()
 

@@ -33,7 +33,7 @@ type authGateway struct {
 	jwter   jwt.JWTer
 	cookier cookies.Cookier
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
@@ -46,7 +46,7 @@ func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
 		jwter:   jwt.NewJWTer(cfg),
 		cookier: cookies.NewCookier(),
 
-		log: logger,
+		logger: logger,
 	}
 
 }

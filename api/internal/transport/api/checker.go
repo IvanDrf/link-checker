@@ -22,7 +22,7 @@ type checkerGateway struct {
 	checkerClient checker_api.CheckerClient
 	checkerConn   *grpc.ClientConn
 
-	log *slog.Logger
+	logger *slog.Logger
 }
 
 func newCheckerGateway(cfg *config.Config, logger *slog.Logger) CheckerGateway {
@@ -32,7 +32,7 @@ func newCheckerGateway(cfg *config.Config, logger *slog.Logger) CheckerGateway {
 		checkerClient: checkerClient,
 		checkerConn:   checkerConn,
 
-		log: logger,
+		logger: logger,
 	}
 }
 
