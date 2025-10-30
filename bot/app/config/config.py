@@ -8,6 +8,8 @@ default_config_path: Final = 'config/config.yaml'
 
 
 class Config:
+    __slots__ = ('logger_level', 'bot_token', 'storage_path')
+
     def __init__(self, logger_level: str, bot_token: str, storage_path: str) -> None:
         self.logger_level: Final = logger_level
         self.bot_token: Final = bot_token
