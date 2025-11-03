@@ -3,21 +3,21 @@ from aiogram.fsm.context import FSMContext
 from typing import Optional
 
 from app.repo.repo import Repo
-from app.commands.save.state import SaveState
-from app.models.user import User, max_links_amount
+from app.commands.delete.state import DeleteState
+from app.models.user import User
 
 
-class Saver:
+class Deleter:
     def __init__(self, repo: Repo) -> None:
         self.repo: Repo = repo
 
-    async def input_link(self, message: Message, state: FSMContext) -> None:
+    async def input_deleted_link(self, message: Message, state: FSMContext) -> None:
         await state.clear()
 
-        await message.answer('Enter the link, you want to save')
-        await state.set_state(SaveState.waiting_input_link)
+        await message.answer('Enter the link ,you want to delete')
+        await state.set_state(DeleteState.waiting_input_link)
 
-    async def save_link(self, message: Message, state: FSMContext) -> None:
+    async def delete_link(self, message: Message, state: FSMContext) -> None:
         if message.text is None or message.from_user is None:
             await message.answer('Cant get your message, try again')
             return
@@ -29,16 +29,16 @@ class Saver:
             await message.answer('You are not in database, please write /start')
             return
 
-        if user.links_amount >= max_links_amount:
-            await message.answer(f'You have maximum saved links - {max_links_amount}')
+        if user.links_amount == 0:
+            await message.answer('You dont have any saved links')
             return
 
         link: str = message.text
 
-        res: Optional[int] = await self.repo.save_link(link, user_id)
+        res = await self.repo.delete_link(link, user_id)
         if res is None:
-            await message.answer('Cant save your link, please try again')
+            await message.answer(f'Cant delete this link: {link}')
             return
 
-        await message.answer(f'Successfully saved your link: {link}')
+        await message.answer(f'Successfully deleted your link: {link}')
         await state.clear()
