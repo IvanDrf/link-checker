@@ -13,7 +13,7 @@ class Repo(UserRepo, LinkRepo):
 
     @connection
     async def add_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        res = await self._add_link(session, link, user_id)
+        res = await self._add_link(link, user_id)
         if res is None:
             return None
 
@@ -25,7 +25,7 @@ class Repo(UserRepo, LinkRepo):
 
     @connection
     async def remove_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        res = await self._remove_link(session, link, user_id)
+        res = await self._remove_link(link, user_id)
         if res is None:
             return None
 

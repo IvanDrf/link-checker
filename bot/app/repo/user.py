@@ -11,7 +11,7 @@ from app.repo.connection import connection
 class UserRepo:
     def __init__(self, engine: AsyncEngine) -> None:
         self.async_session: async_sessionmaker[AsyncSession] = async_sessionmaker(
-            engine, class_=AsyncSession)
+            engine, class_=AsyncSession, expire_on_commit=False)
 
     @connection
     async def add_user(self, session: AsyncSession, user_id: int) -> Optional[int]:

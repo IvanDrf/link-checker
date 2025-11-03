@@ -9,7 +9,7 @@ from app.repo.connection import connection
 class LinkRepo:
     def __init__(self, engine: AsyncEngine) -> None:
         self.async_session: async_sessionmaker[AsyncSession] = async_sessionmaker(
-            engine, class_=AsyncSession)
+            engine, class_=AsyncSession, expire_on_commit=False)
 
     @connection
     async def _add_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
