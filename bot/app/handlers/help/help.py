@@ -20,5 +20,6 @@ Available commands:
 1) /start - start bot
 2) /help - view the list of available commands
 3) /save - save your link in database
-4) /del - delete your link from database    
+4) /del - delete your link from database   
+5) /my - print your saved links 
 ''')
