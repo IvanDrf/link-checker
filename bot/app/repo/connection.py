@@ -26,4 +26,5 @@ def connection(func: Callable[..., Any]) -> Callable[..., Any]:
 
                 await session.rollback()
                 return None
+
     return wrapper

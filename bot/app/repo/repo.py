@@ -12,8 +12,8 @@ class Repo(UserRepo, LinkRepo):
         LinkRepo.__init__(self, engine)
 
     @connection
-    async def add_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        res = await self._add_link(session, link, user_id)
+    async def save_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
+        res = await self._save_link(link, user_id)
         if res is None:
             return None
 
@@ -24,9 +24,9 @@ class Repo(UserRepo, LinkRepo):
         return user_id
 
     @connection
-    async def remove_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        res = await self._remove_link(session, link, user_id)
-        if res is None:
+    async def delete_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
+        res = await self._delete_link(link, user_id)
+        if res == 0:
             return None
 
         res = await self.reduce_links_amount(user_id, 1)

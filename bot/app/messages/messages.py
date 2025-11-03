@@ -3,8 +3,7 @@ from aiogram.fsm.context import FSMContext
 
 
 class Messenger:
-    @staticmethod
-    async def Answer(message: Message, state: FSMContext) -> None:
+    async def answer(self, message: Message, state: FSMContext) -> None:
         await state.clear()
 
         if message.from_user is None:
