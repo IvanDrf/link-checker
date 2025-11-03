@@ -7,8 +7,6 @@ from app.repo.connection import connection
 
 
 class LinkRepo:
-    __slots__ = ('async_session')
-
     def __init__(self, engine: AsyncEngine) -> None:
         self.async_session: async_sessionmaker[AsyncSession] = async_sessionmaker(
             engine, class_=AsyncSession)

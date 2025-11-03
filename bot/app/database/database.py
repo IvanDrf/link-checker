@@ -4,7 +4,7 @@ from app.config.config import Config
 from app.models.models import Base
 
 
-async def create_engine(cfg: Config) -> AsyncEngine:
+async def create_engine_for_database(cfg: Config) -> AsyncEngine:
     engine: AsyncEngine = create_async_engine(
         url=f'sqlite+aiosqlite:///{cfg.storage_path}', echo=False)
 
