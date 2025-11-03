@@ -1,7 +1,10 @@
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy import BigInteger
+from typing import Final
 
 from app.models.models import Base
+
+max_links_amount: Final = 10
 
 
 class User(Base):

@@ -1,63 +1,59 @@
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
-from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import insert, select
 from typing import Optional
 import logging
 
+
 from app.models.user import User
+from app.repo.connection import connection
 
 
 class UserRepo:
+    __slots__ = ('async_session')
+
     def __init__(self, engine: AsyncEngine) -> None:
         self.async_session: async_sessionmaker[AsyncSession] = async_sessionmaker(
             engine, class_=AsyncSession)
 
-    async def add_user(self, user_id: int) -> Optional[int]:
-        async with self.async_session() as session:
-            try:
-                stmt = insert(User).values(
-                    {"user_id": user_id, "links:amount": 0})
-                await session.execute(stmt)
+    @connection
+    async def add_user(self, session: AsyncSession, user_id: int) -> Optional[int]:
+        stmt = insert(User).values({"user_id": user_id, "links_amount": 0})
+        await session.execute(stmt)
 
-                await session.commit()
-                return user_id
+        return user_id
 
-            except SQLAlchemyError as e:
-                logging.info(f'add_user -> {e}')
+    @connection
+    async def find_user(self, session: AsyncSession, user_id: int) -> Optional[User]:
+        user: Optional[User] = await session.scalar(select(User).where(User.user_id == user_id).limit(1))
 
-                return None
+        return user
 
     async def add_links_amount(self, user_id: int, links_amount: int) -> Optional[User]:
         if links_amount <= 0:
+            logging.info(
+                f'add_links_amount -> invalid links amount {links_amount}')
             return None
 
-        await self.__change_links_amount(user_id, links_amount)
+        return await self._change_links_amount(user_id, links_amount)
 
     async def reduce_links_amount(self, user_id: int, links_amount: int) -> Optional[User]:
         if links_amount <= 0:
+            logging.info(
+                f'reduce_links_amount -> invalid links amount {links_amount}')
             return None
 
         links_amount *= -1
 
-        await self.__change_links_amount(user_id, links_amount)
+        return await self._change_links_amount(user_id, links_amount)
 
-    async def __change_links_amount(self, user_id: int, links_amount: int) -> Optional[User]:
-        async with self.async_session() as session:
-            try:
-                user = await session.scalar(select(User).filter_by(user_id=user_id))
-                if user is None:
-                    logging.info(
-                        f'add_links_amount -> cant find user with this id {user_id}')
+    @connection
+    async def _change_links_amount(self, session: AsyncSession, user_id: int, links_amount: int) -> Optional[User]:
+        user: Optional[User] = await session.scalar(select(User).filter_by(user_id=user_id))
+        if user is None:
+            logging.info(
+                f'add_links_amount -> cant find user with this id {user_id}')
+            return None
 
-                    return None
+        user.links_amount += links_amount
 
-                user.links_amount += links_amount
-
-                await session.commit()
-                return user
-
-            except SQLAlchemyError as e:
-                logging.error(f'change_links_amount-> {e}')
-
-                await session.rollback()
-                return None
+        return user
