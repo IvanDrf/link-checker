@@ -17,7 +17,7 @@ class App:
         async_engine: AsyncEngine = await create_engine_for_database(cfg)
         repo: Repo = Repo(async_engine)
 
-        bot: Bot = Bot(token=cfg.bot_token)
+        bot: Bot = Bot(token=cfg.app.bot_token)
         return cls(bot, repo)
 
     async def run(self) -> None:

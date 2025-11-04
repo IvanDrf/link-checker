@@ -7,7 +7,7 @@ from app.config.config import Config
 
 def configure_logger(cfg: Config) -> None:
     logging.basicConfig(
-        level=select_logger_level(cfg.logger_level),
+        level=select_logger_level(cfg.app.logger_level),
         stream=stdout)
 
 

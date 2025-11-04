@@ -6,8 +6,10 @@ from app.app.app import App
 
 
 async def main():
-    cfg: Config = Config.new(Config.get_config_path_from_flag())
+    cfg: Config = Config.load(Config.get_config_path_from_flag())
     configure_logger(cfg)
+
+    print(cfg)
 
     app: App = await App.new(cfg)
 

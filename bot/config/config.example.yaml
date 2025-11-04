@@ -1,3 +1,10 @@
 logger_level: debug
 bot_token: token
 storage_path: storage/sqlite/links.db
+rabbitmq:
+  username: user
+  password: secret_password
+  host: localhost
+  port: 5672
+  consumer_queue: cons
+  producer_queue: produs
