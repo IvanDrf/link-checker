@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from typing import Final
 
-from utils.file_loader import read_file
+from bot.utils.file_reader import read_file
 
 help_router: Router = Router()
 

@@ -9,7 +9,7 @@ SEPARATOR="=============================="
 DIRS=("checker" "auth" "api")
 
 
-run_test() {
+run_golang_tests() {
     go test -v ./... | while IFS= read -r line; do
         if [[ $line == *"PASS"* ]]; then
             echo -e "${GREEN}$line${NO_COLOR}"
@@ -29,7 +29,12 @@ run_test() {
 echo -e "${CYAN}Running all tests ${NO_COLOR}"
 echo ${SEPARATOR}
 
+echo -e "${MAGENTA}Python-Bot${NO_COLOR}"
+cd  ./bot
+pytest
+cd  ..
+
 for dir in "${DIRS[@]}";do
     echo -e "${MAGENTA}${dir} ${NO_COLOR}" 
-    cd $dir && run_test
+    cd $dir && run_golang_tests
 done;

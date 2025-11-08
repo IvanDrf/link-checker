@@ -1,4 +1,4 @@
-from utils.file_loader import read_file
+from utils.file_reader import read_file
 from tests.utils.fixture import files_paths
 
 
