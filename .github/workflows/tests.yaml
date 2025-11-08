@@ -40,10 +40,10 @@ jobs:
                   go mod download
                   go test -v ./...
 
-            - name: Set up Python 3.10
+            - name: Set up Python 3.12
               uses: actions/setup-python@v3
               with:
-                  python-version: "3.10"
+                  python-version: "3.12"
 
             - name: Install Python dependencies
               working-directory: ./bot
