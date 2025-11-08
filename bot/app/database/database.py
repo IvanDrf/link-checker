@@ -2,7 +2,7 @@ from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncConnection, create_async_engine
 
 from app.config.config import Config
-from app.models.models import Base, tables
+from app.models.models import Base, TABLES
 
 
 async def create_engine_for_database(cfg: Config) -> AsyncEngine:
@@ -20,7 +20,7 @@ async def __check_for_missing_tables(engine: AsyncEngine) -> None:
         existing_tables: list[str] = [row[0] for row in res]
 
         missing_tables: list[str] = [
-            table for table in existing_tables if table not in tables]
+            table for table in existing_tables if table not in TABLES]
 
         if len(missing_tables) != 0:
             await __create_tables(conn)

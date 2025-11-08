@@ -31,7 +31,7 @@ echo ${SEPARATOR}
 
 echo -e "${MAGENTA}Python-Bot${NO_COLOR}"
 cd  ./bot
-pytest
+pytest -v
 cd  ..
 
 for dir in "${DIRS[@]}";do

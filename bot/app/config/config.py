@@ -4,7 +4,7 @@ from yaml import safe_load
 from typing import Optional
 from argparse import ArgumentParser, Namespace
 
-default_config_path: Final = 'config/config.yaml'
+DEFAULT_CONFIG_PATH: Final = 'config/config.yaml'
 
 
 @dataclass
@@ -32,7 +32,7 @@ class Config:
     @classmethod
     def load(cls, config_path: Optional[str]) -> 'Config':
         if config_path is None or config_path == '':
-            config_path = default_config_path
+            config_path = DEFAULT_CONFIG_PATH
 
         with open(config_path, 'r') as config_file:
             data: dict[str, Any] = safe_load(config_file)
