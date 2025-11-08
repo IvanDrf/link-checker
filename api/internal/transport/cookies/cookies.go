@@ -1,8 +1,9 @@
 package cookies
 
 import (
-	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	"net/http"
+
+	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 )
 
 type Cookier interface {
@@ -23,6 +24,7 @@ func (c *cookier) SetAuthCookies(w http.ResponseWriter, access, refresh string) 
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	})
 
 	http.SetCookie(w, &http.Cookie{
@@ -31,5 +33,6 @@ func (c *cookier) SetAuthCookies(w http.ResponseWriter, access, refresh string) 
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
 	})
 }
