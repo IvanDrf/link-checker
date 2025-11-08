@@ -2,12 +2,9 @@ name: Run tests
 
 on:
     push:
-        branches:
-            - "**"
-
+        branches: ["**"]
     pull_request:
-        branches:
-            - "**"
+        branches: ["**"]
 
 jobs:
     test:
@@ -17,13 +14,51 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
+              with:
+                  submodules: recursive
 
             - name: SetUp Go
               uses: actions/setup-go@v5
               with:
                   go-version: "1.25"
 
-            - name: Run tests
+            - name: Run Go tests for [API]
+              working-directory: ./api
               run: |
-                  chmod +x scripts/run_tests.bash 
-                  ./scripts/run_tests.bash
+                  go mod download
+                  go test -v ./...
+
+            - name: Run Go tests for [Auth]
+              working-directory: ./auth
+              run: |
+                  go mod download
+                  go test -v ./...
+
+            - name: Run Go tests for [Checker]
+              working-directory: ./checker
+              run: |
+                  go mod download
+                  go test -v ./...
+
+            - name: Set up Python 3.12
+              uses: actions/setup-python@v3
+              with:
+                  python-version: "3.12"
+
+            - name: Install Python dependencies
+              working-directory: ./bot
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install flake8 pytest
+                  if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+            - name: Lint with flake8
+              working-directory: ./bot
+              run: |
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+                  flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+            - name: Run Python tests for [Bot]
+              working-directory: ./bot
+              run: |
+                  pytest

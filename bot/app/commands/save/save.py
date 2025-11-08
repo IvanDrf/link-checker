@@ -4,7 +4,7 @@ from typing import Optional
 
 from app.repo.repo import Repo
 from app.commands.save.state import SaveState
-from app.models.user import User, max_links_amount
+from app.models.user import User, MAX_LINKS_AMOUNT
 
 
 class Saver:
@@ -29,8 +29,8 @@ class Saver:
             await message.answer('You are not in database, please write /start')
             return
 
-        if user.links_amount >= max_links_amount:
-            await message.answer(f'You have maximum saved links - {max_links_amount}')
+        if user.links_amount >= MAX_LINKS_AMOUNT:
+            await message.answer(f'You have maximum saved links - {MAX_LINKS_AMOUNT}')
             return
 
         link: str = message.text

@@ -4,7 +4,7 @@ from typing import Final
 
 from app.models.models import Base
 
-max_links_amount: Final = 10
+MAX_LINKS_AMOUNT: Final = 10
 
 
 class User(Base):
