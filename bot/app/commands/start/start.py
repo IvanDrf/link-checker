@@ -4,7 +4,7 @@ from typing import Optional, Final
 
 from app.repo.repo import Repo
 from app.models.user import User
-from bot.utils.file_reader import read_file
+from utils.file_reader import read_file
 
 
 class Starter:
