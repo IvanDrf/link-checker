@@ -1,40 +1,60 @@
 from aio_pika import connect_robust
-from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractQueue
+from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractQueue, AbstractIncomingMessage
+from pydantic import ValidationError
+
 from typing import Optional
+import logging
 
 from app.config.config import Config
 from app.models.rabbitmq import LinkResponse
 
 
 class Consumer:
-    def __init__(self, conn: AbstractRobustConnection, queue_name: str) -> None:
+    def __init__(self, conn: AbstractRobustConnection, chan: AbstractChannel, queue: AbstractQueue) -> None:
         self.conn: AbstractRobustConnection = conn
-        self.queue_name: str = queue_name
-
-        self.chan: AbstractChannel = self.conn.channel()
+        self.chan: AbstractChannel = chan
+        self.queue: AbstractQueue = queue
 
     @classmethod
     async def new(cls, cfg: Config) -> 'Consumer':
         conn: AbstractRobustConnection = await connect_robust(f'amqp://{cfg.rabbitmq.username}:{cfg.rabbitmq.password}@{cfg.rabbitmq.host}/')
+        chan: AbstractChannel = await conn.channel()
+        queue: AbstractQueue = await chan.declare_queue(name=cfg.rabbitmq.cons_queue, durable=False)
 
-        return cls(conn, cfg.rabbitmq.cons_queue)
+        return cls(conn, chan, queue)
+
+    async def close(self) -> None:
+        if self.conn:
+            await self.conn.close()
 
     async def consume(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
-        queue: AbstractQueue = await self.chan.declare_queue(name=self.queue_name)
-
-        return await self._read_messages(queue, user_id, chat_id)
-
-    async def _read_messages(self, queue: AbstractQueue, user_id: int, chat_id: int) -> Optional[LinkResponse]:
-        async with queue.iterator() as queue_iter:
+        async with self.queue.iterator() as queue_iter:
             async for message in queue_iter:
-                async with message.process():
+                links: Optional[LinkResponse] = parse_incoming_message(message)
+                if links is None:
+                    await message.nack(requeue=False)
+                    continue
 
-                    links: LinkResponse = LinkResponse.model_validate_json(
-                        message.body.decode())
-
-                if links.user_id == user_id and links.chat_id == chat_id:
+                if check_message_for_user(links, user_id, chat_id):
+                    await message.ack()
                     return links
-
-                await message.ack()
+                else:
+                    await message.nack(requeue=True)
 
         return None
+
+
+def parse_incoming_message(message: AbstractIncomingMessage) -> Optional[LinkResponse]:
+    try:
+        links: LinkResponse = LinkResponse.model_validate_json(
+            message.body.decode())
+
+        return links
+
+    except ValidationError:
+        logging.error('consumer -> get invalid message from rabbitmq')
+        return None
+
+
+def check_message_for_user(links: LinkResponse, user_id: int, chat_id: int) -> bool:
+    return links.user_id == user_id and links.chat_id == chat_id

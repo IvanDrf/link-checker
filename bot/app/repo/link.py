@@ -27,10 +27,10 @@ class LinkRepo:
         return len(res.scalars().all())
 
     @connection
-    async def find_links(self, session: AsyncSession, user_id: int) -> Optional[tuple[Link, ...]]:
+    async def find_links(self, session: AsyncSession, user_id: int) -> Optional[list]:
         stmt = select(Link).where(Link.user_id == user_id)
 
         res = await session.scalars(stmt)
         links = res.fetchall()
 
-        return tuple(links) if links else None
+        return list(links) if links else None
