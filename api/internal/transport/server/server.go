@@ -16,8 +16,9 @@ import (
 type Server struct {
 	httpServer *http.Server
 	mux        *http.ServeMux
-	api        api.ApiGateway
-	middle     middleware.Middleware
+
+	api    api.ApiGateway
+	middle middleware.Middleware
 
 	logger *slog.Logger
 }
@@ -29,7 +30,6 @@ func NewServer(cfg *config.Config, logger *slog.Logger) *Server {
 		httpServer: &http.Server{
 			Addr: addr,
 		},
-
 		mux: http.NewServeMux(),
 
 		api:    api.NewApiGateway(cfg, logger),
@@ -44,7 +44,7 @@ func (s *Server) StartServer() {
 
 	s.httpServer.Handler = s.mux
 
-	if err := s.httpServer.ListenAndServe(); err != nil {
+	if err := s.httpServer.ListenAndServe(); err != http.ErrServerClosed {
 		log.Fatal(errs.ErrCantStartServer(err))
 	}
 

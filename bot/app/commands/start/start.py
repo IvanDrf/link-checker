@@ -8,12 +8,12 @@ from utils.file_reader import read_file
 
 
 class Starter:
-    start_static: Final = 'static/start.html'
+    START_STATIC: Final = 'static/start.html'
 
     def __init__(self, repo: Repo) -> None:
         self.repo: Repo = repo
 
-        self.text: str = read_file(Starter.start_static)
+        self.start_text: str = read_file(Starter.START_STATIC)
 
     async def start(self, message: Message, state: FSMContext) -> None:
         await state.clear()
@@ -25,7 +25,7 @@ class Starter:
         user_id: Optional[int] = message.from_user.id
         user: Optional[User] = await self.repo.find_user(user_id)
         if user:
-            await message.answer(self.text.format(username=message.from_user.first_name), parse_mode='HTML')
+            await message.answer(self.start_text.format(username=message.from_user.first_name), parse_mode='HTML')
             return
 
         user_id = await self.repo.add_user(user_id)
@@ -33,4 +33,4 @@ class Starter:
             await message.answer('Cant add you to database, please write /start again')
             return
 
-        await message.answer(f'Hello {message.from_user.first_name}, this is link-checker bot, write /help')
+        await message.answer(self.start_text.format(username=message.from_user.first_name), parse_mode='HTML')

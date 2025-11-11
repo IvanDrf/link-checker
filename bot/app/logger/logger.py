@@ -8,7 +8,8 @@ from app.config.config import Config
 def configure_logger(cfg: Config) -> None:
     logging.basicConfig(
         level=select_logger_level(cfg.app.logger_level),
-        stream=stdout)
+        stream=stdout
+    )
 
 
 type LoggerLevel = int | str
