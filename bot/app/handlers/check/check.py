@@ -24,8 +24,14 @@ class CheckHandler:
         return cls(checker)
 
     async def check_links(self, message: Message, state: FSMContext) -> None:
+        await state.clear()
+
+        if message.from_user is None:
+            await message.answer('Cant get your id, please try again')
+            return
+
         try:
-            message_answer: str = await self.checker.check_links(message, state)
+            message_answer: str = await self.checker.check_links(message.from_user.id, message.chat.id)
             await message.answer(message_answer)
         except InternalError as e:
             await message.answer(e.__str__())

@@ -1,6 +1,3 @@
-from aiogram.types import Message
-from aiogram.fsm.context import FSMContext
-
 from asyncio import timeout
 from typing import Optional, Final
 import logging
@@ -30,24 +27,16 @@ class Checker:
 
         return cls(repo, consumer, producer)
 
-    async def check_links(self, message: Message, state: FSMContext) -> str:
-        await state.clear()
-
-        if message.from_user is None:
-            await message.answer('Cant get your id, please try again')
-            return ''
-
-        links: Optional[list[Link]] = await self.repo.find_links(message.from_user.id)
+    async def check_links(self, user_id: int, chat_id: int) -> str:
+        links: Optional[list[Link]] = await self.repo.find_links(user_id)
         if links is None:
-            await message.answer('You dont have any saved links')
-            return ''
+            return 'You dont have any saved links'
 
-        await self.send_message_from_producer(links, message.from_user.id, message.chat.id)
+        await self.send_message_from_producer(links, user_id, chat_id)
 
-        res: Optional[LinkResponse] = await self.get_message_from_consumer(message.from_user.id, message.chat.id)
+        res: Optional[LinkResponse] = await self.get_message_from_consumer(user_id, chat_id)
         if res is None:
-            await message.answer('Cant get message from Link-Checker service')
-            return ''
+            return 'Cant get message from Link-Checker service'
 
         return create_links_response(res)
 
@@ -55,6 +44,7 @@ class Checker:
         try:
             links_req: LinkRequest = create_links_request(
                 links, user_id, chat_id)
+
             await self._send_message_with_time(links_req)
 
         except TimeoutError:
