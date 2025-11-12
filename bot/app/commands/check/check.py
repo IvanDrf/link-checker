@@ -30,22 +30,26 @@ class Checker:
 
         return cls(repo, consumer, producer)
 
-    async def check_links(self, message: Message, state: FSMContext):
+    async def check_links(self, message: Message, state: FSMContext) -> str:
         await state.clear()
 
         if message.from_user is None:
             await message.answer('Cant get your id, please try again')
-            return
+            return ''
 
         links: Optional[list[Link]] = await self.repo.find_links(message.from_user.id)
         if links is None:
             await message.answer('You dont have any saved links')
-            return
+            return ''
 
         await self.send_message_from_producer(links, message.from_user.id, message.chat.id)
-        res = await self.get_message_from_consumer(message.from_user.id, message.chat.id)
-        logging.error(f'check -> {res}')
-        return res
+
+        res: Optional[LinkResponse] = await self.get_message_from_consumer(message.from_user.id, message.chat.id)
+        if res is None:
+            await message.answer('Cant get message from Link-Checker service')
+            return ''
+
+        return create_links_response(res)
 
     async def send_message_from_producer(self, links: list[Link], user_id: int, chat_id: int) -> None:
         try:
@@ -82,3 +86,7 @@ def create_links_request(links: list[Link], user_id: int, chat_id: int) -> LinkR
         chat_id=chat_id,
         links=[LinkStatus(link=link.link, status=False) for link in links]
     )
+
+
+def create_links_response(links: LinkResponse) -> str:
+    return '\n'.join(f'{link.link} - {'✅' if link.status else '❌'}' for link in links.links)

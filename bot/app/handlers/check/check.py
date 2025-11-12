@@ -25,7 +25,7 @@ class CheckHandler:
 
     async def check_links(self, message: Message, state: FSMContext) -> None:
         try:
-            res = await self.checker.check_links(message, state)
-            await message.answer(res.model_dump_json() if res else '')
+            message_answer: str = await self.checker.check_links(message, state)
+            await message.answer(message_answer)
         except InternalError as e:
             await message.answer(e.__str__())
