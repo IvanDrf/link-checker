@@ -5,20 +5,20 @@ from aiogram.fsm.context import FSMContext
 
 from typing import Final
 
-from bot.utils.file_reader import read_file
+from utils.file_reader import read_file
 
 help_router: Router = Router()
 
 
 class HelpHandler:
-    help_static: Final = 'static/help.html'
+    HELP_STATIC: Final = 'static/help.html'
 
     def __init__(self) -> None:
-        self.text: str = read_file(HelpHandler.help_static)
+        self.help_text: str = read_file(HelpHandler.HELP_STATIC)
 
         help_router.message(Command('help'))(self.help)
 
     async def help(self, message: Message, state: FSMContext) -> None:
         await state.clear()
 
-        await message.answer(self.text, parse_mode='HTML')
+        await message.answer(self.help_text, parse_mode='HTML')

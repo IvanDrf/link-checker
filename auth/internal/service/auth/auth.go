@@ -61,6 +61,7 @@ func (a *authService) Register(ctx context.Context, user *models.User) (*models.
 }
 
 func (a *authService) Login(ctx context.Context, user *models.User) (string, string, error) {
+	a.logger.Info("Login request")
 	userInDB, err := a.users.FindUserByEmail(ctx, user.Email)
 	if err != nil {
 		return "", "", errs.ErrCantFindUserInDB()

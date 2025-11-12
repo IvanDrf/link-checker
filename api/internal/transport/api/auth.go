@@ -67,6 +67,7 @@ func (a *authGateway) CloseAuth() {
 }
 
 func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
+	a.logger.Info("API: Register -> request")
 	w.Header().Set(contentType, jsonContent)
 
 	if r.Header.Get(contentType) != jsonContent {
@@ -104,6 +105,7 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *authGateway) Login(w http.ResponseWriter, r *http.Request) {
+	a.logger.Info("API: Login -> Request")
 	w.Header().Set(contentType, jsonContent)
 
 	if r.Header.Get(contentType) != jsonContent {

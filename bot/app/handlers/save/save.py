@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 
 from app.repo.repo import Repo
 from app.commands.save.save import Saver
-from app.commands.save.state import SaveState
+from app.handlers.save.state import SaveState
 
 save_router: Router = Router()
 
@@ -18,7 +18,17 @@ class SaveHandler:
         save_router.message(SaveState.waiting_input_link)(self.save_link)
 
     async def input_saved_link(self, message: Message, state: FSMContext) -> None:
-        await self.saver.input_link(message, state)
+        await state.clear()
+
+        await message.answer('Enter the link, you want to save')
+        await state.set_state(SaveState.waiting_input_link)
 
     async def save_link(self, message: Message, state: FSMContext) -> None:
-        await self.saver.save_link(message, state)
+        if message.text is None or message.from_user is None:
+            await message.answer('Cant get your message, try again')
+            return
+
+        message_answer: str = await self.saver.save_link(message.from_user.id, message.text)
+        await message.answer(message_answer)
+
+        await state.clear()
