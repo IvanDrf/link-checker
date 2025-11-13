@@ -10,8 +10,9 @@ from app.consumer.consumer import Consumer
 from app.producer.producer import Producer
 from app.exc.internal import InternalError
 
+WAITING_TIME: Final = 1
 SENDING_TIME: Final = 2
-RECEIVING_TIME: Final = 3
+RECEIVING_TIME: Final = 5
 
 
 class Checker:
@@ -46,7 +47,7 @@ class Checker:
 
     async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
         try:
-            return await self._get_message_with_time(user_id, chat_id, RECEIVING_TIME / 2)
+            return await self._get_message_with_time(user_id, chat_id, WAITING_TIME)
         except InternalError:
             logging.info('there are no pending messages')
 
@@ -89,7 +90,7 @@ def create_links_request(links: list[Link], user_id: int, chat_id: int) -> LinkR
     return LinkRequest(
         user_id=user_id,
         chat_id=chat_id,
-        links=[LinkStatus(link=link.link, status=False) for link in links]
+        links=tuple(LinkStatus(link=link.link, status=False) for link in links)
     )
 
 

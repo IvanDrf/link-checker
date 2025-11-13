@@ -9,11 +9,11 @@ class LinkStatus(BaseModel):
 class LinkRequest(BaseModel):
     user_id: int = Field(alias='user_id')
     chat_id: int = Field(alias='chat_id')
-    links: list[LinkStatus] = Field(alias='links')
+    links: tuple[LinkStatus, ...] = Field(alias='links')
 
 
 class LinkResponse(BaseModel):
     user_id: int = Field(alias='user_id')
     chat_id: int = Field(alias='chat_id')
 
-    links: list[LinkStatus] = Field(alias='links')
+    links: tuple[LinkStatus, ...] = Field(alias='links')
