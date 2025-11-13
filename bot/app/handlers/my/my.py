@@ -1,20 +1,28 @@
 from aiogram import Router
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.filters import Command
-from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 
-from typing import Optional
+from typing import Optional, Final
 
 from app.repo.repo import Repo
-from app.commands.my.my import MyLinker
 from app.models.link import Link
+from app.commands.my.my import MyLinker
 
 user_links_router: Router = Router()
 
 
 class UserLinksHandler:
+    BUTTONS: Final = [
+        [KeyboardButton(text='/save')],
+        [KeyboardButton(text='/del')],
+        [KeyboardButton(text='/check')]
+    ]
+
     def __init__(self, repo: Repo) -> None:
         self.linker: MyLinker = MyLinker(repo)
+        self.keyboard: Final = ReplyKeyboardMarkup(
+            keyboard=UserLinksHandler.BUTTONS, resize_keyboard=True, one_time_keyboard=True)
 
         user_links_router.message(Command('my'))(self.print_user_links)
 
@@ -30,7 +38,7 @@ class UserLinksHandler:
             await message.answer('You dont have saved links, write /save to save some')
             return
 
-        await message.answer(create_links_list(links))
+        await message.answer(create_links_list(links), reply_markup=self.keyboard)
 
 
 def create_links_list(links: tuple[Link, ...]) -> str:

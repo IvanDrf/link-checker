@@ -1,6 +1,6 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
 from app.repo.repo import Repo
@@ -29,6 +29,6 @@ class SaveHandler:
             return
 
         message_answer: str = await self.saver.save_link(message.from_user.id, message.text)
-        await message.answer(message_answer)
+        await message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
 
         await state.clear()

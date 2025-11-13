@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
@@ -21,4 +21,4 @@ class HelpHandler:
     async def help(self, message: Message, state: FSMContext) -> None:
         await state.clear()
 
-        await message.answer(self.help_text, parse_mode='HTML')
+        await message.answer(self.help_text, parse_mode='HTML', reply_markup=ReplyKeyboardRemove())

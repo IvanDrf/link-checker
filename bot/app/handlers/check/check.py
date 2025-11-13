@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
@@ -27,11 +27,11 @@ class CheckHandler:
         await state.clear()
 
         if message.from_user is None:
-            await message.answer('Cant get your id, please try again')
+            await message.answer('Cant get your id, please try again', reply_markup=ReplyKeyboardRemove())
             return
 
         try:
             message_answer: str = await self.checker.check_links(message.from_user.id, message.chat.id)
-            await message.answer(message_answer)
+            await message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
         except InternalError as e:
-            await message.answer(e.__str__())
+            await message.answer(e.__str__(), reply_markup=ReplyKeyboardRemove())
