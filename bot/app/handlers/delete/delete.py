@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
@@ -20,15 +20,15 @@ class DeleteHandler:
     async def input_deleted_link(self, message: Message, state: FSMContext) -> None:
         await state.clear()
 
-        await message.answer('Enter the link ,you want to delete')
+        await message.answer('Enter the link ,you want to delete', reply_markup=ReplyKeyboardRemove())
         await state.set_state(DeleteState.waiting_input_link)
 
     async def delete_link(self, message: Message, state: FSMContext) -> None:
         if message.text is None or message.from_user is None:
-            await message.answer('Cant get your message, try again')
+            await message.answer('Cant get your message, try again', reply_markup=ReplyKeyboardRemove())
             return
 
         message_answer: str = await self.deleter.delete_link(message.from_user.id, message.text)
-        await message.answer(message_answer)
+        await message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
 
         await state.clear()

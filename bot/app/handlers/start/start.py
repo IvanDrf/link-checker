@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message
+from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 from aiogram.filters.command import CommandStart
 
@@ -26,12 +26,12 @@ class StartHandler:
         await state.clear()
 
         if message.from_user is None:
-            await message.answer('Cant get your id, please try again')
+            await message.answer('Cant get your id, please try again', reply_markup=ReplyKeyboardRemove())
             return
 
         message_answer: str = await self.starter.start(message.from_user.id)
         if message_answer == DEFAULT_ANSWER:
-            await message.answer(self.start_text.format(username=message.from_user.first_name), parse_mode='HTML')
+            await message.answer(self.start_text.format(username=message.from_user.first_name), parse_mode='HTML', reply_markup=ReplyKeyboardRemove())
             return
 
-        message.answer(message_answer)
+        message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
