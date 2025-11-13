@@ -29,7 +29,7 @@ class Checker:
         return cls(repo, consumer, producer)
 
     async def check_links(self, user_id: int, chat_id: int) -> str:
-        links: Optional[list[Link]] = await self.repo.find_links(user_id)
+        links: Optional[tuple[Link, ...]] = await self.repo.find_links(user_id)
         if links is None:
             return 'You dont have any saved links'
 
@@ -56,7 +56,7 @@ class Checker:
 
         return None
 
-    async def send_message_from_producer(self, links: list[Link], user_id: int, chat_id: int) -> None:
+    async def send_message_from_producer(self, links: tuple[Link, ...], user_id: int, chat_id: int) -> None:
         try:
             links_req: LinkRequest = create_links_request(
                 links, user_id, chat_id)
@@ -86,7 +86,7 @@ class Checker:
             return await self.consumer.consume(user_id, chat_id)
 
 
-def create_links_request(links: list[Link], user_id: int, chat_id: int) -> LinkRequest:
+def create_links_request(links: tuple[Link, ...], user_id: int, chat_id: int) -> LinkRequest:
     return LinkRequest(
         user_id=user_id,
         chat_id=chat_id,
