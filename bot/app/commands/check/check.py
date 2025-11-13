@@ -10,8 +10,8 @@ from app.consumer.consumer import Consumer
 from app.producer.producer import Producer
 from app.exc.internal import InternalError
 
-SENDING_TIME: Final = 3
-RECEIVING_TIME: Final = 5
+SENDING_TIME: Final = 2
+RECEIVING_TIME: Final = 3
 
 
 class Checker:
@@ -32,6 +32,10 @@ class Checker:
         if links is None:
             return 'You dont have any saved links'
 
+        links_from_queue: Optional[LinkResponse] = await self.check_for_links_in_queue(user_id, chat_id)
+        if not links_from_queue is None:
+            return create_links_response(links_from_queue)
+
         await self.send_message_from_producer(links, user_id, chat_id)
 
         res: Optional[LinkResponse] = await self.get_message_from_consumer(user_id, chat_id)
@@ -39,6 +43,17 @@ class Checker:
             return 'Cant get message from Link-Checker service'
 
         return create_links_response(res)
+
+    async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
+        try:
+            return await self._get_message_with_time(user_id, chat_id, RECEIVING_TIME / 2)
+        except InternalError:
+            logging.info('there are no pending messages')
+
+        except TimeoutError:
+            logging.info('there are no pending messages')
+
+        return None
 
     async def send_message_from_producer(self, links: list[Link], user_id: int, chat_id: int) -> None:
         try:
@@ -65,8 +80,8 @@ class Checker:
             raise InternalError(
                 'cant receive message from Link-Checker service')
 
-    async def _get_message_with_time(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
-        async with timeout(RECEIVING_TIME):
+    async def _get_message_with_time(self, user_id: int, chat_id: int, receiving_time: float = RECEIVING_TIME) -> Optional[LinkResponse]:
+        async with timeout(receiving_time):
             return await self.consumer.consume(user_id, chat_id)
 
 
