@@ -14,8 +14,9 @@ type Config struct {
 	LoggerLevel string `yaml:"level"`
 	StoragePath string `yaml:"storage_path" `
 
-	GRPC GRPCConfig `yaml:"grpc" `
-	JWT  JWTConfig  `yaml:"jwt"`
+	GRPC  GRPCConfig  `yaml:"grpc" `
+	JWT   JWTConfig   `yaml:"jwt"`
+	Email EmailConfig `yaml:"email"`
 }
 
 type GRPCConfig struct {
@@ -27,6 +28,12 @@ type JWTConfig struct {
 
 	AccessExpTime  time.Duration `yaml:"access_exp_time"`
 	RefreshExpTime time.Duration `yaml:"refresh_exp_time"`
+}
+
+type EmailConfig struct {
+	HostAddr string `yaml:"host_addr"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 const defaultPath = "../auth/config/config.yaml"
