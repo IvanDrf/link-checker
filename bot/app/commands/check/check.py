@@ -9,6 +9,8 @@ from app.models.rabbitmq import LinkStatus, LinkRequest, LinkResponse
 from app.consumer.consumer import Consumer
 from app.producer.producer import Producer
 from app.exc.internal import InternalError
+from app.exc.external import ExternalError
+from app.exc.user import UserError
 
 WAITING_TIME: Final = 1
 SENDING_TIME: Final = 2
@@ -28,22 +30,22 @@ class Checker:
 
         return cls(repo, consumer, producer)
 
-    async def check_links(self, user_id: int, chat_id: int) -> str:
+    async def check_links(self, user_id: int, chat_id: int) -> tuple[LinkResponse, str]:
         links: Optional[tuple[Link, ...]] = await self.repo.find_links(user_id)
         if links is None:
-            return 'You dont have any saved links'
+            raise UserError('You dont have any saved links')
 
         links_from_queue: Optional[LinkResponse] = await self.check_for_links_in_queue(user_id, chat_id)
         if not links_from_queue is None:
-            return create_links_response(links_from_queue)
+            return links_from_queue, create_links_response(links_from_queue)
 
         await self.send_message_from_producer(links, user_id, chat_id)
 
         res: Optional[LinkResponse] = await self.get_message_from_consumer(user_id, chat_id)
         if res is None:
-            return 'Cant get message from Link-Checker service'
+            raise ExternalError('Cant get message from Link-Checker service')
 
-        return create_links_response(res)
+        return res, create_links_response(res)
 
     async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
         try:

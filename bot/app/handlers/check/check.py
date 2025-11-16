@@ -1,17 +1,27 @@
 from aiogram import Router
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+
+from typing import Final
 
 from app.config.config import Config
 from app.repo.repo import Repo
 from app.commands.check.check import Checker
 from app.exc.internal import InternalError
+from app.exc.external import ExternalError
+from app.exc.user import UserError
+from app.csv.csv import write_links
+from app.handlers.csv.state import CsvState
 
 check_router: Router = Router()
 
 
 class CheckHandler:
+    BUTTONS: Final = [
+        [KeyboardButton(text='/csv')]
+    ]
+
     def __init__(self, checker: Checker) -> None:
         self.checker: Checker = checker
 
@@ -31,7 +41,22 @@ class CheckHandler:
             return
 
         try:
-            message_answer: str = await self.checker.check_links(message.from_user.id, message.chat.id)
+            links, message_answer = await self.checker.check_links(message.from_user.id, message.chat.id)
+
+            await message.answer(message_answer, reply_markup=ReplyKeyboardMarkup(
+                keyboard=CheckHandler.BUTTONS, resize_keyboard=True))
+
+            await message.answer('Enter /csv to get csv report for this links, or /exit to exit from check mode')
+            await state.set_state(CsvState.waiting_for_exit)
+
+            await write_links(message.from_user.id, links)
+
+        except UserError as e:
+            message_answer: str = e.__str__()[e.__str__().find(':') + 1:]
             await message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
+
         except InternalError as e:
+            await message.answer(e.__str__(), reply_markup=ReplyKeyboardRemove())
+
+        except ExternalError as e:
             await message.answer(e.__str__(), reply_markup=ReplyKeyboardRemove())

@@ -10,11 +10,12 @@ from app.handlers.delete.delete import DeleteHandler, delete_router
 from app.handlers.messages.messages import MessageHandler, message_router
 from app.handlers.my.my import UserLinksHandler, user_links_router
 from app.handlers.check.check import CheckHandler, check_router
+from app.handlers.csv.csv import CsvHandler, csv_router
 
 from app.repo.repo import Repo
 
 
-class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHandler, CheckHandler, MessageHandler):
+class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHandler, CheckHandler, MessageHandler, CsvHandler):
     dp: Dispatcher = Dispatcher()
 
     def __init__(self, repo: Repo, checker: Checker) -> None:
@@ -24,6 +25,7 @@ class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHa
         DeleteHandler.__init__(self, repo)
         UserLinksHandler.__init__(self, repo)
         CheckHandler.__init__(self, checker)
+        CsvHandler.__init__(self)
 
         MessageHandler.__init__(self)
 
@@ -39,5 +41,6 @@ class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHa
         self.dp.include_router(delete_router)
         self.dp.include_router(user_links_router)
         self.dp.include_router(check_router)
+        self.dp.include_router(csv_router)
 
         self.dp.include_router(message_router)
