@@ -17,6 +17,7 @@ func InitRedisDatabase(cfg *config.Config) *redis.Client {
 	db := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%s", cfg.Redis.Host, cfg.Redis.Port),
 		Password: cfg.Redis.Password,
+		DB:       cfg.Redis.DB,
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), redisConnectionTime)

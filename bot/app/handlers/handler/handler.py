@@ -1,36 +1,25 @@
 from aiogram import Dispatcher
 
-from app.commands.check.check import Checker
-
-from app.config.config import Config
-from app.handlers.start.start import StartHandler, start_router
-from app.handlers.help.help import HelpHandler, help_router
-from app.handlers.save.save import SaveHandler, save_router
-from app.handlers.delete.delete import DeleteHandler, delete_router
-from app.handlers.messages.messages import MessageHandler, message_router
-from app.handlers.my.my import UserLinksHandler, user_links_router
-from app.handlers.check.check import CheckHandler, check_router
-
-from app.repo.repo import Repo
+from app.handlers.handler.types import Handlers
+from app.handlers.start.start import start_router
+from app.handlers.help.help import help_router
+from app.handlers.save.save import save_router
+from app.handlers.delete.delete import delete_router
+from app.handlers.messages.messages import message_router
+from app.handlers.my.my import user_links_router
+from app.handlers.check.check import check_router
+from app.handlers.csv.csv import csv_router
 
 
-class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHandler, CheckHandler, MessageHandler):
+class Handler:
     dp: Dispatcher = Dispatcher()
 
-    def __init__(self, repo: Repo, checker: Checker) -> None:
-        StartHandler.__init__(self, repo)
-        HelpHandler.__init__(self)
-        SaveHandler.__init__(self, repo)
-        DeleteHandler.__init__(self, repo)
-        UserLinksHandler.__init__(self, repo)
-        CheckHandler.__init__(self, checker)
+    def __init__(self, handlers: Handlers) -> None:
+        self.handlers: Handlers = handlers
 
-        MessageHandler.__init__(self)
-
-    @classmethod
-    async def new(cls, cfg: Config, repo: Repo) -> 'Handler':
-        checker: Checker = await Checker.new(cfg, repo)
-        return cls(repo, checker)
+    async def stop_handling(self) -> None:
+        for handler in self.handlers:
+            await handler.stop_handling()
 
     def register_routes(self) -> None:
         self.dp.include_router(start_router)
@@ -39,5 +28,6 @@ class Handler(StartHandler, HelpHandler, SaveHandler, DeleteHandler, UserLinksHa
         self.dp.include_router(delete_router)
         self.dp.include_router(user_links_router)
         self.dp.include_router(check_router)
+        self.dp.include_router(csv_router)
 
         self.dp.include_router(message_router)

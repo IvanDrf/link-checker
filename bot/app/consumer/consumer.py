@@ -6,7 +6,7 @@ from typing import Optional
 import logging
 
 from app.config.config import Config
-from app.models.rabbitmq import LinkResponse
+from app.models.message import LinkMessage
 
 
 class Consumer:
@@ -27,10 +27,10 @@ class Consumer:
         if self.conn:
             await self.conn.close()
 
-    async def consume(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
+    async def consume(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         async with self.queue.iterator() as queue_iter:
             async for message in queue_iter:
-                links: Optional[LinkResponse] = parse_incoming_message(message)
+                links: Optional[LinkMessage] = parse_incoming_message(message)
                 if links is None:
                     await message.nack(requeue=False)
                     continue
@@ -44,9 +44,9 @@ class Consumer:
         return None
 
 
-def parse_incoming_message(message: AbstractIncomingMessage) -> Optional[LinkResponse]:
+def parse_incoming_message(message: AbstractIncomingMessage) -> Optional[LinkMessage]:
     try:
-        links: LinkResponse = LinkResponse.model_validate_json(
+        links: LinkMessage = LinkMessage.model_validate_json(
             message.body.decode())
 
         return links
@@ -56,5 +56,5 @@ def parse_incoming_message(message: AbstractIncomingMessage) -> Optional[LinkRes
         return None
 
 
-def check_message_for_user(links: LinkResponse, user_id: int, chat_id: int) -> bool:
+def check_message_for_user(links: LinkMessage, user_id: int, chat_id: int) -> bool:
     return links.user_id == user_id and links.chat_id == chat_id

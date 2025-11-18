@@ -3,7 +3,6 @@ from aiogram.filters import Command
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from app.repo.repo import Repo
 from app.commands.save.save import Saver
 from app.handlers.save.state import SaveState
 
@@ -11,8 +10,8 @@ save_router: Router = Router()
 
 
 class SaveHandler:
-    def __init__(self, repo: Repo) -> None:
-        self.saver: Saver = Saver(repo)
+    def __init__(self, saver: Saver) -> None:
+        self.saver: Saver = saver
 
         save_router.message(Command('save'))(self.input_saved_link)
         save_router.message(SaveState.waiting_input_link)(self.save_link)
@@ -32,3 +31,6 @@ class SaveHandler:
         await message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
 
         await state.clear()
+
+    async def stop_handling(self) -> None:
+        pass

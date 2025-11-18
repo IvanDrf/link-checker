@@ -27,7 +27,7 @@ class LinkRepo:
         return len(res.scalars().all())
 
     @connection
-    async def find_links(self, session: AsyncSession, user_id: int) -> Optional[tuple]:
+    async def find_links(self, session: AsyncSession, user_id: int) -> Optional[tuple[Link, ...]]:
         stmt = select(Link).where(Link.user_id == user_id)
 
         res = await session.scalars(stmt)

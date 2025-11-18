@@ -2,7 +2,7 @@ from aio_pika import connect_robust, Message, DeliveryMode
 from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractMessage, AbstractQueue
 
 from app.config.config import Config
-from app.models.rabbitmq import LinkRequest
+from app.models.message import LinkMessage
 
 
 class Producer:
@@ -23,7 +23,7 @@ class Producer:
         if self.conn:
             await self.conn.close()
 
-    async def produce(self, links: LinkRequest) -> None:
+    async def produce(self, links: LinkMessage) -> None:
         message: AbstractMessage = Message(
             body=links.model_dump_json().encode(),
             delivery_mode=DeliveryMode.PERSISTENT

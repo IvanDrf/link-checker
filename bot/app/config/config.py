@@ -25,9 +25,18 @@ class RabbitmqConfig:
 
 
 @dataclass
+class RedisConfig:
+    host: str
+    port: int
+    db: int
+    password: str
+
+
+@dataclass
 class Config:
     app: AppConfig
     rabbitmq: RabbitmqConfig
+    redis: RedisConfig
 
     @classmethod
     def load(cls, config_path: Optional[str]) -> 'Config':
@@ -38,6 +47,7 @@ class Config:
             data: dict[str, Any] = safe_load(config_file)
 
             rabbit: dict[str, Any] = data['rabbitmq']
+            redis: dict[str, Any] = data['redis']
 
             return cls(
                 app=AppConfig(
@@ -51,7 +61,14 @@ class Config:
                     host=rabbit['host'],
                     port=rabbit['port'],
                     cons_queue=rabbit['consumer_queue'],
-                    produs_queue=rabbit['producer_queue'])
+                    produs_queue=rabbit['producer_queue']),
+
+                redis=RedisConfig(
+                    host=redis['host'],
+                    port=redis['port'],
+                    db=redis['db'],
+                    password=redis['password'],
+                )
             )
 
     @staticmethod

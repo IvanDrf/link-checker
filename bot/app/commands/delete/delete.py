@@ -1,12 +1,12 @@
 from typing import Optional
 
-from app.repo.repo import Repo
+from app.repo.abstraction import IRepo
 from app.models.user import User
 
 
 class Deleter:
-    def __init__(self, repo: Repo) -> None:
-        self.repo: Repo = repo
+    def __init__(self, repo: IRepo) -> None:
+        self.repo: IRepo = repo
 
     async def delete_link(self, user_id: int, link: str) -> str:
         user: Optional[User] = await self.repo.find_user(user_id)

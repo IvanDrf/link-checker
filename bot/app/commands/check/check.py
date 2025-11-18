@@ -1,14 +1,15 @@
-from asyncio import timeout
+from asyncio import timeout, create_task
 from typing import Optional, Final
 import logging
 
-from app.config.config import Config
-from app.repo.repo import Repo
+from app.repo.abstraction import IRepo, IRedisRepo
 from app.models.link import Link
-from app.models.rabbitmq import LinkStatus, LinkRequest, LinkResponse
-from app.consumer.consumer import Consumer
-from app.producer.producer import Producer
+from app.models.message import LinkStatus, LinkMessage
+from app.consumer.abstraction import IConsumer
+from app.producer.abstraction import IProducer
 from app.exc.internal import InternalError
+from app.exc.external import ExternalError
+from app.exc.user import UserError
 
 WAITING_TIME: Final = 1
 SENDING_TIME: Final = 2
@@ -16,36 +17,39 @@ RECEIVING_TIME: Final = 5
 
 
 class Checker:
-    def __init__(self, repo: Repo, consumer: Consumer, producer: Producer) -> None:
-        self.repo: Repo = repo
-        self.consumer: Consumer = consumer
-        self.producer: Producer = producer
+    def __init__(self, repo: IRepo, redis_repo: IRedisRepo, consumer: IConsumer, producer: IProducer) -> None:
+        self.repo: IRepo = repo
+        self.redis_repo: IRedisRepo = redis_repo
 
-    @classmethod
-    async def new(cls, cfg: Config, repo: Repo) -> 'Checker':
-        consumer: Consumer = await Consumer.new(cfg)
-        producer: Producer = await Producer.new(cfg)
+        self.consumer: IConsumer = consumer
+        self.producer: IProducer = producer
 
-        return cls(repo, consumer, producer)
+    async def close(self) -> None:
+        await self.redis_repo.close()
+
+        await self.consumer.close()
+        await self.producer.close()
 
     async def check_links(self, user_id: int, chat_id: int) -> str:
         links: Optional[tuple[Link, ...]] = await self.repo.find_links(user_id)
         if links is None:
-            return 'You dont have any saved links'
+            raise UserError('You dont have any saved links')
 
-        links_from_queue: Optional[LinkResponse] = await self.check_for_links_in_queue(user_id, chat_id)
+        links_from_queue: Optional[LinkMessage] = await self.check_for_links_in_queue(user_id, chat_id)
         if not links_from_queue is None:
+            create_task(self.redis_repo.save_links(user_id, links_from_queue))
             return create_links_response(links_from_queue)
 
         await self.send_message_from_producer(links, user_id, chat_id)
 
-        res: Optional[LinkResponse] = await self.get_message_from_consumer(user_id, chat_id)
+        res: Optional[LinkMessage] = await self.get_message_from_consumer(user_id, chat_id)
         if res is None:
-            return 'Cant get message from Link-Checker service'
+            raise ExternalError('Cant get message from Link-Checker service')
 
+        create_task(self.redis_repo.save_links(user_id, res))
         return create_links_response(res)
 
-    async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
+    async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         try:
             return await self._get_message_with_time(user_id, chat_id, WAITING_TIME)
         except InternalError:
@@ -58,7 +62,7 @@ class Checker:
 
     async def send_message_from_producer(self, links: tuple[Link, ...], user_id: int, chat_id: int) -> None:
         try:
-            links_req: LinkRequest = create_links_request(
+            links_req: LinkMessage = create_links_request(
                 links, user_id, chat_id)
 
             await self._send_message_with_time(links_req)
@@ -67,11 +71,11 @@ class Checker:
             logging.error('timeout for sending message from producer')
             raise InternalError('cant send message to Link-Checker service')
 
-    async def _send_message_with_time(self, links_req: LinkRequest) -> None:
+    async def _send_message_with_time(self, links_req: LinkMessage) -> None:
         async with timeout(SENDING_TIME):
             await self.producer.produce(links_req)
 
-    async def get_message_from_consumer(self, user_id: int, chat_id: int) -> Optional[LinkResponse]:
+    async def get_message_from_consumer(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         try:
             return await self._get_message_with_time(user_id, chat_id)
 
@@ -81,18 +85,18 @@ class Checker:
             raise InternalError(
                 'cant receive message from Link-Checker service')
 
-    async def _get_message_with_time(self, user_id: int, chat_id: int, receiving_time: float = RECEIVING_TIME) -> Optional[LinkResponse]:
+    async def _get_message_with_time(self, user_id: int, chat_id: int, receiving_time: float = RECEIVING_TIME) -> Optional[LinkMessage]:
         async with timeout(receiving_time):
             return await self.consumer.consume(user_id, chat_id)
 
 
-def create_links_request(links: tuple[Link, ...], user_id: int, chat_id: int) -> LinkRequest:
-    return LinkRequest(
+def create_links_request(links: tuple[Link, ...], user_id: int, chat_id: int) -> LinkMessage:
+    return LinkMessage(
         user_id=user_id,
         chat_id=chat_id,
         links=tuple(LinkStatus(link=link.link, status=False) for link in links)
     )
 
 
-def create_links_response(links: LinkResponse) -> str:
+def create_links_response(links: LinkMessage) -> str:
     return '\n'.join(f'{link.link} - {'✅' if link.status else '❌'}' for link in links.links)

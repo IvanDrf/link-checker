@@ -19,3 +19,6 @@ class MessageHandler:
             await message.answer('Sorry, but I dont get it, write /help to see available commands', reply_markup=ReplyKeyboardRemove())
         else:
             await message.answer(f'Sorry {message.from_user.first_name}, but I dont get it, write /help to see available commands', reply_markup=ReplyKeyboardRemove())
+
+    async def stop_handling(self) -> None:
+        pass

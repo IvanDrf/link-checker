@@ -4,7 +4,7 @@ from sqlalchemy import text
 from tests.repo.fixture import config
 
 from app.config.config import Config
-from app.database.database import create_engine_for_database
+from app.database.sql import create_engine_for_database
 from app.models.models import TABLES
 
 
