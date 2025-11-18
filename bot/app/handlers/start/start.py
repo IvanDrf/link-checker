@@ -5,7 +5,6 @@ from aiogram.filters.command import CommandStart
 
 from typing import Final
 
-from app.repo.repo import Repo
 from app.commands.start.start import Starter, DEFAULT_ANSWER
 from utils.file_reader import read_file
 
@@ -16,9 +15,9 @@ start_router: Router = Router()
 class StartHandler:
     START_STATIC: Final = 'static/start.html'
 
-    def __init__(self, repo: Repo) -> None:
+    def __init__(self, starter: Starter) -> None:
         self.start_text: str = read_file(StartHandler.START_STATIC)
-        self.starter: Starter = Starter(repo)
+        self.starter: Starter = starter
 
         start_router.message(CommandStart())(self.start)
 
@@ -35,3 +34,6 @@ class StartHandler:
             return
 
         message.answer(message_answer, reply_markup=ReplyKeyboardRemove())
+
+    async def stop_handling(self) -> None:
+        pass

@@ -1,6 +1,6 @@
 import pytest
 
-from app.config.config import Config, AppConfig, RabbitmqConfig
+from app.config.config import Config, AppConfig, RabbitmqConfig, RedisConfig
 
 
 @pytest.fixture(scope='session')
@@ -18,4 +18,5 @@ def config() -> Config:
             port='',
             cons_queue='',
             produs_queue='',
-        ))
+        ),
+        redis=RedisConfig('', 0, 0, ''))

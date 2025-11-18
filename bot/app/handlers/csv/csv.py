@@ -3,16 +3,16 @@ from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from app.csv.csv import create_filename, remove_links_file
-from app.handlers.csv.state import CsvState
+from app.commands.csv.csv import Csver
 
 csv_router: Router = Router()
 
 
 class CsvHandler:
-    def __init__(self) -> None:
+    def __init__(self, csver: Csver) -> None:
+        self.csver: Csver = csver
+
         csv_router.message(Command('csv'))(self.get_csv_report)
-        csv_router.message(CsvState.waiting_for_exit)(self.exit_from_csv_mode)
 
     async def get_csv_report(self, message: Message, state: FSMContext) -> None:
         await state.clear()
@@ -21,18 +21,18 @@ class CsvHandler:
             await message.answer('Cant get your id, please try again', reply_markup=ReplyKeyboardRemove())
             return
 
-        csv_file: FSInputFile = FSInputFile(
-            path=create_filename(message.from_user.id))
-
-        await message.answer_document(csv_file, reply_markup=ReplyKeyboardRemove())
-        await remove_links_file(message.from_user.id)
-
-    async def exit_from_csv_mode(self, message: Message, state: FSMContext) -> None:
-        if message.from_user is None:
-            await message.answer('Cant get your id, please try again', reply_markup=ReplyKeyboardRemove())
+        filename: str = await self.csver.get_csv_report(message.from_user.id)
+        if filename == '':
+            await message.answer('Cant get your checked links, please try /check them again', reply_markup=ReplyKeyboardRemove())
             return
 
-        await remove_links_file(message.from_user.id)
+        await self._send_csv_report(message, filename, message.from_user.id)
 
-        await state.clear()
-        await message.answer('You successfully exit from check mode', reply_markup=ReplyKeyboardRemove())
+    async def _send_csv_report(self, message: Message, filename: str, user_id: int) -> None:
+        csv_file: FSInputFile = FSInputFile(filename)
+
+        await message.answer_document(csv_file, reply_markup=ReplyKeyboardRemove())
+        await self.csver.remove_csv_report(user_id)
+
+    async def stop_handling(self) -> None:
+        pass

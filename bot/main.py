@@ -11,7 +11,10 @@ async def main() -> None:
 
     app: App = await App.new(cfg)
 
-    await app.run()
+    try:
+        await app.run()
+    except KeyboardInterrupt:
+        await app.stop()
 
 if __name__ == '__main__':
     run(main=main())

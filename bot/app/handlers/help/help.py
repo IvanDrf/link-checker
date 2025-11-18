@@ -22,3 +22,6 @@ class HelpHandler:
         await state.clear()
 
         await message.answer(self.help_text, parse_mode='HTML', reply_markup=ReplyKeyboardRemove())
+
+    async def stop_handling(self) -> None:
+        pass

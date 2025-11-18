@@ -5,7 +5,6 @@ from aiogram.fsm.context import FSMContext
 
 from typing import Optional, Final
 
-from app.repo.repo import Repo
 from app.models.link import Link
 from app.commands.my.my import MyLinker
 
@@ -19,8 +18,8 @@ class UserLinksHandler:
         [KeyboardButton(text='/check')]
     ]
 
-    def __init__(self, repo: Repo) -> None:
-        self.linker: MyLinker = MyLinker(repo)
+    def __init__(self, my_linker: MyLinker) -> None:
+        self.linker: MyLinker = my_linker
         self.keyboard: Final = ReplyKeyboardMarkup(
             keyboard=UserLinksHandler.BUTTONS, resize_keyboard=True, one_time_keyboard=True)
 
@@ -39,6 +38,9 @@ class UserLinksHandler:
             return
 
         await message.answer(create_links_list(links), reply_markup=self.keyboard)
+
+    async def stop_handling(self) -> None:
+        pass
 
 
 def create_links_list(links: tuple[Link, ...]) -> str:
