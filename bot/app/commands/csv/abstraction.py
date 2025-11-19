@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class ICsver(Protocol):
+    async def get_csv_report(self, user_id: int) -> str: ...
+    async def remove_csv_report(self, user_id: int) -> None: ...
