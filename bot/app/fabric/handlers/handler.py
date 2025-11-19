@@ -2,7 +2,7 @@ from app.config.config import Config
 from app.handlers.handler.handler import Handler
 from app.handlers.handler.types import Handlers
 
-from app.fabric.dependencies import DependenciesFabric
+from app.fabric.handlers.dependencies import DependenciesFabric
 
 from app.handlers.start.start import StartHandler
 from app.handlers.help.help import HelpHandler

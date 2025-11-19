@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from typing import Optional, Final
 
 from app.models.link import Link
-from app.commands.my.my import MyLinker
+from app.commands.my.abstraction import ILinker
 
 user_links_router: Router = Router()
 
@@ -18,8 +18,8 @@ class UserLinksHandler:
         [KeyboardButton(text='/check')]
     ]
 
-    def __init__(self, my_linker: MyLinker) -> None:
-        self.linker: MyLinker = my_linker
+    def __init__(self, my_linker: ILinker) -> None:
+        self.linker: ILinker = my_linker
         self.keyboard: Final = ReplyKeyboardMarkup(
             keyboard=UserLinksHandler.BUTTONS, resize_keyboard=True, one_time_keyboard=True)
 

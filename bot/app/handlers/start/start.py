@@ -5,7 +5,7 @@ from aiogram.filters.command import CommandStart
 
 from typing import Final
 
-from app.commands.start.start import Starter, DEFAULT_ANSWER
+from app.commands.start.abstraction import IStarter, DEFAULT_ANSWER
 from utils.file_reader import read_file
 
 
@@ -15,9 +15,9 @@ start_router: Router = Router()
 class StartHandler:
     START_STATIC: Final = 'static/start.html'
 
-    def __init__(self, starter: Starter) -> None:
+    def __init__(self, starter: IStarter) -> None:
         self.start_text: str = read_file(StartHandler.START_STATIC)
-        self.starter: Starter = starter
+        self.starter: IStarter = starter
 
         start_router.message(CommandStart())(self.start)
 

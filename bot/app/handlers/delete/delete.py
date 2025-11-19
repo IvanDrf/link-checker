@@ -3,15 +3,15 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from app.commands.delete.delete import Deleter
+from app.commands.delete.abstraction import IDeleter
 from app.handlers.delete.state import DeleteState
 
 delete_router: Router = Router()
 
 
 class DeleteHandler:
-    def __init__(self, deleter: Deleter) -> None:
-        self.deleter: Deleter = deleter
+    def __init__(self, deleter: IDeleter) -> None:
+        self.deleter: IDeleter = deleter
 
         delete_router.message(Command('del'))(self.input_deleted_link)
         delete_router.message(DeleteState.waiting_input_link)(self.delete_link)

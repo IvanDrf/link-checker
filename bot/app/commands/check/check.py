@@ -35,21 +35,21 @@ class Checker:
         if links is None:
             raise UserError('You dont have any saved links')
 
-        links_from_queue: Optional[LinkMessage] = await self.check_for_links_in_queue(user_id, chat_id)
+        links_from_queue: Optional[LinkMessage] = await self._check_for_links_in_queue(user_id, chat_id)
         if not links_from_queue is None:
             create_task(self.redis_repo.save_links(user_id, links_from_queue))
             return create_links_response(links_from_queue)
 
-        await self.send_message_from_producer(links, user_id, chat_id)
+        await self._send_message_from_producer(links, user_id, chat_id)
 
-        res: Optional[LinkMessage] = await self.get_message_from_consumer(user_id, chat_id)
+        res: Optional[LinkMessage] = await self._get_message_from_consumer(user_id, chat_id)
         if res is None:
             raise ExternalError('Cant get message from Link-Checker service')
 
         create_task(self.redis_repo.save_links(user_id, res))
         return create_links_response(res)
 
-    async def check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
+    async def _check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         try:
             return await self._get_message_with_time(user_id, chat_id, WAITING_TIME)
         except InternalError:
@@ -60,7 +60,7 @@ class Checker:
 
         return None
 
-    async def send_message_from_producer(self, links: tuple[Link, ...], user_id: int, chat_id: int) -> None:
+    async def _send_message_from_producer(self, links: tuple[Link, ...], user_id: int, chat_id: int) -> None:
         try:
             links_req: LinkMessage = create_links_request(
                 links, user_id, chat_id)
@@ -75,7 +75,7 @@ class Checker:
         async with timeout(SENDING_TIME):
             await self.producer.produce(links_req)
 
-    async def get_message_from_consumer(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
+    async def _get_message_from_consumer(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         try:
             return await self._get_message_with_time(user_id, chat_id)
 

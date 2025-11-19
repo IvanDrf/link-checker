@@ -1,0 +1,6 @@
+from typing import Protocol
+
+
+class IChecker(Protocol):
+    async def check_links(self, user_id: int, chat_id: int) -> str: ...
+    async def close(self) -> None: ...

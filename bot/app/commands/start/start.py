@@ -2,8 +2,7 @@ from typing import Optional, Final
 
 from app.repo.abstraction import IRepo
 from app.models.user import User
-
-DEFAULT_ANSWER: Final = ''
+from app.commands.start.abstraction import DEFAULT_ANSWER
 
 
 class Starter:

@@ -3,10 +3,21 @@ from dataclasses import dataclass
 from app.config.config import Config
 
 from app.commands.start.start import Starter
+from app.commands.start.abstraction import IStarter
+
 from app.commands.save.save import Saver
+from app.commands.save.abstraction import ISaver
+
 from app.commands.delete.delete import Deleter
+from app.commands.delete.abstraction import IDeleter
+
 from app.commands.my.my import MyLinker
+from app.commands.my.abstraction import ILinker
+
+from app.commands.check.abstraction import IChecker
 from app.commands.check.check import Checker
+
+from app.commands.csv.abstraction import ICsver
 from app.commands.csv.csv import Csver
 
 from app.fabric.repo import RepoFabric
@@ -17,12 +28,12 @@ from app.fabric.consumer import ConsumerFabric
 
 @dataclass
 class Dependencies:
-    starter: Starter
-    saver: Saver
-    deleter: Deleter
-    my_linker: MyLinker
-    checker: Checker
-    csver: Csver
+    starter: IStarter
+    saver: ISaver
+    deleter: IDeleter
+    my_linker: ILinker
+    checker: IChecker
+    csver: ICsver
 
 
 class DependenciesFabric:
@@ -30,12 +41,12 @@ class DependenciesFabric:
     async def create_handler_dependencies(cfg: Config) -> Dependencies:
         repo, redis_repo, producer, consumer = await DependenciesFabric._create_dependencies(cfg)
 
-        starter: Starter = Starter(repo)
-        saver: Saver = Saver(repo)
-        deleter: Deleter = Deleter(repo)
-        my_linker: MyLinker = MyLinker(repo)
-        checker: Checker = Checker(repo, redis_repo, consumer, producer)
-        csver: Csver = Csver(redis_repo)
+        starter: IStarter = Starter(repo)
+        saver: ISaver = Saver(repo)
+        deleter: IDeleter = Deleter(repo)
+        my_linker: ILinker = MyLinker(repo)
+        checker: IChecker = Checker(repo, redis_repo, consumer, producer)
+        csver: ICsver = Csver(redis_repo)
 
         return Dependencies(starter, saver, deleter, my_linker, checker, csver)
 
