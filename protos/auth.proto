@@ -7,6 +7,8 @@ option go_package="pkg/auth-api";
 service Auth {
     rpc Register(RegisterRequest) returns (RegisterResponse);
     rpc Login(LoginRequest) returns (LoginResponse);
+    rpc VerifyEmail(VerificationRequest) returns (VerificationResponse);
+
     rpc RefreshTokens(RefreshRequest) returns (RefreshResponse);
 }
 
@@ -17,6 +19,7 @@ message RegisterRequest {
 
 message RegisterResponse {
     int64 user_id = 1;
+    string verif_token = 2;
 }
 
 message LoginRequest {
@@ -27,6 +30,14 @@ message LoginRequest {
 message LoginResponse {
     string access = 1;
     string refresh = 2;
+}
+
+message VerificationRequest {
+    string verif_token = 1;
+}
+
+message VerificationResponse {
+    string error = 1;
 }
 
 message RefreshRequest {
