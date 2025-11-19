@@ -2,6 +2,8 @@ github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak
 github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251026094944-57aa81aff904 h1:3yIChJr5Zf8ii/qnlRgEyZ0QznlIg8njbBwAsbm5MOQ=
 github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251026094944-57aa81aff904/go.mod h1:TzyXYofpK+BQfy2CPAR0peuUrWCraiWcOYOWMGZzDZk=
+github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251119214041-24b97c41b2b3 h1:CqpRchT7P9bnOBFvocEKPDvWn3z0bk0ogWUmDWHkxeE=
+github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251119214041-24b97c41b2b3/go.mod h1:TzyXYofpK+BQfy2CPAR0peuUrWCraiWcOYOWMGZzDZk=
 github.com/IvanDrf/link-checker/pkg/checker-api v0.0.0-20251026094944-57aa81aff904 h1:v4S+8zZWlI+XuOa2HZSGi3ohy4fadmuduYnrUBNQ3WM=
 github.com/IvanDrf/link-checker/pkg/checker-api v0.0.0-20251026094944-57aa81aff904/go.mod h1:97buUl0xkDStWDT5gbOLFi3ujXp6kq9QPkBlLHYvHh4=
 github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=

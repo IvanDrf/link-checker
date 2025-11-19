@@ -15,7 +15,7 @@ require (
 
 require (
 	github.com/BurntSushi/toml v1.2.1 // indirect
-	github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251119202340-0e5cb19a257e // direct
+	github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251119214041-24b97c41b2b3 // direct
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
