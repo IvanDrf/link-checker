@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from typing import Final
 from time import time
 
-from app.commands.check.check import Checker
+from app.commands.check.abstraction import IChecker
 from app.exc.internal import InternalError
 from app.exc.external import ExternalError
 from app.exc.user import UserError
@@ -19,8 +19,8 @@ class CheckHandler:
         [KeyboardButton(text='/csv')]
     ]
 
-    def __init__(self, checker: Checker) -> None:
-        self.checker: Checker = checker
+    def __init__(self, checker: IChecker) -> None:
+        self.checker: IChecker = checker
 
         check_router.message(Command('check'))(self.check_links)
 

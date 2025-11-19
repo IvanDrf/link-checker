@@ -1,7 +1,7 @@
 from aiogram import Bot
 
 from app.handlers.handler.handler import Handler
-from app.fabric.handler import HandlerFabric
+from app.fabric.handlers.handler import HandlerFabric
 from app.config.config import Config
 
 

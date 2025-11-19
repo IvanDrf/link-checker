@@ -3,14 +3,14 @@ from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from app.commands.csv.csv import Csver
+from app.commands.csv.abstraction import ICsver
 
 csv_router: Router = Router()
 
 
 class CsvHandler:
-    def __init__(self, csver: Csver) -> None:
-        self.csver: Csver = csver
+    def __init__(self, csver: ICsver) -> None:
+        self.csver: ICsver = csver
 
         csv_router.message(Command('csv'))(self.get_csv_report)
 
