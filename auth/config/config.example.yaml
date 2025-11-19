@@ -1,6 +1,11 @@
 env: local
 level: debug
-storage_path: ../auth/storage/sqlite/auth.db
+storage_path: ../auth/storage/sqlite/auth.db\
+redis:
+  host: localhost
+  port: 6379
+  db: 2
+  password: "password"
 grpc:
   port: 50051
 jwt:

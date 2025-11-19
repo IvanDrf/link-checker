@@ -10,9 +10,10 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" `
-	LoggerLevel string `yaml:"level"`
-	StoragePath string `yaml:"storage_path" `
+	Env         string      `yaml:"env" `
+	LoggerLevel string      `yaml:"level"`
+	StoragePath string      `yaml:"storage_path" `
+	Redis       RedisConfig `yaml:"redis"`
 
 	GRPC  GRPCConfig  `yaml:"grpc" `
 	JWT   JWTConfig   `yaml:"jwt"`
@@ -34,6 +35,14 @@ type EmailConfig struct {
 	HostAddr string `yaml:"host_addr"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
+}
+
+type RedisConfig struct {
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
+
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
 }
 
 const defaultPath = "../auth/config/config.yaml"

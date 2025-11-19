@@ -10,6 +10,7 @@ import (
 	"github.com/IvanDrf/auth/internal/config"
 	"github.com/IvanDrf/auth/internal/database"
 	auth "github.com/IvanDrf/auth/internal/grpc"
+	"github.com/redis/go-redis/v9"
 
 	"google.golang.org/grpc"
 )
@@ -18,8 +19,8 @@ type App struct {
 	gRPCserver *grpc.Server
 	port       string
 
-	db          *sql.DB
-	storagePath string
+	db  *sql.DB
+	rdb *redis.Client
 
 	logger *slog.Logger
 }
@@ -28,14 +29,16 @@ func New(cfg *config.Config, log *slog.Logger) *App {
 	gRPCServer := grpc.NewServer()
 
 	app := &App{
-		gRPCserver:  gRPCServer,
-		port:        cfg.GRPC.Port,
-		storagePath: cfg.StoragePath,
-		db:          database.InitDatabase(cfg),
-		logger:      log,
+		gRPCserver: gRPCServer,
+		port:       cfg.GRPC.Port,
+
+		db:  database.InitDatabase(cfg),
+		rdb: database.InitRedisDatabase(cfg),
+
+		logger: log,
 	}
 
-	auth.Register(gRPCServer, cfg, app.db, log)
+	auth.Register(gRPCServer, cfg, app.db, app.rdb, log)
 	return app
 }
 
@@ -55,5 +58,7 @@ func (a *App) Run() error {
 
 func (a *App) Stop() {
 	defer a.db.Close()
+	defer a.rdb.Close()
+
 	a.gRPCserver.GracefulStop()
 }

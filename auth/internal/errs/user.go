@@ -19,3 +19,9 @@ func ErrCantFindUserInDB() error {
 func ErrIncorrectPassword() error {
 	return Error{Msg: "password is incorrect"}
 }
+
+func ErrCantVerificateUser(email string) error {
+	return Error{
+		Msg: "cant verificate user with email: %s",
+	}
+}
