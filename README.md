@@ -1,5 +1,4 @@
-# link-checker
-The project ***has not been completed yet***, and here the ***future*** project architecture
+# Golang Link-Checker
 
 ## Microservice Architecture
 >[!TIP]
