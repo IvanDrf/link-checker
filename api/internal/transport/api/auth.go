@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/IvanDrf/api-gateway/internal/lib/email"
+	veriflink "github.com/IvanDrf/api-gateway/internal/lib/verif_link"
 	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	auth_api "github.com/IvanDrf/link-checker/pkg/auth-api"
 
@@ -31,9 +32,10 @@ type authGateway struct {
 	authClient auth_api.AuthClient
 	authConn   *grpc.ClientConn
 
-	jwter       jwt.JWTer
-	cookier     cookies.Cookier
-	emailSender email.EmailSender
+	jwter        jwt.JWTer
+	cookier      cookies.Cookier
+	emailSender  email.EmailSender
+	verifCreator veriflink.VerifLinkCreator
 
 	logger *slog.Logger
 }
@@ -45,9 +47,10 @@ func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
 		authClient: authClient,
 		authConn:   authConn,
 
-		jwter:       jwt.NewJWTer(cfg),
-		cookier:     cookies.NewCookier(),
-		emailSender: email.NewEmailSender(cfg),
+		jwter:        jwt.NewJWTer(cfg),
+		cookier:      cookies.NewCookier(),
+		emailSender:  email.NewEmailSender(cfg),
+		verifCreator: veriflink.NewVerifLinkCreator(cfg, "api/verify"),
 
 		logger: logger,
 	}
@@ -99,14 +102,35 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 
-		json.NewEncoder(w).Encode(err)
+		errs.HandlerGrpcError(w, err)
 		return
 	}
 
-	go a.emailSender.SendVerificationEmail(user.Email, resp.VerifToken)
+	go a.emailSender.SendVerificationEmail(user.Email, a.verifCreator.CreateVerificationLink(resp.VerifToken))
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)
+}
+
+func (a *authGateway) VerifyEmail(w http.ResponseWriter, r *http.Request) {
+	verifToken := r.URL.Query().Get("token")
+	if verifToken == "" {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), CtxTime)
+	defer cancel()
+
+	_, err := a.authClient.VerifyEmail(ctx, &auth_api.VerificationRequest{
+		VerifToken: verifToken,
+	})
+	if err != nil {
+		errs.HandlerGrpcError(w, err)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (a *authGateway) Login(w http.ResponseWriter, r *http.Request) {

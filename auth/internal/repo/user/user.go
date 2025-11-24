@@ -31,10 +31,10 @@ func (r *userRepo) AddUser(ctx context.Context, user *models.User) (int64, error
 }
 
 func (r *userRepo) FindUserByEmail(ctx context.Context, email string) (*models.User, error) {
-	query := fmt.Sprintf("SELECT user_id, email, password FROM %s WHERE email = ?", repo.UsersTable)
+	query := fmt.Sprintf("SELECT user_id, email, password, verificated FROM %s WHERE email = ?", repo.UsersTable)
 
 	user := models.User{}
-	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.Id, &user.Email, &user.Password)
+	err := r.db.QueryRowContext(ctx, query, email).Scan(&user.Id, &user.Email, &user.Password, &user.Verificated)
 	if err != nil {
 		return nil, err
 	}
@@ -45,6 +45,6 @@ func (r *userRepo) FindUserByEmail(ctx context.Context, email string) (*models.U
 func (r *userRepo) UpdateUserVerification(ctx context.Context, email string) error {
 	query := fmt.Sprintf("UPDATE %s SET verificated = true WHERE email = ?", repo.UsersTable)
 
-	_, err := r.db.ExecContext(ctx, query, true)
+	_, err := r.db.ExecContext(ctx, query, email)
 	return err
 }

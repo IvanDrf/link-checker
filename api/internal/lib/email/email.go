@@ -15,6 +15,9 @@ type EmailSender interface {
 }
 
 type emailSender struct {
+	addr string
+	port string
+
 	hostAddr string
 	username string
 	password string
@@ -22,6 +25,9 @@ type emailSender struct {
 
 func NewEmailSender(cfg *config.Config) EmailSender {
 	return &emailSender{
+		addr: cfg.Api.Addr,
+		port: cfg.Api.Port,
+
 		hostAddr: cfg.Email.HostAddr,
 		username: cfg.Email.Username,
 		password: cfg.Email.Password,
