@@ -23,13 +23,12 @@ func NewTokenRepo(rdb *redis.Client) repo.TokenRepo {
 
 func (r *tokenRepo) AddToken(ctx context.Context, token, email string) error {
 	err := r.rdb.Set(ctx, token, email, timeToLive).Err()
-
 	return err
 }
 
 func (r *tokenRepo) GetEmailByToken(ctx context.Context, token string) (string, error) {
 	email, err := r.rdb.Get(ctx, token).Result()
-	if err != redis.Nil {
+	if err == redis.Nil {
 		return "", errs.ErrVerifTokenDoesntExist(token)
 	}
 

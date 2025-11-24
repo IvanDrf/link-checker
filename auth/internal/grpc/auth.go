@@ -66,6 +66,25 @@ func (s *serverAPI) Register(ctx context.Context, req *auth_api.RegisterRequest)
 	}, nil
 }
 
+func (s *serverAPI) VerifyEmail(ctx context.Context, req *auth_api.VerificationRequest) (*auth_api.VerificationResponse, error) {
+	err := s.auther.VerifyEmail(ctx, req.GetVerifToken())
+	if errors.Is(err, errs.ErrVerifTokenDoesntExist(req.GetVerifToken())) {
+		return nil, status.Error(codes.InvalidArgument, err.Error())
+	}
+
+	if errors.Is(err, errs.ErrCantGetVerifTokenFromRedis(req.GetVerifToken())) {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	return &auth_api.VerificationResponse{
+		Error: "",
+	}, nil
+}
+
 func (s *serverAPI) Login(ctx context.Context, req *auth_api.LoginRequest) (*auth_api.LoginResponse, error) {
 	user := &models.User{
 		Email:    req.GetEmail(),

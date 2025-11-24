@@ -1,10 +1,11 @@
 package api
 
 import (
-	"github.com/IvanDrf/api-gateway/internal/config"
 	"log/slog"
 	"net/http"
 	"time"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
 )
 
 const (
@@ -18,6 +19,7 @@ type ApiGateway interface {
 
 type AuthGateway interface {
 	Register(w http.ResponseWriter, r *http.Request)
+	VerifyEmail(w http.ResponseWriter, r *http.Request)
 	Login(w http.ResponseWriter, r *http.Request)
 	RefreshTokens(w http.ResponseWriter, r *http.Request)
 

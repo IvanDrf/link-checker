@@ -21,9 +21,7 @@ func ErrIncorrectPassword() error {
 }
 
 func ErrCantVerificateUser(email string) error {
-	return Error{
-		Msg: "cant verificate user with email: %s",
-	}
+	return Error{Msg: "cant verificate user with email: %s"}
 }
 
 func ErrEmailIsNotVerificated() error {

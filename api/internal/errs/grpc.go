@@ -11,10 +11,12 @@ import (
 func HandlerGrpcError(w http.ResponseWriter, err error) {
 	st, ok := status.FromError(err)
 	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(ErrInternalServer())
 		return
 	}
 
+	w.WriteHeader(grpcAndHttpCodes[st.Code()])
 	json.NewEncoder(w).Encode(Error{
 		Code: grpcAndHttpCodes[st.Code()],
 		Msg:  st.Message(),

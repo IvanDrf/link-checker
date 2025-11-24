@@ -3,7 +3,6 @@ package authService
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"log/slog"
 
 	"github.com/IvanDrf/auth/internal/config"
@@ -82,12 +81,8 @@ func (a *authService) Register(ctx context.Context, user *models.User) (*models.
 
 func (a *authService) VerifyEmail(ctx context.Context, link string) error {
 	email, err := a.links.GetEmailByToken(ctx, link)
-	if errors.Is(err, errs.ErrVerifTokenDoesntExist(link)) {
+	if err != nil {
 		return err
-	}
-
-	if errors.Is(err, errs.ErrCantGetVerifTokenFromRedis(link)) || err != nil {
-		return errs.ErrCantGetVerifTokenFromRedis(link)
 	}
 
 	err = a.users.UpdateUserVerification(ctx, email)
