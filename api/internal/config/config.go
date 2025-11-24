@@ -2,9 +2,10 @@ package config
 
 import (
 	"flag"
-	"github.com/IvanDrf/api-gateway/internal/errs"
 	"log"
 	"os"
+
+	"github.com/IvanDrf/api-gateway/internal/errs"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -16,6 +17,8 @@ type Config struct {
 	Api     ApiConfig     `yaml:"api"`
 	Auth    AuthConfig    `yaml:"auth"`
 	Checker CheckerConfig `yaml:"checker"`
+
+	Email EmailConfig `yaml:"email"`
 }
 
 type ApiConfig struct {
@@ -36,6 +39,12 @@ type JWTConfig struct {
 type CheckerConfig struct {
 	Addr string `yaml:"addr"`
 	Port int    `yaml:"port"`
+}
+
+type EmailConfig struct {
+	HostAddr string `yaml:"host_addr"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 const defaultPath = "config/config.yaml"

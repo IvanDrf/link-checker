@@ -6,8 +6,8 @@ import (
 	"log"
 	"net/smtp"
 
-	"github.com/IvanDrf/auth/internal/config"
-	"github.com/IvanDrf/auth/internal/errs"
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/errs"
 )
 
 type EmailSender interface {

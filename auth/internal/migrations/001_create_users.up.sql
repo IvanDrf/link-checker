@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS users(
 		user_id INTEGER PRIMARY KEY,
 		email TEXT NOT NULL UNIQUE,
+		verificated BOOLEAN NOT NULL DEFAULT false,
 		password TEXT NOT NULL
 );

@@ -3,7 +3,7 @@ module github.com/IvanDrf/api-gateway
 go 1.25.1
 
 require (
-	github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251026094944-57aa81aff904
+	github.com/IvanDrf/link-checker/pkg/auth-api v0.0.0-20251119214041-24b97c41b2b3
 	github.com/IvanDrf/link-checker/pkg/checker-api v0.0.0-20251026094944-57aa81aff904
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/ilyakaznacheev/cleanenv v1.5.0

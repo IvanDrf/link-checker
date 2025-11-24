@@ -41,3 +41,10 @@ func (r *userRepo) FindUserByEmail(ctx context.Context, email string) (*models.U
 
 	return &user, nil
 }
+
+func (r *userRepo) UpdateUserVerification(ctx context.Context, email string) error {
+	query := fmt.Sprintf("UPDATE %s SET verificated = true WHERE email = ?", repo.UsersTable)
+
+	_, err := r.db.ExecContext(ctx, query, true)
+	return err
+}

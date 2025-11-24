@@ -12,6 +12,7 @@ import (
 	"github.com/IvanDrf/auth/internal/service"
 	authService "github.com/IvanDrf/auth/internal/service/auth"
 	auth_api "github.com/IvanDrf/link-checker/pkg/auth-api"
+	"github.com/redis/go-redis/v9"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -23,9 +24,9 @@ type serverAPI struct {
 	auth_api.UnimplementedAuthServer
 }
 
-func Register(gRPC *grpc.Server, cfg *config.Config, db *sql.DB, log *slog.Logger) {
+func Register(gRPC *grpc.Server, cfg *config.Config, db *sql.DB, rdb *redis.Client, log *slog.Logger) {
 	auth_api.RegisterAuthServer(gRPC, &serverAPI{
-		auther: authService.NewAuthService(cfg, db, log),
+		auther: authService.NewAuthService(cfg, db, rdb, log),
 	})
 }
 
@@ -36,7 +37,9 @@ func (s *serverAPI) Register(ctx context.Context, req *auth_api.RegisterRequest)
 	}
 
 	var err error
-	user, err = s.auther.Register(ctx, user)
+	var verifToken string
+
+	user, verifToken, err = s.auther.Register(ctx, user)
 	if errors.Is(err, errs.ErrInvalidEmail()) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
@@ -49,8 +52,17 @@ func (s *serverAPI) Register(ctx context.Context, req *auth_api.RegisterRequest)
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
+	if errors.Is(err, errs.ErrCantCreateVerifToken()) {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if errors.Is(err, errs.ErrCantSaveVerifToken()) {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
 	return &auth_api.RegisterResponse{
-		UserId: user.Id,
+		UserId:     user.Id,
+		VerifToken: verifToken,
 	}, nil
 }
 
@@ -61,16 +73,16 @@ func (s *serverAPI) Login(ctx context.Context, req *auth_api.LoginRequest) (*aut
 	}
 
 	access, refresh, err := s.auther.Login(ctx, user)
-	if errors.Is(err, errs.ErrCantFindUserInDB()) {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
-	}
-
 	if errors.Is(err, errs.ErrIncorrectPassword()) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	if errors.Is(err, errs.ErrCantCreateJWT()) {
 		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
 	return &auth_api.LoginResponse{
