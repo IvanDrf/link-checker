@@ -12,7 +12,3 @@ jwt:
   key: jwt_secret_key
   access_exp_time: 15m
   refresh_exp_time: 10080m
-email:
-  host_addr: smtp.gmail.com:587
-  username: username
-  password: "password"

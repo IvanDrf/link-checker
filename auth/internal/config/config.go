@@ -15,9 +15,8 @@ type Config struct {
 	StoragePath string      `yaml:"storage_path" `
 	Redis       RedisConfig `yaml:"redis"`
 
-	GRPC  GRPCConfig  `yaml:"grpc" `
-	JWT   JWTConfig   `yaml:"jwt"`
-	Email EmailConfig `yaml:"email"`
+	GRPC GRPCConfig `yaml:"grpc" `
+	JWT  JWTConfig  `yaml:"jwt"`
 }
 
 type GRPCConfig struct {
@@ -29,12 +28,6 @@ type JWTConfig struct {
 
 	AccessExpTime  time.Duration `yaml:"access_exp_time"`
 	RefreshExpTime time.Duration `yaml:"refresh_exp_time"`
-}
-
-type EmailConfig struct {
-	HostAddr string `yaml:"host_addr"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
 }
 
 type RedisConfig struct {

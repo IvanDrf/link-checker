@@ -14,3 +14,8 @@ auth:
 checker:
   addr: localhost
   port: 50052
+
+email:
+  host_addr: smtp.gmail.com:587
+  username: username
+  password: "password"

@@ -8,6 +8,7 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/IvanDrf/api-gateway/internal/lib/email"
 	"github.com/IvanDrf/api-gateway/internal/transport/jwt"
 	auth_api "github.com/IvanDrf/link-checker/pkg/auth-api"
 
@@ -30,8 +31,9 @@ type authGateway struct {
 	authClient auth_api.AuthClient
 	authConn   *grpc.ClientConn
 
-	jwter   jwt.JWTer
-	cookier cookies.Cookier
+	jwter       jwt.JWTer
+	cookier     cookies.Cookier
+	emailSender email.EmailSender
 
 	logger *slog.Logger
 }
@@ -43,8 +45,9 @@ func newAuthGateway(cfg *config.Config, logger *slog.Logger) AuthGateway {
 		authClient: authClient,
 		authConn:   authConn,
 
-		jwter:   jwt.NewJWTer(cfg),
-		cookier: cookies.NewCookier(),
+		jwter:       jwt.NewJWTer(cfg),
+		cookier:     cookies.NewCookier(),
+		emailSender: email.NewEmailSender(cfg),
 
 		logger: logger,
 	}
@@ -99,6 +102,8 @@ func (a *authGateway) Register(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(err)
 		return
 	}
+
+	go a.emailSender.SendVerificationEmail(user.Email, resp.VerifToken)
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(resp)

@@ -25,3 +25,7 @@ func ErrCantVerificateUser(email string) error {
 		Msg: "cant verificate user with email: %s",
 	}
 }
+
+func ErrEmailIsNotVerificated() error {
+	return Error{Msg: "user with this email is not verificated"}
+}

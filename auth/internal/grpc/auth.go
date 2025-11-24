@@ -73,16 +73,16 @@ func (s *serverAPI) Login(ctx context.Context, req *auth_api.LoginRequest) (*aut
 	}
 
 	access, refresh, err := s.auther.Login(ctx, user)
-	if errors.Is(err, errs.ErrCantFindUserInDB()) {
-		return nil, status.Error(codes.Unauthenticated, err.Error())
-	}
-
 	if errors.Is(err, errs.ErrIncorrectPassword()) {
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
 	if errors.Is(err, errs.ErrCantCreateJWT()) {
 		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	if err != nil {
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
 	return &auth_api.LoginResponse{

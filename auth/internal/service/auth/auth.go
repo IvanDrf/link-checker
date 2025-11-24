@@ -8,7 +8,6 @@ import (
 
 	"github.com/IvanDrf/auth/internal/config"
 	"github.com/IvanDrf/auth/internal/errs"
-	sender "github.com/IvanDrf/auth/internal/lib/email"
 	"github.com/IvanDrf/auth/internal/lib/jwter"
 	"github.com/IvanDrf/auth/internal/models"
 	"github.com/IvanDrf/auth/internal/repo"
@@ -25,8 +24,7 @@ type authService struct {
 	users repo.UserRepo
 	links repo.TokenRepo
 
-	jwter       jwter.JWTer
-	emailSender sender.EmailSender
+	jwter jwter.JWTer
 
 	hasher         hasher.PswHasher
 	emailValidator email.EmailValidator
@@ -40,8 +38,7 @@ func NewAuthService(cfg *config.Config, db *sql.DB, rdb *redis.Client, logger *s
 		users: userRepo.NewRepo(db),
 		links: tokenRepo.NewTokenRepo(rdb),
 
-		jwter:       jwter.NewJWTer(cfg),
-		emailSender: sender.NewEmailSender(cfg),
+		jwter: jwter.NewJWTer(cfg),
 
 		hasher:         hasher.NewPswHasher(),
 		emailValidator: email.NewValidator(),
@@ -110,6 +107,10 @@ func (a *authService) Login(ctx context.Context, user *models.User) (string, str
 
 	if !a.hasher.ComparePassword(userInDB.Password, user.Password) {
 		return "", "", errs.ErrIncorrectPassword()
+	}
+
+	if !userInDB.Verificated {
+		return "", "", errs.ErrEmailIsNotVerificated()
 	}
 
 	access, refresh, err := a.jwter.GenerateTokens(userInDB.Id)
