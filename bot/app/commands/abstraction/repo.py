@@ -2,7 +2,7 @@ from typing import Protocol, Optional
 
 from app.models.user import User
 from app.models.link import Link
-from app.models.message import LinkMessage, LinkStatus
+from app.schemas.message import LinkMessage, LinkStatus
 
 
 class IRepo(Protocol):

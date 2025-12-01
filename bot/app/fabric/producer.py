@@ -1,4 +1,4 @@
-from app.producer.abstraction import IProducer
+from app.commands.abstraction.producer import IProducer
 from app.producer.producer import Producer
 from app.config.config import Config
 

@@ -3,7 +3,7 @@ from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
-from app.commands.delete.abstraction import IDeleter
+from app.handlers.delete.abstraction import IDeleter
 from app.handlers.delete.state import DeleteState
 
 delete_router: Router = Router()

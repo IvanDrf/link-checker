@@ -2,22 +2,19 @@ from dataclasses import dataclass
 
 from app.config.config import Config
 
+
+from app.handlers.start.abstraction import IStarter
+from app.handlers.save.abstraction import ISaver
+from app.handlers.delete.abstraction import IDeleter
+from app.handlers.my.abstraction import ILinker
+from app.handlers.check.abstraction import IChecker
+from app.handlers.csv.abstraction import ICsver
+
 from app.commands.start.start import Starter
-from app.commands.start.abstraction import IStarter
-
 from app.commands.save.save import Saver
-from app.commands.save.abstraction import ISaver
-
 from app.commands.delete.delete import Deleter
-from app.commands.delete.abstraction import IDeleter
-
 from app.commands.my.my import MyLinker
-from app.commands.my.abstraction import ILinker
-
-from app.commands.check.abstraction import IChecker
 from app.commands.check.check import Checker
-
-from app.commands.csv.abstraction import ICsver
 from app.commands.csv.csv import Csver
 
 from app.fabric.repo import RepoFabric

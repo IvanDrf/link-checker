@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from app.commands.save.abstraction import ISaver
+from app.handlers.save.abstraction import ISaver
 from app.handlers.save.state import SaveState
 
 save_router: Router = Router()

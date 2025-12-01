@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from typing import Optional, Final
 
 from app.models.link import Link
-from app.commands.my.abstraction import ILinker
+from app.handlers.my.abstraction import ILinker
 
 user_links_router: Router = Router()
 

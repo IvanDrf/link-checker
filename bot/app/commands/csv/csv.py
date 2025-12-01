@@ -1,7 +1,7 @@
 import logging
 
-from app.repo.abstraction import IRedisRepo
-from app.models.message import LinkStatus
+from app.commands.abstraction.repo import IRedisRepo
+from app.schemas.message import LinkStatus
 from app.exc.internal import InternalError
 from app.csv.csv import write_links, remove_links_file
 

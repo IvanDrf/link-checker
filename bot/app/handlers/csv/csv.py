@@ -3,7 +3,7 @@ from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
 
-from app.commands.csv.abstraction import ICsver
+from app.handlers.csv.abstraction import ICsver
 
 csv_router: Router = Router()
 

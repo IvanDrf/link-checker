@@ -1,6 +1,6 @@
 from typing import Protocol, Optional
 
-from app.models.message import LinkMessage
+from app.schemas.message import LinkMessage
 
 
 class IConsumer(Protocol):

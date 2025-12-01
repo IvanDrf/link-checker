@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from app.models.message import LinkMessage
+from app.schemas.message import LinkMessage
 
 
 class IProducer(Protocol):
