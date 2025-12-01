@@ -5,7 +5,7 @@ from aiogram.filters.command import CommandStart
 
 from typing import Final
 
-from app.commands.start.abstraction import IStarter, DEFAULT_ANSWER
+from app.handlers.start.abstraction import IStarter, DEFAULT_ANSWER
 from utils.file_reader import read_file
 
 

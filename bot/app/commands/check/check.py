@@ -2,11 +2,13 @@ from asyncio import timeout, create_task
 from typing import Optional, Final
 import logging
 
-from app.repo.abstraction import IRepo, IRedisRepo
+from app.commands.abstraction.repo import IRepo, IRedisRepo
+from app.commands.abstraction.consumer import IConsumer
+from app.commands.abstraction.producer import IProducer
+
 from app.models.link import Link
-from app.models.message import LinkStatus, LinkMessage
-from app.consumer.abstraction import IConsumer
-from app.producer.abstraction import IProducer
+from app.schemas.message import LinkStatus, LinkMessage
+
 from app.exc.internal import InternalError
 from app.exc.external import ExternalError
 from app.exc.user import UserError

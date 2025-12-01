@@ -1,6 +1,6 @@
 from typing import Optional
 
-from app.repo.abstraction import IRepo
+from app.commands.abstraction.repo import IRepo
 from app.models.user import User
 
 

@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from typing import Final
 from time import time
 
-from app.commands.check.abstraction import IChecker
+from app.handlers.check.abstraction import IChecker
 from app.exc.internal import InternalError
 from app.exc.external import ExternalError
 from app.exc.user import UserError

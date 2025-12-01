@@ -3,7 +3,7 @@ import logging
 from json import dumps
 from typing import Optional
 
-from app.models.message import LinkMessage, LinkStatus, LinkTuple
+from app.schemas.message import LinkMessage, LinkStatus, LinkTuple
 from app.exc.internal import InternalError
 
 

@@ -2,7 +2,7 @@ from aio_pika import connect_robust, Message, DeliveryMode
 from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractMessage, AbstractQueue
 
 from app.config.config import Config
-from app.models.message import LinkMessage
+from app.schemas.message import LinkMessage
 
 
 class Producer:

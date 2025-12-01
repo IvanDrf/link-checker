@@ -5,7 +5,7 @@ from typing import Final
 
 import logging
 
-from app.models.message import LinkStatus
+from app.schemas.message import LinkStatus
 
 CSV_DIR: Final = 'csv'
 

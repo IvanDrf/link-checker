@@ -1,4 +1,4 @@
-from app.consumer.abstraction import IConsumer
+from app.commands.abstraction.consumer import IConsumer
 from app.consumer.consumer import Consumer
 from app.config.config import Config
 

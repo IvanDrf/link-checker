@@ -4,35 +4,14 @@ from yaml import safe_load
 from typing import Optional
 from argparse import ArgumentParser, Namespace
 
+from app.config.app import AppConfig
+from app.config.rabbitmq import RabbitmqConfig
+from app.config.redis import RedisConfig
+
 DEFAULT_CONFIG_PATH: Final = 'config/config.yaml'
 
 
-@dataclass
-class AppConfig:
-    logger_level: str
-    bot_token: str
-    storage_path: str
-
-
-@dataclass
-class RabbitmqConfig:
-    username: str
-    password: str
-    host: str
-    port: str
-    cons_queue: str
-    produs_queue: str
-
-
-@dataclass
-class RedisConfig:
-    host: str
-    port: int
-    db: int
-    password: str
-
-
-@dataclass
+@dataclass(frozen=True)
 class Config:
     app: AppConfig
     rabbitmq: RabbitmqConfig
@@ -43,6 +22,10 @@ class Config:
         if config_path is None or config_path == '':
             config_path = DEFAULT_CONFIG_PATH
 
+        return Config.read_config(config_path)
+
+    @classmethod
+    def read_config(cls, config_path: str) -> 'Config':
         with open(config_path, 'r') as config_file:
             data: dict[str, Any] = safe_load(config_file)
 
@@ -50,25 +33,9 @@ class Config:
             redis: dict[str, Any] = data['redis']
 
             return cls(
-                app=AppConfig(
-                    logger_level=data['logger_level'],
-                    bot_token=data['bot_token'],
-                    storage_path=data['storage_path']),
-
-                rabbitmq=RabbitmqConfig(
-                    username=rabbit['username'],
-                    password=rabbit['password'],
-                    host=rabbit['host'],
-                    port=rabbit['port'],
-                    cons_queue=rabbit['consumer_queue'],
-                    produs_queue=rabbit['producer_queue']),
-
-                redis=RedisConfig(
-                    host=redis['host'],
-                    port=redis['port'],
-                    db=redis['db'],
-                    password=redis['password'],
-                )
+                app=AppConfig.read_config(data),
+                rabbitmq=RabbitmqConfig.read_config(rabbit),
+                redis=RedisConfig.read_config(redis)
             )
 
     @staticmethod
