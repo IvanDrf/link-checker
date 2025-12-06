@@ -23,3 +23,4 @@ class App:
 
     async def stop(self) -> None:
         await self.handler.stop_handling()
+        await self.bot.session.close()

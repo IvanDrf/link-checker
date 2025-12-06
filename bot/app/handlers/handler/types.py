@@ -23,4 +23,4 @@ class Handlers:
 
     def __iter__(self):
         for handler in fields(self):
-            yield (getattr(handler, handler.name))
+            yield (getattr(self, handler.name))

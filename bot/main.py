@@ -1,4 +1,4 @@
-from asyncio import run
+from asyncio import run, create_task, Task
 
 from app.config.config import Config
 from app.logger.logger import configure_logger
@@ -11,9 +11,10 @@ async def main() -> None:
 
     app: App = await App.new(cfg)
 
+    app_task: Task = create_task(app.run())
     try:
-        await app.run()
-    except KeyboardInterrupt:
+        await app_task
+    finally:
         await app.stop()
 
 if __name__ == '__main__':
