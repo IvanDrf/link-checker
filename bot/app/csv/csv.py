@@ -7,7 +7,7 @@ import logging
 
 from app.schemas.message import LinkStatus
 
-CSV_DIR: Final = 'csv'
+CSV_DIR: Final = 'storage/csv'
 
 
 async def write_links(user_id: int, links: tuple[LinkStatus, ...]) -> str:
