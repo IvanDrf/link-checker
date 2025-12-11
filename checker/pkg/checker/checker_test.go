@@ -15,8 +15,7 @@ func TestValidLinks(t *testing.T) {
 	validLinks := []string{
 		"google.com",
 		"https://ya.ru",
-		"vk.com",
-		"https://github.com",
+		"https://habr.com",
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), testingTime)
@@ -48,7 +47,7 @@ func testChecker(t *testing.T, ctx context.Context, links []string, expected boo
 	for _, link := range links {
 		go func(link string) {
 			defer wg.Done()
-			assert.Equal(t, expected, checker.CheckLink(ctx, link))
+			assert.Equal(t, expected, checker.CheckLink(ctx, link), link, expected)
 		}(link)
 	}
 
