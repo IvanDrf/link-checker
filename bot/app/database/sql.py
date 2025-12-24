@@ -20,7 +20,7 @@ async def __check_for_missing_tables(engine: AsyncEngine) -> None:
         existing_tables: list[str] = [row[0] for row in res]
 
         missing_tables: list[str] = [
-            table for table in existing_tables if table not in TABLES]
+            table for table in TABLES if table not in existing_tables]
 
         if len(missing_tables) != 0:
             await __create_tables(conn)

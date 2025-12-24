@@ -1,10 +1,10 @@
-from pytest import mark, fail
-
 from typing import Final
 
+from pytest import fail, mark
+
+from app.exc.internal import InternalError
 from app.repo.redis import RedisRepo
 from app.schemas.message import LinkMessage
-from app.exc.internal import InternalError
 
 
 @mark.asyncio

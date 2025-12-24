@@ -14,7 +14,6 @@ class Repo(UserRepo, LinkRepo):
 
     @connection
     async def save_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        self.add_user
         res = await self._save_link(link, user_id)
         if res is None:
             return None
