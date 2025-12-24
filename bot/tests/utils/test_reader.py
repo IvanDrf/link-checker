@@ -1,5 +1,4 @@
 from utils.file_reader import read_file
-from tests.utils.fixture import files_paths
 
 
 def test_reader(files_paths: tuple[str, ...]) -> None:

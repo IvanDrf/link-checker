@@ -1,6 +1,6 @@
 import pytest
 
-from app.config.config import Config, AppConfig, RabbitmqConfig, RedisConfig
+from app.config.config import AppConfig, Config, RabbitmqConfig, RedisConfig
 
 
 @pytest.fixture(scope='session')
