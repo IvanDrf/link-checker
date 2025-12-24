@@ -1,9 +1,10 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message, FSInputFile, ReplyKeyboardRemove
 from aiogram.fsm.context import FSMContext
+from aiogram.types import FSInputFile, Message, ReplyKeyboardRemove
 
 from app.handlers.csv.abstraction import ICsver
+
 
 csv_router: Router = Router()
 

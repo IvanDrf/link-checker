@@ -1,14 +1,14 @@
 from aiogram import Dispatcher
 
-from app.handlers.handler.types import Handlers
-from app.handlers.start.start import start_router
-from app.handlers.help.help import help_router
-from app.handlers.save.save import save_router
-from app.handlers.delete.delete import delete_router
-from app.handlers.messages.messages import message_router
-from app.handlers.my.my import user_links_router
 from app.handlers.check.check import check_router
 from app.handlers.csv.csv import csv_router
+from app.handlers.delete.delete import delete_router
+from app.handlers.handler.types import Handlers
+from app.handlers.help.help import help_router
+from app.handlers.messages.messages import message_router
+from app.handlers.my.my import user_links_router
+from app.handlers.save.save import save_router
+from app.handlers.start.start import start_router
 
 
 class Handler:

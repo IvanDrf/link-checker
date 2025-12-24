@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
-from sqlalchemy import insert, select
-from typing import Optional
 import logging
+from typing import Optional
 
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.models.user import User
 from app.repo.connection import connection

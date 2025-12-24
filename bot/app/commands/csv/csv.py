@@ -1,16 +1,16 @@
 import logging
 
 from app.commands.abstraction.repo import IRedisRepo
-from app.schemas.message import LinkStatus
+from app.csv.csv import remove_links_file, write_links
 from app.exc.internal import InternalError
-from app.csv.csv import write_links, remove_links_file
+from app.schemas.message import LinkStatus
 
 
 class Csver:
     def __init__(self, redis_repo: IRedisRepo) -> None:
         self.redis_repo: IRedisRepo = redis_repo
 
-    async def get_csv_report(self, user_id: int) -> str:
+    async def get_csv_file_name_report(self, user_id: int) -> str:
         '''returns filename'''
         try:
             links: tuple[LinkStatus, ...] = await self.redis_repo.get_links(user_id)

@@ -1,7 +1,7 @@
 from typing import Optional
 
 from app.commands.abstraction.repo import IRepo
-from app.models.user import User, MAX_LINKS_AMOUNT
+from app.models.user import MAX_LINKS_AMOUNT, User
 
 
 class Saver:

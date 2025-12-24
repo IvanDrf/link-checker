@@ -1,8 +1,8 @@
 from sqlalchemy import text
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncConnection, create_async_engine
+from sqlalchemy.ext.asyncio import AsyncConnection, AsyncEngine, create_async_engine
 
 from app.config.config import Config
-from app.models.models import Base, TABLES
+from app.models.models import TABLES, Base
 
 
 async def create_engine_for_database(cfg: Config) -> AsyncEngine:

@@ -1,9 +1,10 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from typing import Optional
 
-from app.repo.user import UserRepo
-from app.repo.link import LinkRepo
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+
 from app.repo.connection import connection
+from app.repo.link import LinkRepo
+from app.repo.user import UserRepo
 
 
 class Repo(UserRepo, LinkRepo):

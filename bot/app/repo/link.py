@@ -1,6 +1,7 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
-from sqlalchemy import insert, delete, select
 from typing import Optional
+
+from sqlalchemy import delete, insert, select
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.models.link import Link
 from app.repo.connection import connection

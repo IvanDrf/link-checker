@@ -1,9 +1,9 @@
-from aio_pika import connect_robust
-from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractQueue, AbstractIncomingMessage
-from pydantic import ValidationError
-
-from typing import Optional
 import logging
+from typing import Optional
+
+from aio_pika import connect_robust
+from aio_pika.abc import AbstractChannel, AbstractIncomingMessage, AbstractQueue, AbstractRobustConnection
+from pydantic import ValidationError
 
 from app.config.config import Config
 from app.schemas.message import LinkMessage

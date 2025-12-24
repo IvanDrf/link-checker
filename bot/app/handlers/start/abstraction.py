@@ -1,4 +1,5 @@
-from typing import Protocol, Final
+from typing import Final, Protocol
+
 
 DEFAULT_ANSWER: Final = ''
 

@@ -1,5 +1,5 @@
-from aio_pika import connect_robust, Message, DeliveryMode
-from aio_pika.abc import AbstractRobustConnection, AbstractChannel, AbstractMessage, AbstractQueue
+from aio_pika import DeliveryMode, Message, connect_robust
+from aio_pika.abc import AbstractChannel, AbstractMessage, AbstractQueue, AbstractRobustConnection
 
 from app.config.config import Config
 from app.schemas.message import LinkMessage

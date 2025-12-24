@@ -1,12 +1,13 @@
-from dataclasses import dataclass
-from typing import Final, Optional, Any
-from yaml import safe_load
-from typing import Optional
 from argparse import ArgumentParser, Namespace
+from dataclasses import dataclass
+from typing import Any, Final, Optional
+
+from yaml import safe_load
 
 from app.config.app import AppConfig
 from app.config.rabbitmq import RabbitmqConfig
 from app.config.redis import RedisConfig
+
 
 DEFAULT_CONFIG_PATH: Final = 'config/config.yaml'
 

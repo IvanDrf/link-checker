@@ -1,15 +1,16 @@
+from time import time
+from typing import Final
+
 from aiogram import Router
-from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup, ReplyKeyboardRemove
 
-from typing import Final
-from time import time
-
-from app.handlers.check.abstraction import IChecker
-from app.exc.internal import InternalError
 from app.exc.external import ExternalError
+from app.exc.internal import InternalError
 from app.exc.user import UserError
+from app.handlers.check.abstraction import IChecker
+
 
 check_router: Router = Router()
 

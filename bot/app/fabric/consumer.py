@@ -1,6 +1,6 @@
 from app.commands.abstraction.consumer import IConsumer
-from app.consumer.consumer import Consumer
 from app.config.config import Config
+from app.consumer.consumer import Consumer
 
 
 class ConsumerFabric:
