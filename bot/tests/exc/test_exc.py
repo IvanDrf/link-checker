@@ -1,6 +1,6 @@
-from app.exc.internal import InternalError
 from app.exc.external import ExternalError
 from app.exc.file import FileError
+from app.exc.internal import InternalError
 from app.exc.user import UserError
 
 

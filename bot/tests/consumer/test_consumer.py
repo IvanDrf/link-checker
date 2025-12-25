@@ -1,5 +1,5 @@
+from aio_pika import DeliveryMode, Message
 from pytest import mark
-from aio_pika import Message, DeliveryMode
 
 from app.consumer.consumer import Consumer
 from app.schemas.message import LinkMessage

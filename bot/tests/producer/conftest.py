@@ -1,9 +1,9 @@
+from aio_pika import connect_robust
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
-from aio_pika import connect_robust
 
-from app.producer.producer import Producer
 from app.config.rabbitmq import RabbitmqConfig
+from app.producer.producer import Producer
 from app.schemas.message import LinkMessage, LinkStatus
 
 

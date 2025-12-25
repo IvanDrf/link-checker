@@ -1,6 +1,6 @@
-from pytest import mark
-
 from asyncio import sleep
+
+from pytest import mark
 
 from app.producer.producer import Producer
 from app.schemas.message import LinkMessage

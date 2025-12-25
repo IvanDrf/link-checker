@@ -1,7 +1,6 @@
+from aio_pika import connect_robust
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
-
-from aio_pika import connect_robust
 
 from app.config.rabbitmq import RabbitmqConfig
 from app.consumer.consumer import Consumer
