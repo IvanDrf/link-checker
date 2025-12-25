@@ -1,0 +1,8 @@
+app:
+  host: "localhost"
+  port: 8000
+
+cassandra:
+  name: "stats"
+  host: "127.0.0.1"
+  port: 9042
