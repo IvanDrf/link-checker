@@ -9,4 +9,4 @@ class FileError(Exception):
         if self.message:
             return f'File error: {self.message}'
 
-        return f'File error'
+        return 'File error'

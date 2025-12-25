@@ -1,11 +1,11 @@
-from aiogram import Router
-from aiogram.types import Message, ReplyKeyboardRemove
-from aiogram.fsm.context import FSMContext
-from aiogram.filters.command import CommandStart
-
 from typing import Final
 
-from app.handlers.start.abstraction import IStarter, DEFAULT_ANSWER
+from aiogram import Router
+from aiogram.filters.command import CommandStart
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, ReplyKeyboardRemove
+
+from app.handlers.start.abstraction import DEFAULT_ANSWER, IStarter
 from utils.file_reader import read_file
 
 

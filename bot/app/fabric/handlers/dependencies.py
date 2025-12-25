@@ -1,26 +1,22 @@
 from dataclasses import dataclass
 
-from app.config.config import Config
-
-
-from app.handlers.start.abstraction import IStarter
-from app.handlers.save.abstraction import ISaver
-from app.handlers.delete.abstraction import IDeleter
-from app.handlers.my.abstraction import ILinker
-from app.handlers.check.abstraction import IChecker
-from app.handlers.csv.abstraction import ICsver
-
-from app.commands.start.start import Starter
-from app.commands.save.save import Saver
-from app.commands.delete.delete import Deleter
-from app.commands.my.my import MyLinker
 from app.commands.check.check import Checker
 from app.commands.csv.csv import Csver
-
-from app.fabric.repo import RepoFabric
-from app.fabric.redis import RedisRepoFabric
-from app.fabric.producer import ProducerFabric
+from app.commands.delete.delete import Deleter
+from app.commands.my.my import MyLinker
+from app.commands.save.save import Saver
+from app.commands.start.start import Starter
+from app.config.config import Config
 from app.fabric.consumer import ConsumerFabric
+from app.fabric.producer import ProducerFabric
+from app.fabric.redis import RedisRepoFabric
+from app.fabric.repo import RepoFabric
+from app.handlers.check.abstraction import IChecker
+from app.handlers.csv.abstraction import ICsver
+from app.handlers.delete.abstraction import IDeleter
+from app.handlers.my.abstraction import ILinker
+from app.handlers.save.abstraction import ISaver
+from app.handlers.start.abstraction import IStarter
 
 
 @dataclass

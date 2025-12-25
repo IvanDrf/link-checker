@@ -1,4 +1,4 @@
-from typing import Protocol, Optional
+from typing import Optional, Protocol
 
 from app.schemas.message import LinkMessage
 

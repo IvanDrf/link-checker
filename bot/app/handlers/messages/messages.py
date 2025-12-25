@@ -1,6 +1,7 @@
-from aiogram import Router, F
-from aiogram.types import Message, ReplyKeyboardRemove
+from aiogram import F, Router
 from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, ReplyKeyboardRemove
+
 
 message_router: Router = Router()
 

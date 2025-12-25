@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import BigInteger
 from typing import Final
 
+from sqlalchemy import BigInteger
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.models.models import Base
+
 
 MAX_LINKS_AMOUNT: Final = 10
 

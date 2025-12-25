@@ -1,8 +1,10 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import ForeignKey, String
 from typing import Final
 
+from sqlalchemy import ForeignKey, String
+from sqlalchemy.orm import Mapped, mapped_column
+
 from app.models.models import Base
+
 
 MAX_LINK_LENGTH: Final = 150
 

@@ -1,11 +1,12 @@
+import logging
+from typing import Final
+
 from aiocsv import AsyncWriter
 from aiofiles import open
 from aiofiles.os import remove
-from typing import Final
-
-import logging
 
 from app.schemas.message import LinkStatus
+
 
 CSV_DIR: Final = 'storage/csv'
 

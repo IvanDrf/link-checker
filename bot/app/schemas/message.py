@@ -1,4 +1,4 @@
-from pydantic import BaseModel, TypeAdapter, Field
+from pydantic import BaseModel, Field, TypeAdapter
 
 
 class LinkStatus(BaseModel):

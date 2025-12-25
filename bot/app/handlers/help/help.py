@@ -1,11 +1,12 @@
-from aiogram import Router
-from aiogram.types import Message, ReplyKeyboardRemove
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-
 from typing import Final
 
+from aiogram import Router
+from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message, ReplyKeyboardRemove
+
 from utils.file_reader import read_file
+
 
 help_router: Router = Router()
 

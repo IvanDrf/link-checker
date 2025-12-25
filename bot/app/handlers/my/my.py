@@ -1,12 +1,13 @@
+from typing import Final, Optional
+
 from aiogram import Router
-from aiogram.types import Message, KeyboardButton, ReplyKeyboardMarkup
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
+from aiogram.types import KeyboardButton, Message, ReplyKeyboardMarkup
 
-from typing import Optional, Final
-
-from app.models.link import Link
 from app.handlers.my.abstraction import ILinker
+from app.models.link import Link
+
 
 user_links_router: Router = Router()
 

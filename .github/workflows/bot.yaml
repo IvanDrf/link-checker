@@ -1,4 +1,4 @@
-name: Run tests
+name: Run [BOT] tests
 
 on:
     push:
@@ -17,28 +17,11 @@ jobs:
               with:
                   submodules: recursive
 
-            - name: SetUp Go
-              uses: actions/setup-go@v5
-              with:
-                  go-version: "1.25"
-
-            - name: Run Go tests for [API]
-              working-directory: ./api
+            - name: Install RabbitMQ Server
               run: |
-                  go mod download
-                  go test -v ./...
-
-            - name: Run Go tests for [Auth]
-              working-directory: ./auth
-              run: |
-                  go mod download
-                  go test -v ./...
-
-            - name: Run Go tests for [Checker]
-              working-directory: ./checker
-              run: |
-                  go mod download
-                  go test -v ./...
+                  sudo apt-get update
+                  sudo apt-get install -y rabbitmq-server
+                  sudo systemctl start rabbitmq-server
 
             - name: Set up Python 3.12
               uses: actions/setup-python@v3
@@ -51,6 +34,9 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install flake8 pytest
                   if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+            - name: Setup Redis
+              uses: shogo82148/actions-setup-redis@v1
 
             - name: Lint with flake8
               working-directory: ./bot

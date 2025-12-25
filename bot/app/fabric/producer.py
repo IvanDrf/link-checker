@@ -1,6 +1,6 @@
 from app.commands.abstraction.producer import IProducer
-from app.producer.producer import Producer
 from app.config.config import Config
+from app.producer.producer import Producer
 
 
 class ProducerFabric:

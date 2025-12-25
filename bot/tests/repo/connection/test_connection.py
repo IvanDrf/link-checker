@@ -1,8 +1,6 @@
 import pytest
 from sqlalchemy import text
 
-from tests.repo.fixture import config
-
 from app.config.config import Config
 from app.database.sql import create_engine_for_database
 from app.models.models import TABLES
@@ -11,7 +9,7 @@ from app.models.models import TABLES
 @pytest.mark.asyncio
 async def test_connection(config: Config) -> None:
     engine = await create_engine_for_database(config)
-    assert not (engine is None)
+    assert engine is not None
 
 
 @pytest.mark.asyncio

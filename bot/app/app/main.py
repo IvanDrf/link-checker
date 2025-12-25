@@ -1,8 +1,8 @@
-from asyncio import run, create_task, Task
+from asyncio import Task, create_task, run
 
+from app.app.app import App
 from app.config.config import Config
 from app.logger.logger import configure_logger
-from app.app.app import App
 
 
 async def main() -> None:

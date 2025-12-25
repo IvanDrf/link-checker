@@ -1,9 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from typing import Optional
 
-from app.repo.user import UserRepo
-from app.repo.link import LinkRepo
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
+
+from app.exc.internal import InternalError
 from app.repo.connection import connection
+from app.repo.link import LinkRepo
+from app.repo.user import UserRepo
 
 
 class Repo(UserRepo, LinkRepo):
@@ -13,25 +15,24 @@ class Repo(UserRepo, LinkRepo):
 
     @connection
     async def save_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        self.add_user
-        res = await self._save_link(link, user_id)
+        res = await self._save_link(session, link, user_id)
         if res is None:
-            return None
+            raise InternalError('cant save link in database')
 
-        res = await self.add_links_amount(user_id, 1)
+        res = await self._add_links_amount(session, user_id, 1)
         if res is None:
-            return None
+            raise InternalError('cant change links amount in database')
 
         return user_id
 
     @connection
     async def delete_link(self, session: AsyncSession, link: str, user_id: int) -> Optional[int]:
-        res = await self._delete_link(link, user_id)
+        res = await self._delete_link(session, link, user_id)
         if res == 0:
-            return None
+            raise InternalError('cant delete link in databsae')
 
-        res = await self.reduce_links_amount(user_id, 1)
+        res = await self._reduce_links_amount(session, user_id, 1)
         if res is None:
-            return None
+            raise InternalError('cant reduce links amount in database')
 
         return user_id

@@ -1,28 +1,28 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import SQLAlchemyError
-
-from typing import Callable, Any, Optional
-from functools import wraps
 import logging
+from functools import wraps
+from typing import Any, Callable, Optional, Protocol
+
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.exc.internal import InternalError
+
+
+class _AsyncSessioner(Protocol):
+    def async_session(self) -> AsyncSession:
+        ...
 
 
 def connection(func: Callable[..., Any]) -> Callable[..., Any]:
     @wraps(func)
-    async def wrapper(self, *args, **kwargs) -> Optional[Any]:
-        session: AsyncSession
-
+    async def wrapper(self: _AsyncSessioner, *args, **kwargs) -> Optional[Any]:
         async with self.async_session() as session:
             try:
                 result = await func(self, session, *args, **kwargs)
 
                 await session.commit()
                 return result
-            except SQLAlchemyError as e:
-                logging.error(f'{func.__name__}-> {e}')
-
-                await session.rollback()
-                return None
-            except Exception as e:
+            except (SQLAlchemyError, InternalError, Exception) as e:
                 logging.error(f'{func.__name__}-> {e}')
 
                 await session.rollback()

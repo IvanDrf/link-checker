@@ -1,5 +1,6 @@
 import logging
 from sys import stdout
+
 from frozendict import frozendict
 
 from app.config.config import Config

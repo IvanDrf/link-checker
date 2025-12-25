@@ -2,13 +2,13 @@ package app
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 
 	"github.com/IvanDrf/auth/internal/config"
 	"github.com/IvanDrf/auth/internal/database"
+	"github.com/IvanDrf/auth/internal/errs"
 	auth "github.com/IvanDrf/auth/internal/grpc"
 	"github.com/redis/go-redis/v9"
 
@@ -45,12 +45,12 @@ func New(cfg *config.Config, log *slog.Logger) *App {
 func (a *App) Run() error {
 	l, err := net.Listen("tcp", fmt.Sprintf(":%s", a.port))
 	if err != nil {
-		return errors.New("")
+		return errs.ErrCantConnectToTCP(err)
 	}
 
 	a.logger.Info(fmt.Sprintf("starting _AUTH_ server on %s", a.port))
 	if err := a.gRPCserver.Serve(l); err != nil {
-		return fmt.Errorf("")
+		return errs.ErrCantStartAuthServer(err)
 	}
 
 	return nil

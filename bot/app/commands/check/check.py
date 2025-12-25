@@ -1,17 +1,16 @@
-from asyncio import timeout, create_task
-from typing import Optional, Final
 import logging
+from asyncio import create_task, timeout
+from typing import Final, Optional
 
-from app.commands.abstraction.repo import IRepo, IRedisRepo
 from app.commands.abstraction.consumer import IConsumer
 from app.commands.abstraction.producer import IProducer
-
-from app.models.link import Link
-from app.schemas.message import LinkStatus, LinkMessage
-
-from app.exc.internal import InternalError
+from app.commands.abstraction.repo import IRedisRepo, IRepo
 from app.exc.external import ExternalError
+from app.exc.internal import InternalError
 from app.exc.user import UserError
+from app.models.link import Link
+from app.schemas.message import LinkMessage, LinkStatus
+
 
 WAITING_TIME: Final = 1
 SENDING_TIME: Final = 2
@@ -54,10 +53,7 @@ class Checker:
     async def _check_for_links_in_queue(self, user_id: int, chat_id: int) -> Optional[LinkMessage]:
         try:
             return await self._get_message_with_time(user_id, chat_id, WAITING_TIME)
-        except InternalError:
-            logging.info('there are no pending messages')
-
-        except TimeoutError:
+        except (InternalError, TimeoutError):
             logging.info('there are no pending messages')
 
         return None

@@ -1,8 +1,10 @@
+import logging
+
 from aiogram import Bot
 
-from app.handlers.handler.handler import Handler
-from app.fabric.handlers.handler import HandlerFabric
 from app.config.config import Config
+from app.fabric.handlers.handler import HandlerFabric
+from app.handlers.handler.handler import Handler
 
 
 class App:
@@ -22,5 +24,6 @@ class App:
         await self.handler.dp.start_polling(self.bot)
 
     async def stop(self) -> None:
+        logging.info('Stopping app')
         await self.handler.stop_handling()
         await self.bot.session.close()

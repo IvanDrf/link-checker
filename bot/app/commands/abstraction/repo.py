@@ -1,7 +1,7 @@
-from typing import Protocol, Optional
+from typing import Optional, Protocol
 
-from app.models.user import User
 from app.models.link import Link
+from app.models.user import User
 from app.schemas.message import LinkMessage, LinkStatus
 
 

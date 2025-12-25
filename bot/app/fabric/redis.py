@@ -1,9 +1,9 @@
 from redis.asyncio import Redis
 
 from app.commands.abstraction.repo import IRedisRepo
-from app.repo.redis import RedisRepo
 from app.config.config import Config
 from app.database.redis import connect_to_redis
+from app.repo.redis import RedisRepo
 
 
 class RedisRepoFabric:

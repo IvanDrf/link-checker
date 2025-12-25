@@ -1,8 +1,8 @@
-from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
-from sqlalchemy import insert, select
-from typing import Optional
 import logging
+from typing import Optional
 
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 from app.models.user import User
 from app.repo.connection import connection
@@ -26,15 +26,15 @@ class UserRepo:
 
         return user
 
-    async def add_links_amount(self, user_id: int, links_amount: int) -> Optional[User]:
+    async def _add_links_amount(self, session: AsyncSession, user_id: int, links_amount: int) -> Optional[User]:
         if links_amount <= 0:
             logging.info(
                 f'add_links_amount -> invalid links amount {links_amount}')
             return None
 
-        return await self._change_links_amount(user_id, links_amount)
+        return await self._change_links_amount(session, user_id, links_amount)
 
-    async def reduce_links_amount(self, user_id: int, links_amount: int) -> Optional[User]:
+    async def _reduce_links_amount(self, session: AsyncSession, user_id: int, links_amount: int) -> Optional[User]:
         if links_amount <= 0:
             logging.info(
                 f'reduce_links_amount -> invalid links amount {links_amount}')
@@ -42,9 +42,8 @@ class UserRepo:
 
         links_amount *= -1
 
-        return await self._change_links_amount(user_id, links_amount)
+        return await self._change_links_amount(session, user_id, links_amount)
 
-    @connection
     async def _change_links_amount(self, session: AsyncSession, user_id: int, links_amount: int) -> Optional[User]:
         user: Optional[User] = await session.scalar(select(User).filter_by(user_id=user_id))
         if user is None:
