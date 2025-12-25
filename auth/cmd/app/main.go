@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,7 +18,11 @@ func main() {
 	logger := logger.InitLogger(cfg.LoggerLevel)
 
 	application := app.New(cfg, logger)
-	go application.Run()
+	go func() {
+		if err := application.Run(); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
