@@ -11,5 +11,5 @@ rabbitmq:
   password: secret_password
   host: localhost
   port: 5672
-  consumer_queue: cons
-  producer_queue: produs
+  consumer_queue: produs
+  producer_queue: cons

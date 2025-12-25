@@ -10,6 +10,11 @@ jobs:
   test:
     name: Run tests
     runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+          - 5672:5672
 
     steps:
       - name: Checkout code

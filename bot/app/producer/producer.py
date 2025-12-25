@@ -13,13 +13,16 @@ class Producer:
 
     @classmethod
     async def new(cls, cfg: Config) -> 'Producer':
-        conn: AbstractRobustConnection = await connect_robust(f'amqp://{cfg.rabbitmq.username}:{cfg.rabbitmq.password}@{cfg.rabbitmq.host}/')
+        conn: AbstractRobustConnection = await connect_robust(f'amqp://{cfg.rabbitmq.username}:{cfg.rabbitmq.password}@{cfg.rabbitmq.host}:{cfg.rabbitmq.port}/')
         chan: AbstractChannel = await conn.channel()
         queue: AbstractQueue = await chan.declare_queue(name=cfg.rabbitmq.produs_queue, durable=False)
 
         return cls(conn, chan, queue)
 
     async def close(self) -> None:
+        if self.chan:
+            await self.chan.close()
+
         if self.conn:
             await self.conn.close()
 
