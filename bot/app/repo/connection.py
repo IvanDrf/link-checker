@@ -5,6 +5,8 @@ from typing import Any, Callable, Optional, Protocol
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.exc.internal import InternalError
+
 
 class _AsyncSessioner(Protocol):
     def async_session(self) -> AsyncSession:
@@ -20,7 +22,7 @@ def connection(func: Callable[..., Any]) -> Callable[..., Any]:
 
                 await session.commit()
                 return result
-            except (SQLAlchemyError, Exception) as e:
+            except (SQLAlchemyError, InternalError, Exception) as e:
                 logging.error(f'{func.__name__}-> {e}')
 
                 await session.rollback()
