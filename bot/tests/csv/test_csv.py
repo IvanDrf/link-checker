@@ -32,11 +32,11 @@ async def test_remove_links_file(USER_ID: int, links: tuple[LinkStatus, ...]) ->
     filename = await write_links(USER_ID, links)
 
     file_path = Path(filename)
-    assert file_path.exists() == True
+    assert file_path.exists() is True
 
     await remove_links_file(USER_ID)
 
-    assert file_path.exists() == False
+    assert file_path.exists() is False
 
 
 async def read_csv_file(filename: str) -> tuple[LinkStatus, ...]:

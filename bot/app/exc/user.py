@@ -9,4 +9,4 @@ class UserError(Exception):
         if self.message:
             return f'UserError: {self.message}'
 
-        return f'UserError: empty message'
+        return 'UserError: empty message'

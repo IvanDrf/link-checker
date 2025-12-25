@@ -2,19 +2,20 @@ package app
 
 import (
 	"context"
-	"github.com/IvanDrf/api-gateway/internal/config"
-	"github.com/IvanDrf/api-gateway/internal/transport/server"
 	"log/slog"
 	"time"
+
+	"github.com/IvanDrf/api-gateway/internal/config"
+	"github.com/IvanDrf/api-gateway/internal/transport/server"
 )
 
 type App struct {
-	server server.Server
+	server *server.Server
 }
 
 func New(cfg *config.Config, logger *slog.Logger) *App {
 	return &App{
-		server: *server.NewServer(cfg, logger),
+		server: server.NewServer(cfg, logger),
 	}
 }
 
