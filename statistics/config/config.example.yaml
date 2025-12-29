@@ -1,0 +1,9 @@
+app:
+  host: "localhost"
+  port: 8000
+  logger_level: "info"
+
+cassandra:
+  key_space: "stats"
+  host: "172.19.0.2"
+  port: 9042
