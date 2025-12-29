@@ -1,12 +1,13 @@
-from async_cassandra import AsyncCluster, AsyncCassandraSession
-from async_cassandra.exceptions import AsyncCassandraError
-
+import logging
 from asyncio import Semaphore, create_task, gather
 from typing import Final
-import logging
 
-from src.schemas.links import Link
-from src.core.exc.internal import InternalError
+from async_cassandra import AsyncCassandraSession, AsyncCluster
+from async_cassandra.exceptions import AsyncCassandraError
+
+from src.core.exc.repo import RepoError
+from src.schemas.link import Link
+
 
 MAX_CONCURRENCY: Final = 20
 
@@ -33,7 +34,7 @@ class LinkRepo:
 
         except AsyncCassandraError as e:
             logging.error(f'Link repo error: {e.__str__()}')
-            raise InternalError('cant save links in cassandra')
+            raise RepoError('cant save links in database')
 
     async def _add_link(self, semaphore: Semaphore, stmt, link: Link):
         async with semaphore:
@@ -48,7 +49,7 @@ class LinkRepo:
 
         except AsyncCassandraError as e:
             logging.error(f'Link repo error: {e.__str__()}')
-            raise InternalError('cant get links from cassandra')
+            raise RepoError('cant get links from database')
 
     async def get_most_popular_links(self, limit: int) -> tuple[Link, ...]:
         try:
@@ -58,6 +59,5 @@ class LinkRepo:
             return tuple([Link(link=row[0], count=row[1]) async for row in rows])
 
         except AsyncCassandraError as e:
-
             logging.error(f'Link repo error: {e.__str__()}')
-            raise InternalError('cant get most popular links')
+            raise RepoError('cant get most popular links from database')

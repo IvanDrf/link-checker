@@ -5,4 +5,4 @@ from dataclasses import dataclass
 class CassandraSettings:
     host: str
     port: int
-    name: str
+    key_space: str

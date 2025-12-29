@@ -24,3 +24,6 @@ class Settings:
                 app=AppSettings(**content['app']),
                 cassandra=CassandraSettings(**content['cassandra']),
             )
+
+
+settings = Settings.load_from_yaml()
