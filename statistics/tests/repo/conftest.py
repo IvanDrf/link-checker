@@ -4,6 +4,7 @@ from pytest_asyncio import fixture as async_fixture
 from src.core.settings.app import AppSettings
 from src.core.settings.cassandra import CassandraSettings
 from src.core.settings.settings import Settings
+from src.core.migrations.cassandra import apply_migrations, MigrationMethod
 from src.database.cassandra import connect_to_cassandra
 from src.repo.links import LinkRepo
 from src.schemas.link import Link
@@ -19,12 +20,12 @@ async def link_repo():
     )
 
     repo = LinkRepo(cluster, session)
-    await _create_link_table(repo)
+    await apply_migrations(session, MigrationMethod.UP)
 
     try:
         yield repo
     finally:
-        await _drop_link_table(repo)
+        await apply_migrations(session, MigrationMethod.DOWN)
         await repo.close()
 
 
@@ -37,19 +38,3 @@ def links() -> tuple[Link, ...]:
         Link(link='google.com'),
         Link(link='google.com'),
     )
-
-
-async def _create_link_table(repo: LinkRepo) -> None:
-    stmt = await repo.session.prepare('''
-    CREATE TABLE IF NOT EXISTS links(
-        link TEXT PRIMARY KEY,
-        count COUNTER
-    );
-    ''')
-
-    await repo.session.execute(stmt)
-
-
-async def _drop_link_table(repo: LinkRepo) -> None:
-    stmt = await repo.session.prepare('DROP TABLE IF EXISTS links;')
-    await repo.session.execute(stmt)
