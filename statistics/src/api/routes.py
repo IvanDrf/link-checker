@@ -1,5 +1,5 @@
 import logging
-from typing import Annotated
+from typing import Annotated, Final
 
 from fastapi import APIRouter, Body, Depends, Query, Response, status
 
@@ -10,11 +10,20 @@ from src.schemas.error import ErrorResponse
 from src.schemas.link import Link
 
 
+DEFAULT_LIMIT: Final = 30
+MIN_LIMIT: Final = 1
+MAX_LIMIT: Final = 120
+
 links_router = APIRouter(prefix='/links')
 
 
 @links_router.post('/save')
-async def save_links(links: Annotated[tuple[Link, ...], Body()], link_service: Annotated[ILinkService, Depends(get_link_service)], response: Response):
+async def save_links(
+    links: Annotated[tuple[Link, ...], Body()],
+    link_service: Annotated[ILinkService, Depends(get_link_service)],
+    response: Response
+) -> ErrorResponse | None:
+
     try:
         await link_service.add_links(links)
         response.status_code = status.HTTP_204_NO_CONTENT
@@ -26,7 +35,12 @@ async def save_links(links: Annotated[tuple[Link, ...], Body()], link_service: A
 
 
 @links_router.get('/popluar')
-async def get_popular_links(limit: Annotated[int, Query(ge=0, le=50)], link_service: Annotated[ILinkService, Depends(get_link_service)], response: Response):
+async def get_popular_links(
+    link_service: Annotated[ILinkService, Depends(get_link_service)],
+    response: Response,
+    limit: Annotated[int, Query(ge=MIN_LIMIT, le=MAX_LIMIT)] = DEFAULT_LIMIT
+) -> tuple[Link, ...] | ErrorResponse:
+
     try:
         links = await link_service.get_most_popular_links(limit)
 
@@ -41,7 +55,12 @@ async def get_popular_links(limit: Annotated[int, Query(ge=0, le=50)], link_serv
 
 
 @links_router.get('/')
-async def get_links(limit: Annotated[int, Query(ge=0, le=50)], link_service: Annotated[ILinkService, Depends(get_link_service)], response: Response):
+async def get_links(
+    link_service: Annotated[ILinkService, Depends(get_link_service)],
+    response: Response,
+    limit: Annotated[int, Query(ge=MIN_LIMIT, le=MAX_LIMIT)] = DEFAULT_LIMIT
+) -> tuple[Link, ...] | ErrorResponse:
+
     try:
         links = await link_service.get_links(limit)
 

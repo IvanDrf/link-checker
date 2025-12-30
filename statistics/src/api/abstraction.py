@@ -1,9 +1,7 @@
-from typing import Final, Protocol
+from typing import Protocol
 
+from src.api.routes import DEFAULT_LIMIT
 from src.schemas.link import Link
-
-
-DEFAULT_LIMIT: Final = 30
 
 
 class ILinkService(Protocol):
