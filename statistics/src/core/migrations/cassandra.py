@@ -1,5 +1,5 @@
 from enum import Enum
-from os import listdir
+from os import getcwd, listdir
 from typing import Final
 
 from aiofiles import open
@@ -15,7 +15,8 @@ class MigrationMethod(Enum):
 
 
 async def apply_migrations(session: AsyncCassandraSession, method: MigrationMethod) -> None:
-    migration_files = get_migration_files_from_dir(MIGRATIONS_DIR, method)
+    print(getcwd())
+    migration_files = _get_migration_files_from_dir(MIGRATIONS_DIR, method)
 
     for filename in migration_files:
         async with open(filename, 'r') as file:
@@ -25,5 +26,5 @@ async def apply_migrations(session: AsyncCassandraSession, method: MigrationMeth
             await session.execute(stmt)
 
 
-def get_migration_files_from_dir(dir: str, method: MigrationMethod) -> list[str]:
-    return sorted([file for file in listdir(dir) if method.value in file])
+def _get_migration_files_from_dir(dir: str, method: MigrationMethod) -> list[str]:
+    return sorted([MIGRATIONS_DIR+'/'+file for file in listdir(dir) if method.value in file])

@@ -1,10 +1,10 @@
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
 
+from src.core.migrations.cassandra import MigrationMethod, apply_migrations
 from src.core.settings.app import AppSettings
 from src.core.settings.cassandra import CassandraSettings
 from src.core.settings.settings import Settings
-from src.core.migrations.cassandra import apply_migrations, MigrationMethod
 from src.database.cassandra import connect_to_cassandra
 from src.repo.links import LinkRepo
 from src.schemas.link import Link
