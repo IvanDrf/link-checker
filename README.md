@@ -4,7 +4,7 @@
 
 ### Architecture
 <details> <summary>Microservice Architecture</summary>
-  <img width="600" height="500" alt="architecture" src="https://github.com/user-attachments/assets/cde244bd-c5de-49ec-ae3c-6716aec13f4f" />
+  <img width="800" height="500" alt="architecture" src="https://github.com/user-attachments/assets/89bff5ff-c095-49f9-b79b-b1efc389a401" />
 </details>
 
 <details> <summary>Architecture</summary>
