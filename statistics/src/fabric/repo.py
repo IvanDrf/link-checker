@@ -1,12 +1,11 @@
-from src.core.settings.settings import Settings
-from src.database.cassandra import connect_to_cassandra
+from src.core.settings.postgresql import DatabaseSettings
+from src.database.postgresql import connect_to_database
 from src.repo.links import LinkRepo
 from src.service.abstraction import ILinkRepo
 
 
 class LinkRepoFabric:
-    @classmethod
-    async def new_repo(cls, settings: Settings) -> ILinkRepo:
-        cluster, session = await connect_to_cassandra(settings)
-
-        return LinkRepo(cluster, session)
+    @staticmethod
+    async def new_repo(settings: DatabaseSettings) -> ILinkRepo:
+        session_maker = await connect_to_database(settings)
+        return LinkRepo(session_maker)

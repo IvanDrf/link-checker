@@ -8,7 +8,7 @@ def setup_logger() -> None:
                         format='%(asctime)s %(levelname)s %(message)s')
 
 
-def _select_logger_level():
+def _select_logger_level() -> int:
     levels = {
         'debug': logging.DEBUG,
         'info': logging.INFO,

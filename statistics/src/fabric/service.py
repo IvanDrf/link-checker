@@ -4,6 +4,6 @@ from src.service.links import LinkService
 
 
 class LinkServiceFabric:
-    @classmethod
-    async def new_service(cls, repo: ILinkRepo) -> ILinkService:
+    @staticmethod
+    def new_service(repo: ILinkRepo) -> ILinkService:
         return LinkService(repo)

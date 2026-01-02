@@ -1,7 +1,7 @@
 import logging
-from typing import Annotated
+from typing import Annotated, Final
 
-from fastapi import APIRouter, Body, Depends, Response, status
+from fastapi import APIRouter, Body, Depends, Query, Response, status
 
 from src.api.abstraction import ILinkService
 from src.core.exc.internal import InternalError
@@ -10,17 +10,45 @@ from src.schemas.error import ErrorResponse
 from src.schemas.link import Link
 
 
+MIN_LIMIT: Final = 1
+DEFAULT_LIMIT: Final = 30
+MAX_LIMIT: Final = 200
+
 links_router = APIRouter(prefix='/links')
 
 
 @links_router.post('/save')
-async def save_links(links: Annotated[tuple[Link, ...], Body()], link_service: Annotated[ILinkService, Depends(get_link_service)], response: Response):
+async def save_links(
+    links: Annotated[tuple[Link, ...], Body()],
+    link_service: Annotated[ILinkService, Depends(get_link_service)],
+    response: Response
+) -> ErrorResponse | None:
+
     try:
         await link_service.add_links(links)
+        response.status_code = status.HTTP_204_NO_CONTENT
     except InternalError as e:
         logging.error(e.__str__())
 
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
         return ErrorResponse(message='internal error, cant save links')
 
-    response.status_code = status.HTTP_204_NO_CONTENT
+
+@links_router.get('/popular')
+async def get_popular_links(
+    link_service: Annotated[ILinkService, Depends(get_link_service)],
+    response: Response,
+    limit: Annotated[int, Query(ge=MIN_LIMIT, le=MAX_LIMIT)] = DEFAULT_LIMIT
+) -> tuple[Link, ...] | ErrorResponse:
+
+    try:
+        links = await link_service.get_most_popular_links(limit)
+
+        response.status_code = status.HTTP_200_OK
+        return links
+
+    except InternalError as e:
+        logging.error(e.__str__())
+
+        response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
+        return ErrorResponse(message='internal error, cant find popular links')
