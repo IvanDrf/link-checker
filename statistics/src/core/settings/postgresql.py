@@ -2,7 +2,10 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class CassandraSettings:
+class DatabaseSettings:
+    user: str
+    password: str
+
     host: str
     port: int
-    key_space: str
+    db_name: str

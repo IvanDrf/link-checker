@@ -4,7 +4,7 @@ from typing import Final
 from yaml import safe_load
 
 from src.core.settings.app import AppSettings
-from src.core.settings.cassandra import CassandraSettings
+from src.core.settings.postgresql import DatabaseSettings
 
 
 DEFAULT_SETTIGS_PATH: Final = 'config/config.yaml'
@@ -13,7 +13,7 @@ DEFAULT_SETTIGS_PATH: Final = 'config/config.yaml'
 @dataclass(frozen=True)
 class Settings:
     app: AppSettings
-    cassandra: CassandraSettings
+    database: DatabaseSettings
 
     @classmethod
     def load_from_yaml(cls, path_to_yaml: str = DEFAULT_SETTIGS_PATH) -> 'Settings':
@@ -22,7 +22,7 @@ class Settings:
 
             return Settings(
                 app=AppSettings(**content['app']),
-                cassandra=CassandraSettings(**content['cassandra']),
+                database=DatabaseSettings(**content['database']),
             )
 
 

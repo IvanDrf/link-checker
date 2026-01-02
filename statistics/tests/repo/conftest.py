@@ -1,7 +1,7 @@
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
-
 from src.core.migrations.cassandra import MigrationMethod, apply_migrations
+
 from src.core.settings.app import AppSettings
 from src.core.settings.cassandra import CassandraSettings
 from src.core.settings.settings import Settings
@@ -16,7 +16,7 @@ async def link_repo():
 
     cluster, session = await connect_to_cassandra(settings=Settings(
         app=AppSettings(host='localhost', port=8000, logger_level='debug'),
-        cassandra=CassandraSettings(host=host, port=port, key_space='stats'))
+        database=CassandraSettings(host=host, port=port, key_space='stats'))
     )
 
     repo = LinkRepo(cluster, session)

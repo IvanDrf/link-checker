@@ -6,10 +6,10 @@ from src.schemas.link import Link
 
 
 add_links_expected = (
-    Link(link='google.com', count=2),
-    Link(link='vk.com', count=1),
-    Link(link='ya.ru', count=1),
-    Link(link='habr.com', count=1),
+    Link(link='google.com', view=2),
+    Link(link='vk.com', view=1),
+    Link(link='ya.ru', view=1),
+    Link(link='habr.com', view=1),
 )
 
 

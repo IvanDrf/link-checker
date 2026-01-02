@@ -23,7 +23,7 @@ def handle_timeout_and_error(error_type: type[Exception], message: str):
 
             except error_type as e:
                 logging.error(e.__str__())
-                raise InternalError(f'cant {message}')
+                raise InternalError(message)
 
         return wrapper
 

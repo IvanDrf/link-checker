@@ -1,4 +1,5 @@
 CREATE TABLE IF NOT EXISTS links (
     link TEXT PRIMARY KEY,
-    count COUNTER
+    status BOOL NOT NULL,
+    views INT NOT NULL
 );

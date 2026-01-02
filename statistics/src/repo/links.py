@@ -1,63 +1,27 @@
-import logging
-from asyncio import Semaphore, create_task, gather
 from typing import Final
 
-from async_cassandra import AsyncCassandraSession, AsyncCluster
-from async_cassandra.exceptions import AsyncCassandraError
+from sqlalchemy import insert, select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.exc.repo import RepoError
-from src.schemas.link import Link
+from src.models.link import Link
+from src.repo.connection import connection
 
 
 MAX_CONCURRENCY: Final = 20
 
 
 class LinkRepo:
-    def __init__(self, cluster: AsyncCluster, session: AsyncCassandraSession) -> None:
-        self.cluster: AsyncCluster = cluster
-        self.session: AsyncCassandraSession = session
+    @connection(error_type=RepoError, error_message='cant save links in database')
+    async def add_links(self, session: AsyncSession, links: tuple[Link, ...]) -> None:
+        stmt = insert(Link).values(links)
+        await session.execute(stmt)
 
-    async def close(self) -> None:
-        await self.session.close()
-        await self.cluster.shutdown()
+    @connection(error_type=RepoError, error_message='cant find most popular links in database')
+    async def get_most_popular_links(self, session: AsyncSession, limit: int) -> tuple[Link, ...]:
+        stmt = select(Link).order_by(Link.views).limit(limit)
 
-    async def add_links(self, links: tuple[Link, ...]) -> None:
-        try:
-            stmt = await self.session.prepare('UPDATE links SET count = count + 1 WHERE link = ?')
+        res = await session.scalars(stmt)
+        links = res.fetchall()
 
-            semaphore = Semaphore(MAX_CONCURRENCY)
-
-            tasks = tuple(create_task(self._add_link(
-                semaphore, stmt, link)) for link in links)
-
-            await gather(*tasks, return_exceptions=True)
-
-        except AsyncCassandraError as e:
-            logging.error(f'Link repo error: {e.__str__()}')
-            raise RepoError('cant save links in database')
-
-    async def _add_link(self, semaphore: Semaphore, stmt, link: Link):
-        async with semaphore:
-            await self.session.execute(query=stmt, parameters=(link.link,))
-
-    async def get_links(self, limit: int) -> tuple[Link, ...]:
-        try:
-            stmt = await self.session.prepare('SELECT link, count FROM links LIMIT ?')
-            rows = await self.session.execute(query=stmt, parameters=(limit,))
-
-            return tuple([Link(link=row[0], count=row[1]) async for row in rows])
-
-        except AsyncCassandraError as e:
-            logging.error(f'Link repo error: {e.__str__()}')
-            raise RepoError('cant get links from database')
-
-    async def get_most_popular_links(self, limit: int) -> tuple[Link, ...]:
-        try:
-            stmt = await self.session.prepare('SELECT link, count FROM links ORDER BY count ASC LIMIT ?')
-            rows = await self.session.execute(query=stmt, parameters=(limit,))
-
-            return tuple([Link(link=row[0], count=row[1]) async for row in rows])
-
-        except AsyncCassandraError as e:
-            logging.error(f'Link repo error: {e.__str__()}')
-            raise RepoError('cant get most popular links from database')
+        return tuple(link for link in links)
