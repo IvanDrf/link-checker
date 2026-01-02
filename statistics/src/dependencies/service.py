@@ -6,14 +6,14 @@ from src.api.abstraction import ILinkService
 _link_service: Optional[ILinkService] = None
 
 
-async def init_link_service(service: ILinkService) -> None:
+def init_link_service(service: ILinkService) -> None:
     global _link_service
 
     if _link_service is None:
         _link_service = service
 
 
-async def get_link_service() -> ILinkService:
+def get_link_service() -> ILinkService:
     global _link_service
 
     if _link_service is None:

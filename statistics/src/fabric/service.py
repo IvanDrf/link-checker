@@ -5,5 +5,5 @@ from src.service.links import LinkService
 
 class LinkServiceFabric:
     @staticmethod
-    async def new_service(repo: ILinkRepo) -> ILinkService:
+    def new_service(repo: ILinkRepo) -> ILinkService:
         return LinkService(repo)

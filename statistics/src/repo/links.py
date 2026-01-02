@@ -1,19 +1,22 @@
-from typing import Final
 import logging
+from typing import Final
 
-from sqlalchemy import select, Select
-from sqlalchemy.dialects.postgresql import insert, Insert
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import Select, select
+from sqlalchemy.dialects.postgresql import Insert, insert
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.core.exc.repo import RepoError
-from src.database.postgresql import session_maker
 from src.models.link import LinkOrm
+
 
 MAX_CONCURRENCY: Final = 20
 
 
 class LinkRepo:
+    def __init__(self, session_maker: async_sessionmaker[AsyncSession]) -> None:
+        self.session_maker = session_maker
+
     async def add_links(self, links: tuple[dict[str, str | bool | int], ...]) -> None:
         stmt = insert(LinkOrm).values(links)
         conflict_stmt = stmt.on_conflict_do_update(
@@ -24,7 +27,7 @@ class LinkRepo:
             }
         )
 
-        async with session_maker() as session, session.begin():
+        async with self.session_maker() as session, session.begin():
             return await self._add_links(session, conflict_stmt)
 
     async def _add_links(self, session: AsyncSession, stmt: Insert) -> None:
@@ -41,7 +44,7 @@ class LinkRepo:
     async def get_most_popular_links(self, limit: int) -> tuple[LinkOrm, ...]:
         stmt = select(LinkOrm).order_by(LinkOrm.views).limit(limit)
 
-        async with session_maker() as session:
+        async with self.session_maker() as session:
             return await self._get_most_popular_links(session, stmt)
 
     async def _get_most_popular_links(self, session: AsyncSession, stmt: Select[tuple[LinkOrm]]) -> tuple[LinkOrm, ...]:
