@@ -11,8 +11,8 @@ from src.core.settings.settings import settings
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
-    logging.info(f'Starting app on {settings.app.port}')
     await init_app()
+    logging.info(f'Starting app on {settings.app.port}')
 
     yield
 

@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.models.base import Base
 
 
-class Link(Base):
+class LinkOrm(Base):
     __tablename__ = 'links'
 
     link: Mapped[str] = mapped_column(String, primary_key=True)

@@ -3,6 +3,6 @@ from src.service.abstraction import ILinkRepo
 
 
 class LinkRepoFabric:
-    @classmethod
-    async def new_repo(cls) -> ILinkRepo:
+    @staticmethod
+    async def new_repo() -> ILinkRepo:
         return LinkRepo()

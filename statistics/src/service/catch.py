@@ -19,7 +19,7 @@ def handle_timeout_and_error(error_type: type[Exception], message: str):
                     return res
             except TimeoutError as e:
                 logging.error(f'REPO error timeout: {e.__str__()}')
-                raise InternalError(f'timeout for {message}')
+                raise InternalError(f'timeout: {message}')
 
             except error_type as e:
                 logging.error(e.__str__())
