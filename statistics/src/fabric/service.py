@@ -1,9 +1,9 @@
 from src.api.abstraction import ILinkService
-from src.service.abstraction import ILinkRepo
+from src.service.abstraction import ILinkRepo, ICacheRepo
 from src.service.links import LinkService
 
 
 class LinkServiceFabric:
     @staticmethod
-    def new_service(repo: ILinkRepo) -> ILinkService:
-        return LinkService(repo)
+    def new_service(link_repo: ILinkRepo, cache_repo: ICacheRepo) -> ILinkService:
+        return LinkService(link_repo, cache_repo)

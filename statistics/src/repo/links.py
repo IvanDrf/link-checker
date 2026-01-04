@@ -1,7 +1,7 @@
 import logging
 from typing import Final
 
-from sqlalchemy import Select, select
+from sqlalchemy import Select, select, desc
 from sqlalchemy.dialects.postgresql import Insert, insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
@@ -14,6 +14,8 @@ MAX_CONCURRENCY: Final = 20
 
 
 class LinkRepo:
+    __slots__ = ('session_maker')
+
     def __init__(self, session_maker: async_sessionmaker[AsyncSession]) -> None:
         self.session_maker = session_maker
 
@@ -42,7 +44,7 @@ class LinkRepo:
             raise RepoError('cant add links in database')
 
     async def get_most_popular_links(self, limit: int) -> tuple[LinkOrm, ...]:
-        stmt = select(LinkOrm).order_by(LinkOrm.views).limit(limit)
+        stmt = select(LinkOrm).order_by(desc(LinkOrm.views)).limit(limit)
 
         async with self.session_maker() as session:
             return await self._get_most_popular_links(session, stmt)
