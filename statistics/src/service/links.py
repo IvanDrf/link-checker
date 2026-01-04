@@ -18,6 +18,9 @@ class LinkService:
         self.link_repo: ILinkRepo = link_repo
         self.cache_repo: ICacheRepo = cache_repo
 
+    async def stop(self) -> None:
+        await self.cache_repo.close()
+
     @handle_timeout_and_error(error_type=RepoError, message='cant add add links in database')
     async def add_links(self, links: tuple[Link, ...]) -> None:
         await self.link_repo.add_links(tuple(
@@ -44,7 +47,8 @@ class LinkService:
                 status=link.status,
                 views=link.views
             )
-            for link in links_from_db)
+            for link in links_from_db
+        )
 
         create_task(self.cache_repo.save_links(links))
         logging.info('link service: get links from database')

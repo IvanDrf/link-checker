@@ -1,7 +1,7 @@
 from src.core.logger.logger import setup_logger
 from src.core.settings.settings import settings
 
-from src.dependencies.service import init_link_service
+from src.dependencies.service import init_link_service, get_link_service
 from src.fabric.repo import LinkRepoFabric, CacheRepoFabric
 from src.fabric.service import LinkServiceFabric
 
@@ -14,3 +14,8 @@ async def init_app() -> None:
     service = LinkServiceFabric.new_service(link_repo, cache_repo)
 
     init_link_service(service)
+
+
+async def close_app() -> None:
+    service = get_link_service()
+    await service.stop()

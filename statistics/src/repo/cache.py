@@ -17,6 +17,9 @@ class CacheRepo:
     def __init__(self, redis: Redis) -> None:
         self.redis: Redis = redis
 
+    async def close(self) -> None:
+        await self.redis.close()
+
     async def save_links(self, links: tuple[Link, ...]) -> None:
         links_json = format_links_to_json(links)
 
