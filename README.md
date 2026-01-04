@@ -66,6 +66,11 @@ func WorkerPool(ctx context.Context, in chan string, out chan models.Link, worke
 The main documentation is located in the [docs/](https://github.com/IvanDrf/link-checker/tree/main/docs) directory in english and russian.
 
 All example config files are in dirs - **config**
+- api - [config.example.yaml](https://github.com/IvanDrf/link-checker/blob/main/api/config/config.example.yaml)
+- auth - [config.example.yaml](https://github.com/IvanDrf/link-checker/blob/main/auth/config/config.example.yaml)
+- bot - [config.example.yaml](https://github.com/IvanDrf/link-checker/blob/main/bot/config/config.example.yaml)
+- checker - [config.example.yaml](https://github.com/IvanDrf/link-checker/blob/main/checker/config/config.example.yaml)
+- stats - [config.example.yaml](https://github.com/IvanDrf/link-checker/blob/main/statistics/config/config.example.yaml)
 
 ## API-gateway
 Documentation - [docs](https://github.com/IvanDrf/link-checker/tree/main/docs)
