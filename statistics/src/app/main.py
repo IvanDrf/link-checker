@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from uvicorn import run
 
 from src.api.routes import links_router
-from src.app.app import init_app
+from src.app.app import init_app, close_app
 from src.core.settings.settings import settings
 
 
@@ -16,6 +16,7 @@ async def lifespan(_: FastAPI):
 
     yield
 
+    await close_app()
     logging.info(f'Stopping app on {settings.app.port}')
 
 

@@ -245,3 +245,4 @@ __marimo__/
 #database
 *.db
 *.csv
+versions
