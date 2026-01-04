@@ -15,7 +15,19 @@
 
 ### Description
 
-The application is a collection of microservices: [auth](https://github.com/IvanDrf/link-checker/tree/main/auth), [checker](https://github.com/IvanDrf/link-checker/tree/main/checker);  [http api-gateway](https://github.com/IvanDrf/link-checker/tree/main/api), [Telegram Bot](https://t.me/links_checker_chks_bot). App allows you to register by email, confirm it and check an array of links with up to 100 links in one request, or you can use [Telegram Bot](https://t.me/links_checker_chks_bot), and the checking speed is very high, because the **worker pool** pattern is used to check links.
+The application is a collection of microservices: [auth](https://github.com/IvanDrf/link-checker/tree/main/auth), [checker](https://github.com/IvanDrf/link-checker/tree/main/checker), [http api-gateway](https://github.com/IvanDrf/link-checker/tree/main/api), [Telegram Bot](https://t.me/links_checker_chks_bot) and [stats](https://github.com/IvanDrf/link-checker/tree/main/statistics).
+- GRPC
+  - [auth](https://github.com/IvanDrf/link-checker/tree/main/auth) service is responsible for user authentication and authorization, account creation
+  - [checker](https://github.com/IvanDrf/link-checker/tree/main/checker) is the main service responsible for checking links
+    
+- HTTP
+  -	[http api-gateway](https://github.com/IvanDrf/link-checker/tree/main/api) is a common gateway that is responsible for receiving requests from users
+  -	[stats](https://github.com/IvanDrf/link-checker/tree/main/statistics) is service that stores information about the most popular requested links and their latest statuses (doesnt store users information)
+    
+- Telegram
+  - [Telegram Bot](https://t.me/links_checker_chks_bot) is a bot that allows users to save links and check them
+
+App allows you to register by email, confirm it and check an array of links with up to 100 links in one request, or you can use [Telegram Bot](https://t.me/links_checker_chks_bot), and the checking speed is very high, because the **worker pool** pattern is used to check links.
 ``` go
 func WorkerPool(ctx context.Context, in chan string, out chan models.Link, workers int, checkLink CheckLinkFunc) {
 	wg := new(sync.WaitGroup)
@@ -53,7 +65,7 @@ func WorkerPool(ctx context.Context, in chan string, out chan models.Link, worke
 ## Documentation
 The main documentation is located in the [docs/](https://github.com/IvanDrf/link-checker/tree/main/docs) directory in english and russian.
 
-All example config files are in dirs - 'config'
+All example config files are in dirs - **config**
 
 ## API-gateway
 Documentation - [docs](https://github.com/IvanDrf/link-checker/tree/main/docs)
