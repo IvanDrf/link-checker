@@ -26,6 +26,7 @@ The application is a collection of microservices: [auth](https://github.com/Ivan
     
 - Telegram
   - [Telegram Bot](https://t.me/links_checker_chks_bot) is a bot that allows users to save links and check them
+<br></br>
 
 App allows you to register by email, confirm it and check an array of links with up to 100 links in one request, or you can use [Telegram Bot](https://t.me/links_checker_chks_bot), and the checking speed is very high, because the **worker pool** pattern is used to check links.
 ``` go
