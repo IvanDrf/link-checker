@@ -3,14 +3,14 @@ from typing import Any, Final
 
 from fastapi import status
 from httpx import ASGITransport, AsyncClient, Response
-from pytest import mark, fail
+from pytest import fail, mark
 
 from src.api.abstraction import ILinkService
 from src.app.main import app
 from src.dependencies.service import get_link_service
 from src.schemas.link import Link
-
 from tests.routes.conftest import LinkServiceTest
+
 
 REPEATED_REQUESTS: Final = 3
 
