@@ -1,16 +1,12 @@
 import logging
-from typing import Final
 
-from sqlalchemy import Select, select, desc
+from sqlalchemy import Select, desc, select
 from sqlalchemy.dialects.postgresql import Insert, insert
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from src.core.exc.repo import RepoError
 from src.models.link import LinkOrm
-
-
-MAX_CONCURRENCY: Final = 20
 
 
 class LinkRepo:

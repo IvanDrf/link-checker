@@ -1,4 +1,4 @@
-from typing import Protocol, Optional
+from typing import Optional, Protocol
 
 from src.models.link import LinkOrm
 from src.schemas.link import Link

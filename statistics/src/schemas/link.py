@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field, TypeAdapter
 
 class Link(BaseModel):
     link: str
-    status: bool = Field(default=False, exclude=True)
+    status: bool = Field(default=False)
     views: int = 0
 
 

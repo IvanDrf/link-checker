@@ -1,7 +1,7 @@
 from redis.asyncio import Redis
 
-from src.core.settings.redis import RedisSettings
 from src.core.exc.internal import InternalError
+from src.core.settings.redis import RedisSettings
 
 
 async def connect_to_redis(settings: RedisSettings) -> Redis:
