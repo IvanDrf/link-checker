@@ -10,5 +10,5 @@ def links() -> tuple[Link, ...]:
         Link(link='vk.com', status=True, views=1),
         Link(link='ya.ru', status=True, views=2),
         Link(link='habr.com', status=True, views=3),
-        Link(link='test.com', status=True, views=6)
+        Link(link='test.com', status=False, views=6)
     )
