@@ -1,10 +1,10 @@
-from typing import Final
-from asyncio import create_task
 import logging
+from asyncio import create_task
+from typing import Final
 
 from src.core.exc.repo import RepoError
 from src.schemas.link import Link
-from src.service.abstraction import ILinkRepo, ICacheRepo
+from src.service.abstraction import ICacheRepo, ILinkRepo
 from src.utils.catch import handle_timeout_and_error
 
 

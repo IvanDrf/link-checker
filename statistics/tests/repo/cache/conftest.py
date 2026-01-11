@@ -1,13 +1,11 @@
-from typing import AsyncGenerator, Any
 from json import dumps
-
-from redis.asyncio import Redis
+from typing import Any, AsyncGenerator
 
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
 from pytest_redis.factories import redis_proc
+from redis.asyncio import Redis
 
-from src.service.abstraction import ICacheRepo
 from src.repo.cache import CacheRepo
 from src.schemas.link import Link
 
@@ -25,23 +23,12 @@ async def redis(redis_proc) -> AsyncGenerator[Redis, Any]:
 
 
 @async_fixture(scope='function')
-async def cache_repo(redis) -> ICacheRepo:
+async def cache_repo(redis) -> CacheRepo:
     cache = CacheRepo(redis)
 
     return cache
 
 
 @fixture(scope='package')
-def links() -> tuple[Link, ...]:
-    return (
-        Link(link='google.com', status=True, views=10),
-        Link(link='vk.com', status=True, views=1),
-        Link(link='ya.ru', status=True, views=2),
-        Link(link='habr.com', status=True, views=3),
-        Link(link='test.com', status=True, views=6)
-    )
-
-
-@fixture(scope='package')
-def links_json(links) -> str:
+def links_json(links: tuple[Link, ...]) -> str:
     return dumps([link.model_dump() for link in links])

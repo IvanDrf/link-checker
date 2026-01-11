@@ -1,6 +1,6 @@
+import logging
 from json import dumps
 from typing import Final, Optional
-import logging
 
 from redis.asyncio import Redis, RedisError
 
@@ -30,7 +30,12 @@ class CacheRepo:
             logging.error(f'redis error: {e.__str__()}')
 
     async def get_links(self) -> Optional[tuple[Link, ...]]:
-        links_json: Optional[str] = await self.redis.get(LINKS_KEY)
+        try:
+            links_json: Optional[str] = await self.redis.get(LINKS_KEY)
+        except RedisError as e:
+            logging.error(f'redis error: {e.__str__()}')
+            return None
+
         if links_json is None:
             return None
 

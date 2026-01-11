@@ -1,5 +1,5 @@
 from src.api.abstraction import ILinkService
-from src.service.abstraction import ILinkRepo, ICacheRepo
+from src.service.abstraction import ICacheRepo, ILinkRepo
 from src.service.links import LinkService
 
 

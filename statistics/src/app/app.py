@@ -1,8 +1,7 @@
 from src.core.logger.logger import setup_logger
 from src.core.settings.settings import settings
-
-from src.dependencies.service import init_link_service, get_link_service
-from src.fabric.repo import LinkRepoFabric, CacheRepoFabric
+from src.dependencies.service import get_link_service, init_link_service
+from src.fabric.repo import CacheRepoFabric, LinkRepoFabric
 from src.fabric.service import LinkServiceFabric
 
 
