@@ -1,3 +1,4 @@
+from argparse import ArgumentParser
 from dataclasses import dataclass
 from typing import Final
 
@@ -18,7 +19,7 @@ class Settings:
     cache: RedisSettings
 
     @classmethod
-    def load_from_yaml(cls, path_to_yaml: str = DEFAULT_SETTIGS_PATH) -> 'Settings':
+    def __load_from_yaml(cls, path_to_yaml: str = DEFAULT_SETTIGS_PATH) -> 'Settings':
         with open(path_to_yaml, 'r') as file:
             content = safe_load(file)
 
@@ -28,5 +29,16 @@ class Settings:
                 cache=RedisSettings(**content['cache'])
             )
 
+    @staticmethod
+    def load_settings() -> 'Settings':
+        parser = ArgumentParser()
+        parser.add_argument('-c', '--config')
 
-settings = Settings.load_from_yaml()
+        args, _ = parser.parse_known_args()
+        if args.config:
+            return Settings.__load_from_yaml(args.config)
+
+        return Settings.__load_from_yaml()
+
+
+settings = Settings.load_settings()
