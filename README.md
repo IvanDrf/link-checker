@@ -2,7 +2,7 @@
 
 ## App
 
-### Architecture
+### Architecture and Structure
 <details> <summary>Microservice Architecture</summary>
   <img width="800" height="500" alt="architecture" src="https://github.com/user-attachments/assets/89bff5ff-c095-49f9-b79b-b1efc389a401" />
 </details>
@@ -12,6 +12,24 @@
   <br></br>
   <img width="400" height="400" alt="architecture" src="https://github.com/user-attachments/assets/2241f031-ee50-4e28-ad1e-1c297831ac61" />
 </details>
+
+<details> <summary>Structure</summary>
+
+```
+├── api - API Gateway
+├── auth - AUTH service
+├── bot - Telegram bot
+├── checker - main service, link checker
+├── docs - documentation for services
+├── LICENSE
+├── pkg - auto generated grpc files
+├── protos - proto flies
+├── README.md
+├── scripts - scripts for testing go services and building go apps
+└── statistics - stats service
+```
+</details>
+
 
 ### Description
 
