@@ -7,7 +7,7 @@ from src.models.link import LinkOrm
 from src.repo.links import LinkRepo
 from src.schemas.link import Link
 from src.service.links import convert_links_for_db
-from tests.utils import is_links_are_same
+from tests.utils import is_links_are_same, is_links_sorted_by_views
 
 
 @mark.asyncio
@@ -33,7 +33,8 @@ async def test_get_popular_links(link_repo: LinkRepo, links, limits, repeated) -
         links_from_db = await link_repo.get_most_popular_links(limit)
 
         assert len(links_from_db) == limit
-        # assert is_links_are_same(links_from_db, links) is True
+        assert is_links_are_same(links_from_db, links[:limit]) is True
+        assert is_links_sorted_by_views(links_from_db)
 
 
 async def insert_links(link_repo: LinkRepo, links: tuple[Link, ...], repeated: int) -> None:

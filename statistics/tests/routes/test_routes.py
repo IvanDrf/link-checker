@@ -2,12 +2,12 @@ from asyncio import gather
 
 from fastapi import status
 from httpx import ASGITransport, AsyncClient
-from pytest import fail, mark, fixture
+from pytest import fail, fixture, mark
 
+from src.api.abstraction import ILinkService
 from src.app.main import app
 from src.dependencies.service import get_link_service
 from src.schemas.link import Link
-from src.api.abstraction import ILinkService
 from tests.routes.conftest import LinkServiceTest
 from tests.routes.utils import send_get, send_post
 from tests.utils import is_links_sorted_by_views

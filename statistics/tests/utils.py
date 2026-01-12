@@ -9,5 +9,5 @@ def is_links_are_same(links_from_db: Sequence[LinkOrm], links: Sequence[Link]) -
         link.link for link in links)
 
 
-def is_links_sorted_by_views(links: Sequence[Link]) -> bool:
+def is_links_sorted_by_views(links: Sequence[Link | LinkOrm]) -> bool:
     return all(links[i].views >= links[i + 1].views for i in range(len(links) - 1))
