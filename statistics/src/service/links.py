@@ -23,15 +23,7 @@ class LinkService:
 
     @handle_timeout_and_error(error_type=RepoError, message='cant add add links in database')
     async def add_links(self, links: tuple[Link, ...]) -> None:
-        await self.link_repo.add_links(tuple(
-            {
-                'link': link.link,
-                'status': link.status,
-                'views': 1
-            }
-
-            for link in links
-        ))
+        await self.link_repo.add_links(convert_links_for_db(links))
 
     @handle_timeout_and_error(error_type=RepoError, message='cant find most popular links in database')
     async def get_most_popular_links(self, limit: int) -> tuple[Link, ...]:
@@ -53,3 +45,15 @@ class LinkService:
         create_task(self.cache_repo.save_links(links))
         logging.info('link service: get links from database')
         return links
+
+
+def convert_links_for_db(links: tuple[Link, ...]) -> tuple[dict[str, str | bool | int], ...]:
+    return tuple(
+        {
+            'link': link.link,
+            'status': link.status,
+            'views': 1
+        }
+
+        for link in links
+    )

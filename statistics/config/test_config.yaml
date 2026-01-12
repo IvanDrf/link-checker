@@ -1,0 +1,18 @@
+app:
+  host: "localhost"
+  port: 8000
+  logger_level: "debug"
+
+database:
+  user: "test_user"
+  password: "test_password"
+
+  host: "localhost"
+  port: 5435
+  db_name: "test_link_checker"
+
+cache:
+  host: "localhost"
+  port: 6380
+  database: 0
+  password: "password"
