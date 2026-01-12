@@ -1,7 +1,7 @@
 app:
   host: "localhost"
   port: 8000
-  logger_level: "debug"
+  logger_level: "error"
 
 database:
   user: "test_user"

@@ -24,22 +24,12 @@ class LinkServiceTest:
 
 
 @fixture(scope='package')
-def contents() -> list[dict]:
+def contents(links: tuple[Link, ...]) -> list[dict]:
     return [
         {
-            'link': 'google.com',
-            'status': True
-        },
-        {
-            'link': 'habr.com',
-            'status': True
-        },
-        {
-            'link': 'steam.com',
-            'status': True
-        },
-        {
-            'link': 'test.com',
-            'status': False
+            'link': link.link,
+            'status': link.status
         }
+
+        for link in links
     ]

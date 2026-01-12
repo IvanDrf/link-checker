@@ -63,8 +63,3 @@ class CacheRepoTest:
 @fixture(scope='package')
 def link_service() -> LinkService:
     return LinkService(link_repo=LinkRepoTest(), cache_repo=CacheRepoTest())
-
-
-@fixture(scope='package')
-def limits(links: tuple[Link, ...]) -> tuple[int, ...]:
-    return len(links), len(links) - 1, len(links) - 2
