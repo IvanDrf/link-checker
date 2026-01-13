@@ -1,9 +1,9 @@
-from asyncio import sleep
-
 from pytest import fail, mark
 
 from src.schemas.link import Link
 from src.service.links import LinkService
+from tests.utils import is_links_sorted_by_views
+from tests.service.utils import get_links_with_limit
 
 
 @mark.asyncio
@@ -16,27 +16,9 @@ async def test_add_links(link_service: LinkService, links: tuple[Link, ...]) -> 
 
 
 @mark.asyncio
-async def test_get_most_popular_links(link_service: LinkService, limits: tuple[int, ...]) -> None:
-    links_from_repo = []
+async def test_get_most_popular_links(links: tuple[Link, ...], link_service: LinkService, limits: tuple[int, ...]) -> None:
+    await link_service.add_links(links)
 
-    async def get_links(output: list[Link]) -> None:
-        for limit in limits:
-            links = await link_service.get_most_popular_links(limit)
-
-            assert len(links) <= limit
-            assert all(links[i].views >= links[i].views
-                       for i in range(len(links) - 1))
-
-            output.append(links)
-
-    await get_links(links_from_repo)
-
-    # clear repo, for testing if values are gotten from cache
-    clear_links: tuple[Link, ...] = Link(link='', status=False, views=0),
-    await link_service.add_links(clear_links)
-    await sleep(0.5)
-
-    links_from_cache = []
-    await get_links(links_from_cache)
-
-    assert len(links_from_repo) == len(links_from_cache)
+    async for links, limit in get_links_with_limit(link_service, limits):
+        assert len(links) == limit
+        assert is_links_sorted_by_views(links)

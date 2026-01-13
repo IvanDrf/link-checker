@@ -28,8 +28,6 @@ class LinkRepoTest:
                 )
             else:
                 self.links[link['link']].views += 1  # type: ignore
-                # format: ignore
-                # type: ignore
                 self.links[link['link']].status = link['status']  # type: ignore # noqa
 
     async def get_most_popular_links(self, limit: int) -> tuple[LinkOrm, ...]:
@@ -60,6 +58,6 @@ class CacheRepoTest:
         return Links.validate_json(links_json)
 
 
-@fixture(scope='package')
+@fixture(scope='function')
 def link_service() -> LinkService:
     return LinkService(link_repo=LinkRepoTest(), cache_repo=CacheRepoTest())

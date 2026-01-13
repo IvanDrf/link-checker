@@ -3,7 +3,6 @@ from typing import Any, AsyncGenerator
 
 from pytest import fixture
 from pytest_asyncio import fixture as async_fixture
-from pytest_redis.factories import redis_proc
 from redis.asyncio import Redis
 
 from src.repo.cache import CacheRepo

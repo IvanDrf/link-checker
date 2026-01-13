@@ -2,7 +2,7 @@ from asyncio import gather
 
 from fastapi import status
 from httpx import ASGITransport, AsyncClient
-from pytest import fail, fixture, mark
+from pytest import fail, mark
 
 from src.api.abstraction import ILinkService
 from src.app.main import app
@@ -67,6 +67,8 @@ async def test_get_most_popular_links(contents: tuple[dict], repeated: int, limi
 
             links_json: list[dict] = response.json()
             links = [Link(**link) for link in links_json]
+            for link in links:
+                print(link.link, link.views)
 
             assert len(links) == limit
             assert is_links_sorted_by_views(links) is True
