@@ -1,7 +1,6 @@
-from typing import AsyncGenerator, Any
+from typing import Any, AsyncGenerator
 
 from src.schemas.link import Link
-
 from src.service.links import LinkService
 
 

@@ -2,8 +2,8 @@ from pytest import fail, mark
 
 from src.schemas.link import Link
 from src.service.links import LinkService
-from tests.utils import is_links_sorted_by_views
 from tests.service.utils import get_links_with_limit
+from tests.utils import is_links_sorted_by_views
 
 
 @mark.asyncio

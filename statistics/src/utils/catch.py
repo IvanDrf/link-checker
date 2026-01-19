@@ -1,7 +1,7 @@
 import logging
 from asyncio import timeout
 from functools import wraps
-from typing import Any, Callable, Final
+from typing import Awaitable, Callable, Final
 
 from src.core.exc.internal import InternalError
 
@@ -10,9 +10,9 @@ WAIT_REPO_TIME: Final = 2
 
 
 def handle_timeout_and_error(error_type: type[Exception], message: str):
-    def decorator(func: Callable[..., Any]):
+    def decorator[**P, R](func: Callable[P, Awaitable[R]]):
         @wraps(func)
-        async def wrapper(*args, **kwargs):
+        async def wrapper(*args: P.args, **kwargs: P.kwargs):
             try:
                 async with timeout(WAIT_REPO_TIME):
                     res = await func(*args, **kwargs)
