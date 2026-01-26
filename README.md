@@ -4,13 +4,13 @@
 
 ### Architecture and Structure
 <details> <summary>Microservice Architecture</summary>
-  <img width="800" height="500" alt="architecture" src="https://github.com/user-attachments/assets/89bff5ff-c095-49f9-b79b-b1efc389a401" />
+  <img width="800" height="500" alt="architecture" src="https://github.com/IvanDrf/link-checker/blob/main/assets/microservice-architecture.jpg" />
 </details>
 
 <details> <summary>Architecture</summary>
   <br>A Clean, Onion architecture was used for each of the services.</br>
   <br></br>
-  <img width="400" height="400" alt="architecture" src="https://github.com/user-attachments/assets/2241f031-ee50-4e28-ad1e-1c297831ac61" />
+  <img width="400" height="400" alt="architecture" src="https://github.com/IvanDrf/link-checker/blob/main/assets/architecture.png" />
 </details>
 
 <details> <summary>Structure</summary>
