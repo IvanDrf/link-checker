@@ -1,8 +1,15 @@
+from fastapi import APIRouter, FastAPI
+
 from src.core.logger.logger import setup_logger
 from src.core.settings.settings import settings
 from src.dependencies.service import get_link_service, init_link_service
 from src.fabric.repo import CacheRepoFabric, LinkRepoFabric
 from src.fabric.service import LinkServiceFabric
+
+
+def include_routers(app: FastAPI, routers: tuple[APIRouter, ...]) -> None:
+    for router in routers:
+        app.include_router(router)
 
 
 async def init_app() -> None:

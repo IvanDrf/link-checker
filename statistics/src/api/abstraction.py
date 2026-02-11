@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Optional, Protocol
 
 from src.schemas.link import Link
 
@@ -7,6 +7,6 @@ class ILinkService(Protocol):
     async def add_links(self, links: tuple[Link, ...]) -> None: ...
 
     async def get_most_popular_links(
-        self, limit: int) -> tuple[Link, ...]: ...
+        self, limit: int) -> Optional[tuple[Link, ...]]: ...
 
     async def stop(self) -> None: ...

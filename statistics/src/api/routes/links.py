@@ -43,6 +43,9 @@ async def get_popular_links(
 
     try:
         links = await link_service.get_most_popular_links(limit)
+        if links is None:
+            response.status_code = status.HTTP_204_NO_CONTENT
+            return ()
 
         response.status_code = status.HTTP_200_OK
         return links

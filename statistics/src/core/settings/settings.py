@@ -12,7 +12,7 @@ from src.core.settings.redis import RedisSettings
 DEFAULT_SETTIGS_PATH: Final = 'config/config.yaml'
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, slots=True)
 class Settings:
     app: AppSettings
     database: DatabaseSettings

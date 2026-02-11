@@ -4,13 +4,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from uvicorn import run
 
-from src.api.routes import links_router
-from src.app.app import close_app, init_app
+from src.api.routers import routers
+from src.app.app import close_app, include_routers, init_app
 from src.core.settings.settings import settings
 
 
 @asynccontextmanager
-async def lifespan(_: FastAPI):
+async def lifespan(app: FastAPI):
     await init_app()
     logging.info(f'Starting app on {settings.app.port}')
 
@@ -21,7 +21,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(links_router)
+include_routers(app, routers)
 
 
 def main() -> None:

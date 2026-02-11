@@ -1,6 +1,6 @@
 import logging
 from asyncio import create_task
-from typing import Final
+from typing import Final, Optional
 
 from src.core.exc.repo import RepoError
 from src.schemas.link import Link
@@ -26,8 +26,9 @@ class LinkService:
         await self.link_repo.add_links(convert_links_for_db(links))
 
     @handle_timeout_and_error(error_type=RepoError, message='cant find most popular links in database')
-    async def get_most_popular_links(self, limit: int) -> tuple[Link, ...]:
+    async def get_most_popular_links(self, limit: int) -> Optional[tuple[Link, ...]]:
         links_from_cache = await self.cache_repo.get_links()
+
         if links_from_cache is not None and len(links_from_cache) >= limit:
             logging.info('link service: get links from cache')
             return links_from_cache[:limit]

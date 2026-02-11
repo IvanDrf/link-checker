@@ -9,7 +9,7 @@ from src.app.main import app
 from src.dependencies.service import get_link_service
 from src.schemas.link import Link
 from tests.routes.conftest import LinkServiceTest
-from tests.routes.utils import send_get, send_post
+from tests.routes.utils import send_popular_links_get, send_save_links_post
 from tests.utils import is_links_sorted_by_views
 
 
@@ -35,7 +35,7 @@ async def test_save_links(contents: tuple[dict], repeated: int) -> None:
 
 
 async def send_valid_post_requests(client: AsyncClient, contents: tuple[dict], repeated: int) -> None:
-    responses = await gather(*(send_post(client, contents) for _ in range(repeated)), return_exceptions=True)
+    responses = await gather(*(send_save_links_post(client, contents) for _ in range(repeated)), return_exceptions=True)
 
     for response in responses:
         if isinstance(response, BaseException):
@@ -45,7 +45,8 @@ async def send_valid_post_requests(client: AsyncClient, contents: tuple[dict], r
 
 
 async def send_invalid_post_requests(client: AsyncClient) -> None:
-    responses = await gather(send_post(client, ''), send_post(client, [{'name': 'user'}]), return_exceptions=True)
+    responses = await gather(send_save_links_post(client, ''), send_save_links_post(client, [{'name': 'user'}]), return_exceptions=True)
+
     for response in responses:
         if isinstance(response, BaseException):
             fail(f'unexpected exception: {response.__str__()}')
@@ -59,7 +60,7 @@ async def test_get_most_popular_links(contents: tuple[dict], repeated: int, limi
         # send some links
         await send_valid_post_requests(client, contents, repeated)
 
-        responses = await gather(*(send_get(client, limit) for limit in limits), return_exceptions=True)
+        responses = await gather(*(send_popular_links_get(client, limit) for limit in limits), return_exceptions=True)
 
         for response, limit in zip(responses, limits):
             if isinstance(response, BaseException):
